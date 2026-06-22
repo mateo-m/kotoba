@@ -2,3 +2,14 @@ node_modules/
 docs/.vitepress/cache
 docs/.vitepress/dist
 docs/.vitepress/.temp
+
+# OS / system-generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
