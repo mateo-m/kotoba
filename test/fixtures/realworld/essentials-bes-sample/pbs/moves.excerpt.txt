@@ -1,0 +1,5 @@
+# Generic PBS excerpt for migration QA.
+[MOVE]
+1,TACKLE,Tackle,000,40,NORMAL,Physical,100,35,0,00,0,abef,"A physical attack."
+2,EMBER,Ember,000,40,FIRE,Special,100,25,10,00,0,abef,"A weak fire attack."
+3,WATERGUN,Water Gun,000,40,WATER,Special,100,25,0,00,0,abef,"Shoots water."

@@ -1,0 +1,7 @@
+# Generic paired-line excerpt for migration QA.
+Save the game
+Save the game
+Would you like to continue?
+Would you like to continue?
+No items here.
+No items here.

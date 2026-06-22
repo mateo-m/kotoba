@@ -1,0 +1,11 @@
+{
+  "sample": {
+    "types": {
+      "id_0000": "Normal",
+      "id_0001": "Fire",
+      "id_0002": "Water",
+      "id_0003": "Electric",
+      "id_0004": "Grass"
+    }
+  }
+}

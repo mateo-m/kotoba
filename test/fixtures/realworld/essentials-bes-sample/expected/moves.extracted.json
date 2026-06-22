@@ -1,0 +1,18 @@
+{
+  "data": {
+    "moves": {
+      "ember": {
+        "description": "A weak fire attack.",
+        "name": "Ember"
+      },
+      "tackle": {
+        "description": "A physical attack.",
+        "name": "Tackle"
+      },
+      "watergun": {
+        "description": "Shoots water.",
+        "name": "Water Gun"
+      }
+    }
+  }
+}

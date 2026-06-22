@@ -1,0 +1,12 @@
+{
+  "sample": {
+    "line_0001": "Save the game",
+    "line_0002": "Would you like to continue?",
+    "line_0003": "No items here."
+  },
+  "source_text": {
+    "No items here.": "sample.line_0003",
+    "Save the game": "sample.line_0001",
+    "Would you like to continue?": "sample.line_0002"
+  }
+}
