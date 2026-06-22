@@ -1,0 +1,15 @@
+{
+  "data": {
+    "types": {
+      "fire": {
+        "name": "Fire"
+      },
+      "grass": {
+        "name": "Grass"
+      },
+      "normal": {
+        "name": "Normal"
+      }
+    }
+  }
+}

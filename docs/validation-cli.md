@@ -82,9 +82,11 @@ bin/ruby18 bin/kotoba pbs-extract moves PBS/moves.txt Locales/en.moves.json
 bin/ruby18 bin/kotoba pbs-extract items PBS/items.txt Locales/en.items.json
 bin/ruby18 bin/kotoba pbs-extract abilities PBS/abilities.txt Locales/en.abilities.json
 bin/ruby18 bin/kotoba pbs-extract pokemon PBS/pokemon.txt Locales/en.pokemon.json
+bin/ruby18 bin/kotoba pbs-extract types PBS/types.txt Locales/en.types.json
+bin/ruby18 bin/kotoba pbs-extract trainers PBS/trainers.txt Locales/en.trainers.json
 ```
 
-The output uses the `data.<namespace>.<id>` shape used by adapter helpers. Items include `name`, `name_plural`, and `description`. Abilities include `name` and `description`. Pokemon sections include `name`, `kind`, `pokedex`, and optional `form_name`.
+The output uses the `data.<namespace>.<id>` shape used by adapter helpers. Items include `name`, `name_plural`, and `description`. Abilities include `name` and `description`. Pokemon sections include `name`, `kind`, `pokedex`, and optional `form_name`. Types include `name`. Trainer sections include `lose_text`, optional `end_speech`, `end_battle`, and `reg_speech`, plus `trainer_type`, `trainer_name`, and optional `version` parsed from the section header.
 
 ## messages.dat Extraction
 
@@ -146,7 +148,7 @@ Import map dialogue into a runtime catalog with `source_text` mappings:
 bin/ruby18 bin/kotoba map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
 ```
 
-The importer reads event command codes `101` (show text), `401` (continuation), `102` (choices), `108` (comment), and `_INTL` / `_ISPRINTF` strings inside script commands `355` and `655`. Copy external `.rxdata` files into the repository before running `bin/ruby18` through Docker.
+The importer reads event command codes `101` (show text), `401` (continuation), `102` (choices), `108` (comment), and `_INTL` / `_ISPRINTF` strings inside script commands `355`, `356`, `655`, and `657` (double- or single-quoted). Copy external `.rxdata` files into the repository before running `bin/ruby18` through Docker.
 
 ## Translator Handoff Package
 

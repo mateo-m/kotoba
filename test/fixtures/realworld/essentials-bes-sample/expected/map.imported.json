@@ -7,16 +7,22 @@
           "line_0002": "Please follow the path ahead.",
           "line_0003": "Take the left path",
           "line_0004": "Take the right path",
-          "line_0005": "Stay on the trail."
+          "line_0005": "Stay on the trail.",
+          "line_0006": "Checkpoint ahead.",
+          "line_0007": "Warp activated.",
+          "line_0008": "Gate opens."
         }
       }
     }
   },
   "source_text": {
+    "Checkpoint ahead.": "sample.maps.map_9001.event_0001.line_0006",
+    "Gate opens.": "sample.maps.map_9001.event_0001.line_0008",
     "Please follow the path ahead.": "sample.maps.map_9001.event_0001.line_0002",
     "Stay on the trail.": "sample.maps.map_9001.event_0001.line_0005",
     "Take the left path": "sample.maps.map_9001.event_0001.line_0003",
     "Take the right path": "sample.maps.map_9001.event_0001.line_0004",
+    "Warp activated.": "sample.maps.map_9001.event_0001.line_0007",
     "Welcome to the area.": "sample.maps.map_9001.event_0001.line_0001"
   }
 }

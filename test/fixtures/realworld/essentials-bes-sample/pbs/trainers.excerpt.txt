@@ -1,0 +1,14 @@
+# Generic PBS excerpt for migration QA.
+[GUIDE,Aria]
+LoseText=You know the trail well.
+Pokemon=SPROUTLING,5
+
+[SCOUT,Ren]
+LoseText=I will train harder.
+EndSpeech=See you on the path.
+Pokemon=FLAMEWORK,6
+
+[SCOUT,Ren,1]
+LoseText=Still not enough.
+RegSpeech=Take this map.
+Pokemon=SPROUTLING,8

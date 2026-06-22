@@ -136,6 +136,9 @@ class CatalogToolsTest < KotobaTestCase
     assert_equal("Welcome to the shop.", commands[1]["lines"][0])
     assert_equal(["Option A", "Option B"], commands[2]["lines"])
     assert_equal(["Check the path ahead."], commands[3]["lines"])
+    assert_equal(["Checkpoint ahead."], commands[4]["lines"])
+    assert_equal(["Warp engaged."], commands[5]["lines"])
+    assert_equal(["Gate opens."], commands[6]["lines"])
   ensure
     File.delete(path) if path && File.exist?(path)
   end
@@ -148,6 +151,8 @@ class CatalogToolsTest < KotobaTestCase
     assert_equal("Hello there.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0001"])
     assert_equal("Option A", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0003"])
     assert_equal("Check the path ahead.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0005"])
+    assert_equal("Checkpoint ahead.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0006"])
+    assert_equal("Gate opens.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0008"])
   ensure
     File.delete(path) if path && File.exist?(path)
   end
@@ -167,6 +172,47 @@ class CatalogToolsTest < KotobaTestCase
     assert_equal("Sproutling", catalog["data"]["pokemon"]["sproutling"]["name"])
     assert_equal("Seed", catalog["data"]["pokemon"]["sproutling"]["kind"])
     assert_equal("A small creature.", catalog["data"]["pokemon"]["sproutling"]["pokedex"])
+  ensure
+    File.delete(path) if path && File.exist?(path)
+  end
+
+  def test_extract_pbs_types_sections_extract_names
+    path = File.join(File.dirname(__FILE__), "tmp_types.txt")
+    File.open(path, "wb") do |file|
+      file.write("[NORMAL]\n")
+      file.write("Name=Normal\n")
+      file.write("[GRASS]\n")
+      file.write("Name=Grass\n")
+    end
+
+    catalog = KotobaTools::CatalogTools.extract_pbs("types", path)
+
+    assert_equal("Normal", catalog["data"]["types"]["normal"]["name"])
+    assert_equal("Grass", catalog["data"]["types"]["grass"]["name"])
+  ensure
+    File.delete(path) if path && File.exist?(path)
+  end
+
+  def test_extract_pbs_trainers_sections_extract_battle_text
+    path = File.join(File.dirname(__FILE__), "tmp_trainers.txt")
+    File.open(path, "wb") do |file|
+      file.write("[GUIDE,Aria]\n")
+      file.write("LoseText=You know the trail well.\n")
+      file.write("[SCOUT,Ren,1]\n")
+      file.write("LoseText=Still not enough.\n")
+      file.write("RegSpeech=Take this map.\n")
+    end
+
+    catalog = KotobaTools::CatalogTools.extract_pbs("trainers", path)
+
+    guide = catalog["data"]["trainers"]["guide_aria"]
+    assert_equal("GUIDE", guide["trainer_type"])
+    assert_equal("Aria", guide["trainer_name"])
+    assert_equal("You know the trail well.", guide["lose_text"])
+
+    scout = catalog["data"]["trainers"]["scout_ren_1"]
+    assert_equal("1", scout["version"])
+    assert_equal("Take this map.", scout["reg_speech"])
   ensure
     File.delete(path) if path && File.exist?(path)
   end
@@ -248,8 +294,11 @@ class CatalogToolsTest < KotobaTestCase
     cmd2 = RPG::EventCommand.new(401, 0, ["Welcome to the shop."])
     cmd3 = RPG::EventCommand.new(102, 0, [0, "Option A", "Option B"])
     cmd4 = RPG::EventCommand.new(355, 0, ["pbMessage(_INTL(\"Check the path ahead.\"))"])
+    cmd5 = RPG::EventCommand.new(108, 0, ["Checkpoint ahead."])
+    cmd6 = RPG::EventCommand.new(356, 0, ["pbMessage(_ISPRINTF(\"Warp engaged.\"))"])
+    cmd7 = RPG::EventCommand.new(657, 0, ["pbMessage(_INTL('Gate opens.'))"])
     page = RPG::Event::Page.new
-    page.list = [cmd1, cmd2, cmd3, cmd4]
+    page.list = [cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7]
     event = RPG::Event.new
     event.id = 1
     event.name = "Guide"

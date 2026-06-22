@@ -79,6 +79,8 @@ bin/ruby18 bin/kotoba pbs-extract moves PBS/moves.txt Locales/en.moves.json
 bin/ruby18 bin/kotoba pbs-extract items PBS/items.txt Locales/en.items.json
 bin/ruby18 bin/kotoba pbs-extract abilities PBS/abilities.txt Locales/en.abilities.json
 bin/ruby18 bin/kotoba pbs-extract pokemon PBS/pokemon.txt Locales/en.pokemon.json
+bin/ruby18 bin/kotoba pbs-extract types PBS/types.txt Locales/en.types.json
+bin/ruby18 bin/kotoba pbs-extract trainers PBS/trainers.txt Locales/en.trainers.json
 ```
 
 BES and v21-style projects may also ship `Text_english_core/` and `Text_english_game/` directories. Convert them with:

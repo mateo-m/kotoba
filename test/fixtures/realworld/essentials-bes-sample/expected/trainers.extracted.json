@@ -1,0 +1,24 @@
+{
+  "data": {
+    "trainers": {
+      "guide_aria": {
+        "lose_text": "You know the trail well.",
+        "trainer_name": "Aria",
+        "trainer_type": "GUIDE"
+      },
+      "scout_ren": {
+        "end_speech": "See you on the path.",
+        "lose_text": "I will train harder.",
+        "trainer_name": "Ren",
+        "trainer_type": "SCOUT"
+      },
+      "scout_ren_1": {
+        "lose_text": "Still not enough.",
+        "reg_speech": "Take this map.",
+        "trainer_name": "Ren",
+        "trainer_type": "SCOUT",
+        "version": "1"
+      }
+    }
+  }
+}

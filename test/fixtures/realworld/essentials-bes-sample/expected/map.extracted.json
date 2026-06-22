@@ -17,6 +17,15 @@
           }, {
             "code": 355,
             "lines": ["Stay on the trail."]
+          }, {
+            "code": 108,
+            "lines": ["Checkpoint ahead."]
+          }, {
+            "code": 356,
+            "lines": ["Warp activated."]
+          }, {
+            "code": 657,
+            "lines": ["Gate opens."]
           }]
         }
       }

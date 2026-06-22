@@ -1,0 +1,12 @@
+# Generic PBS excerpt for migration QA.
+[NORMAL]
+Name=Normal
+IconPosition=0
+
+[GRASS]
+Name=Grass
+IconPosition=1
+
+[FIRE]
+Name=Fire
+IconPosition=2

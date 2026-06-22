@@ -93,6 +93,15 @@ module KotobaTools
         "Kind" => "kind",
         "Pokedex" => "pokedex",
         "FormName" => "form_name"
+      },
+      "types" => {
+        "Name" => "name"
+      },
+      "trainers" => {
+        "LoseText" => "lose_text",
+        "EndSpeech" => "end_speech",
+        "EndBattle" => "end_battle",
+        "RegSpeech" => "reg_speech"
       }
     }
 
@@ -218,9 +227,9 @@ module KotobaTools
           text = line.sub(/#.*$/, "").strip
           next if text == ""
           if text[0, 1] == "[" && text[-1, 1] == "]"
-            store_pbs_section_entry(entries, current_id, current)
+            store_pbs_section_entry(entries, current_id, current, namespace)
             current_id = text[1...-1]
-            current = {}
+            current = section_header_fields(namespace, current_id)
           elsif text =~ /\A([^=]+)=(.*)\z/
             key = $1.strip
             value = $2.strip
@@ -233,11 +242,22 @@ module KotobaTools
           end
         end
       end
-      store_pbs_section_entry(entries, current_id, current)
+      store_pbs_section_entry(entries, current_id, current, namespace)
       {"data" => {namespace.to_s => entries}}
     end
 
-    def self.store_pbs_section_entry(entries, section_id, current)
+    def self.section_header_fields(namespace, section_id)
+      fields = {}
+      if namespace.to_s == "trainers"
+        parts = section_id.to_s.split(",")
+        fields["trainer_type"] = parts[0].strip if parts[0]
+        fields["trainer_name"] = parts[1].strip if parts[1]
+        fields["version"] = parts[2].strip if parts[2]
+      end
+      fields
+    end
+
+    def self.store_pbs_section_entry(entries, section_id, current, namespace = nil)
       return if current.empty?
 
       id = current["internal_name"] || section_id
@@ -769,7 +789,10 @@ module KotobaTools
         return params.collect { |line| line.to_s }.find_all { |line| line != "" }
       end
       if code == 108
-        return [params[0].to_s].find_all { |line| line != "" }
+        text = params[0].to_s
+        intl = extract_script_intl_sources(text)
+        return intl unless intl.empty?
+        return [text].find_all { |line| line != "" }
       end
       if code == 102
         start = numeric_pbs_value?(params[0]) ? 1 : 0
@@ -782,7 +805,7 @@ module KotobaTools
         end
         return lines
       end
-      if code == 355 || code == 655
+      if code == 355 || code == 356 || code == 655 || code == 657
         script = params[0].to_s
         return [] if script == ""
         intl = extract_script_intl_sources(script)
@@ -797,7 +820,13 @@ module KotobaTools
       script.scan(/_INTL\s*\(\s*"((?:\\"|[^"])*)"/) do
         result << unquote($1)
       end
+      script.scan(/_INTL\s*\(\s*'((?:\\'|[^'])*)'/) do
+        result << unquote($1)
+      end
       script.scan(/_ISPRINTF\s*\(\s*"((?:\\"|[^"])*)"/) do
+        result << unquote($1)
+      end
+      script.scan(/_ISPRINTF\s*\(\s*'((?:\\'|[^'])*)'/) do
         result << unquote($1)
       end
       result

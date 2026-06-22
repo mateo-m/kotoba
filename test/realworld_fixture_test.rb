@@ -66,6 +66,24 @@ class RealworldFixtureTest < KotobaTestCase
     assert_equal(expected("pokemon.extracted.json"), actual)
   end
 
+  def test_pbs_types_extract_matches_golden
+    actual = KotobaTools::CatalogTools.extract_pbs(
+      "types",
+      File.join(ROOT, "pbs", "types.excerpt.txt")
+    )
+
+    assert_equal(expected("types.extracted.json"), actual)
+  end
+
+  def test_pbs_trainers_extract_matches_golden
+    actual = KotobaTools::CatalogTools.extract_pbs(
+      "trainers",
+      File.join(ROOT, "pbs", "trainers.excerpt.txt")
+    )
+
+    assert_equal(expected("trainers.extracted.json"), actual)
+  end
+
   def test_text_english_import_matches_golden
     actual = KotobaTools::CatalogTools.import_text_english(
       File.join(ROOT, "text_english", "dialogue.excerpt.txt"),
