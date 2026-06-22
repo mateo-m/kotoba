@@ -1,0 +1,185 @@
+# Third-Party Adapters
+
+Adapters connect `RGSSI18n` to a game engine, starter kit, plugin, or project convention. They should stay thin: the runtime owns locale fallback, catalog loading, message parsing, and message evaluation; adapters own integration details.
+
+## Adapter Contract
+
+An adapter is any object that responds to:
+
+```ruby
+install(options)
+```
+
+Register it by name:
+
+```ruby
+RGSSI18n.register_adapter("my_engine", MyEngineI18nAdapter)
+```
+
+Install it later:
+
+```ruby
+RGSSI18n.use_adapter("my_engine", {"load" => true})
+```
+
+`use_adapter` looks up the registered adapter and calls `install(options || {})`.
+
+## Complete Minimal Adapter
+
+Create `adapters/my_engine.rb`:
+
+```ruby
+require File.join(File.dirname(__FILE__), "registry")
+
+module RGSSI18n
+  module Adapters
+    module MyEngine
+      def self.install(options)
+        paths = options["catalog_paths"] || options[:catalog_paths]
+        if paths
+          RGSSI18n.configure do |config|
+            config.catalog_paths = paths
+          end
+        end
+        RGSSI18n.load! if options["load"] || options[:load]
+        install_global_helper if options["install_global"] || options[:install_global]
+        true
+      end
+
+      def self.translate_text(text, variables)
+        if text.to_s[0, 5] == "i18n:"
+          return RGSSI18n.t(text.to_s[5, text.to_s.length - 5], variables || {})
+        end
+        text
+      end
+
+      def self.install_global_helper
+        return if Object.method_defined?(:_MYI18N)
+        Object.class_eval do
+          def _MYI18N(key, variables = nil, options = nil)
+            RGSSI18n.t(key, variables || {}, options || {})
+          end
+        end
+      end
+    end
+  end
+end
+
+RGSSI18n.register_adapter("my_engine", RGSSI18n::Adapters::MyEngine)
+```
+
+Use string and symbol option keys because RPG Maker scripts and external Ruby code often mix both styles.
+
+## Example Usage
+
+```ruby
+require_relative "runtime/rgss_i18n_core"
+require_relative "adapters/my_engine"
+
+RGSSI18n.use_adapter("my_engine", {
+  "catalog_paths" => {
+    "en" => ["Locales/en.json"]
+  },
+  "load" => true,
+  "install_global" => true
+})
+
+_MYI18N("menu.save")
+```
+
+## Source-Text Bridge Example
+
+Legacy engines often translate source English:
+
+```ruby
+_INTL("A wild {1} appeared!", pokemon_name)
+```
+
+Use a catalog namespace to map source text to stable keys:
+
+```json
+{
+  "source_text": {
+    "A wild {1} appeared!": "battle.wild_appeared"
+  },
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}
+```
+
+Then bridge positional variables:
+
+```ruby
+def self.intl(source_text, *args)
+  key = RGSSI18n.t("source_text." + source_text.to_s, nil, {"default" => ""})
+  return source_text if key == ""
+  RGSSI18n.t(key, {"pokemon" => args[0], "arg1" => args[0]})
+end
+```
+
+Source-text bridges are migration tools. New code should call stable keys directly.
+
+## Test Pattern
+
+Put tests under `test/compatibility/`:
+
+```ruby
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "test_helper"))
+
+adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "adapters"))
+$LOAD_PATH.unshift(adapter_path) unless $LOAD_PATH.include?(adapter_path)
+require "my_engine"
+
+class MyEngineAdapterTest < RGSSI18nTestCase
+  FIXTURE_ROOT = File.expand_path(File.join(File.dirname(__FILE__), "..", "fixtures", "my_engine"))
+
+  def test_adapter_loads_catalogs
+    RGSSI18n.use_adapter("my_engine", {
+      "catalog_paths" => {"en" => [File.join(FIXTURE_ROOT, "en.json")]},
+      "load" => true
+    })
+
+    assert_equal("Save", RGSSI18n.t("menu.save"))
+  end
+end
+```
+
+## Fixture Policy
+
+Every supported adapter target needs fixtures:
+
+- generated minimal catalog data used by tests
+- a `SOURCE` file explaining engine/version provenance
+- local path, tag, commit, release date, or other source evidence
+- notes that fixtures are not copied full game data
+
+Do not claim support for an engine version without fixtures and acceptance tests.
+
+## What Belongs In An Adapter
+
+Good adapter responsibilities:
+
+- configure catalog paths
+- load catalogs on install
+- bridge engine-specific markers to `RGSSI18n.t`
+- optionally install global helpers
+- expose small data-name helpers for known engine data
+
+Bad adapter responsibilities:
+
+- adding parser features
+- changing runtime fallback behavior
+- putting Pokemon/PBS/map assumptions into `runtime/`
+- loading large binary assets during unit tests
+- silently swallowing install failures
+
+## Verification
+
+Run:
+
+```sh
+bin/ruby18 bin/lint
+```
+
+For core adapter changes, also run the cross-version Docker matrix in [Compatibility](../compatibility.md).

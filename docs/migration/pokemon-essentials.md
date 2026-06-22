@@ -1,0 +1,81 @@
+# Migration From Pokemon Essentials
+
+The current adapters are compatibility bridges, not a full migration tool. They are designed to let an existing Essentials project adopt stable JSON catalogs gradually.
+
+## Old Shape
+
+Legacy Essentials text often starts as source-English strings passed to `_INTL`:
+
+```ruby
+_INTL("A wild {1} appeared!", name)
+```
+
+This is convenient at first, but it makes the English sentence part of the API. If the English text changes, translations can break.
+
+## Bridge Shape
+
+Use `source_text` mappings during migration:
+
+```json
+{
+  "source_text": {
+    "A wild {1} appeared!": "battle.wild_appeared"
+  },
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}
+```
+
+The adapter maps source text to a stable key and then evaluates the stable runtime message.
+
+## New Shape
+
+New scripts should call stable keys directly:
+
+```ruby
+RGSSI18n.t("battle.wild_appeared", {"pokemon" => name})
+```
+
+Stable keys make refactors safer and reduce translator churn.
+
+## Practical Migration Plan
+
+1. Install the matching Essentials adapter.
+2. Add `Locales/en.json`.
+3. Add only the strings you are actively translating.
+4. Route `_INTL` through the adapter for the chosen project area.
+5. Add `source_text` mappings for those strings.
+6. Run validation.
+7. Add translated locale files.
+8. Convert new or frequently edited scripts to direct `RGSSI18n.t` calls.
+
+Avoid trying to migrate every string in one pass. Start with menus, battle messages, or one plugin.
+
+## Import Helpers
+
+If the game ships compiled translations in `Data/messages.dat`, inspect it first:
+
+```sh
+bin/ruby18 bin/rgss-i18n messages-dat-extract Data/messages.dat build/messages.extract.json
+```
+
+Then migrate it to a runtime catalog:
+
+```sh
+bin/ruby18 bin/rgss-i18n messages-dat-migrate Data/messages.dat legacy Locales/legacy.json
+```
+
+Essentials paired-line text can be converted into a source-text bridge catalog:
+
+```sh
+bin/ruby18 bin/rgss-i18n essentials-pairs-import intl.txt essentials Locales/en.essentials.json
+```
+
+Common PBS-style CSV files can be extracted into `data.<namespace>.<id>` catalogs:
+
+```sh
+bin/ruby18 bin/rgss-i18n pbs-extract moves PBS/moves.txt Locales/en.moves.json
+```
+
+Migration automation planning lives in [Roadmap](../roadmap.md).
