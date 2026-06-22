@@ -68,6 +68,16 @@ class EssentialsAdapterTest < RGSSI18nTestCase
     assert_equal("A wild Mew appeared!", RGSSI18n.t("game.battle.wild_appeared", {"pokemon" => "Mew"}))
   end
 
+  def test_bes_intl_bridge_uses_source_map_fixture
+    RGSSI18n.use_adapter("essentials_bes", {
+      "catalog_paths" => {"en" => [fixture("bes", "source_map.json")]},
+      "load" => true
+    })
+
+    assert_equal("A wild Pikachu appeared!", RGSSI18n::Adapters::EssentialsBES._INTL("A wild {1} appeared!", "Pikachu"))
+    assert_equal("You have 42 coins.", RGSSI18n::Adapters::EssentialsBES._ISPRINTF("You have {1:d} coins.", 42))
+  end
+
   def test_bes_data_lookup_uses_localization_fixture
     RGSSI18n.use_adapter("essentials_bes", {
       "catalog_paths" => {"en" => [fixture("bes", "localization.json")]},
