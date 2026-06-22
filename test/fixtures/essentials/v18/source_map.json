@@ -1,0 +1,12 @@
+{
+  "source_text": {
+    "A wild {1} appeared!": "battle.wild_appeared",
+    "You have {1:d} coins.": "ui.coins"
+  },
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  },
+  "ui": {
+    "coins": "You have {count} coins."
+  }
+}

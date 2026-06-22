@@ -1,0 +1,10 @@
+Target: Pokemon Essentials v21/v21.1-style split message loading
+
+Sources:
+
+- Pokemon Essentials v21 release scripts
+- Pokemon Essentials v21.1-compatible split message loading scripts
+- Data/Scripts/001_Technical/003_Intl_Messages.rb
+  License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International.
+
+Fixtures in this directory are generated minimal compatibility data. They are not copies of full game data.

@@ -1,0 +1,8 @@
+{
+  "source_text": {
+    "A wild {1} appeared!": "battle.wild_appeared"
+  },
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}

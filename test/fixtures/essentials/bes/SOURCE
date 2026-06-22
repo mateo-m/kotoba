@@ -1,0 +1,8 @@
+Target: Essentials-BES translation and LOCALIZATION helpers
+Sources:
+- Essentials-BES release scripts
+- Data/Scripts/006_Game processing/004_Intl_Messages.rb
+- Data/Scripts/023_Debug/006_BES-T_Localization.rb
+License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International.
+
+Fixtures in this directory are generated minimal compatibility data. They are not copies of full game data.

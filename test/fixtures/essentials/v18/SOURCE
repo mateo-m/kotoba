@@ -1,0 +1,9 @@
+Target: Pokemon Essentials v18
+
+Sources:
+- Pokemon Essentials v18 distribution package
+- Data/Scripts.rxdata contains script section `Intl_Messages`
+- `Intl_Messages` defines `_INTL`, `_ISPRINTF`, and `MessageTypes::ScriptTexts = 24`
+- `MessageConfig` contains fallback `_INTL` and `_ISPRINTF` definitions
+
+Fixtures in this directory are generated minimal compatibility data. They are not copies of full game data or scripts.

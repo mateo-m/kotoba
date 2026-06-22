@@ -1,0 +1,6 @@
+Target: Pokemon Essentials v16-style translation helpers
+Sources:
+- Pokemon Essentials v16-compatible scripts
+- !Scripts/[041] Intl_Messages.rb
+
+Fixtures in this directory are generated minimal compatibility data. They are not copies of full game data.

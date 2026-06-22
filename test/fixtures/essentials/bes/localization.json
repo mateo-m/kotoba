@@ -1,0 +1,19 @@
+{
+  "data": {
+    "moves": {
+      "thunderbolt": {
+        "name": "Thunderbolt"
+      }
+    },
+    "items": {
+      "potion": {
+        "name": "Potion"
+      }
+    },
+    "abilities": {
+      "overgrow": {
+        "name": "Overgrow"
+      }
+    }
+  }
+}

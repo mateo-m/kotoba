@@ -1,0 +1,9 @@
+{
+  "menu": {
+    "save": "Save",
+    "load": "Load"
+  },
+  "npc": {
+    "greeting": "Hello, {name}!"
+  }
+}

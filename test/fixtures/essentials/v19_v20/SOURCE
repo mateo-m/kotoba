@@ -1,0 +1,8 @@
+Target: Pokemon Essentials v19/v20 translation helpers
+Sources:
+- Pokemon Essentials v19 release scripts
+- Pokemon Essentials v20 release scripts
+- Data/Scripts/001_Technical/003_Intl_Messages.rb
+License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International.
+
+Fixtures in this directory are generated minimal compatibility data. They are not copies of full game data.

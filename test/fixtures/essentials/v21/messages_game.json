@@ -1,0 +1,7 @@
+{
+  "game": {
+    "battle": {
+      "wild_appeared": "A wild {pokemon} appeared!"
+    }
+  }
+}
