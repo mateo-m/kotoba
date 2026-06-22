@@ -147,7 +147,15 @@ Please run the local checks before submitting changes. Full setup and hook detai
 
 ## Documentation
 
-- [Documentation index](docs/index.md)
+Published docs are built with VitePress and deployed to GitHub Pages on pushes to `main`.
+
+Preview locally:
+
+```sh
+bun run docs:dev
+```
+
+- [Documentation site](docs/index.md) (source in `docs/`)
 - [Getting Started](docs/getting-started.md)
 - [Bare RGSS integration](docs/adapters/bare-rgss.md)
 - [Pokemon Essentials integration](docs/adapters/pokemon-essentials.md)

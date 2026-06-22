@@ -55,7 +55,5 @@ docker run --rm --platform linux/amd64 ruby-legacy:1.9.3-p551 \
 
 ## Related Docs
 
-- [Docker Images](../docs/docker-images.md)
-- [Compatibility](../docs/compatibility.md)
-- [CI](../docs/ci.md)
-- [README](../README.md)
+- [Compatibility](/compatibility)
+- [CI](/ci)

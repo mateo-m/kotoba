@@ -20,3 +20,17 @@ jobs:
             -t ruby-legacy:1.8.7-p374 \
             -f docker/ruby-legacy/Dockerfile .
       - run: bun run lint
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run docs:build
+        env:
+          VITEPRESS_BASE: /${{ github.event.repository.name }}/
+          VITEPRESS_REPOSITORY_NAME: ${{ github.event.repository.name }}
+          VITEPRESS_GITHUB_REPO: ${{ github.repository }}

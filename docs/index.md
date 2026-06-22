@@ -1,40 +1,38 @@
-# Documentation
+---
+layout: home
 
-> Canonical documentation for RPG Maker i18n.
+hero:
+  name: RPG Maker i18n
+  text: Ruby internationalization for RPG Maker-era projects
+  tagline: JSON catalogs, locale fallbacks, and message syntax built for Ruby 1.8 and RGSS
+  actions:
+    - theme: brand
+      text: Get Started
+      link: /getting-started
+    - theme: alt
+      text: Roadmap
+      link: /roadmap
 
-Use this directory after the [README](../README.md) quick start when you need API details, integration guides, or tooling workflows.
+features:
+  - title: Ruby 1.8 first
+    details: Runtime code targets RPG Maker XP and RGSS1 constraints instead of modern Ruby only.
+  - title: JSON catalogs
+    details: Load nested locale files at runtime with fallback chains such as fr-CA -> fr -> en.
+  - title: Game text syntax
+    details: Variables, select, plural branches, and apostrophe escaping for dialog-heavy projects.
+  - title: Validation tooling
+    details: CLI commands for load tests, cross-locale checks, import/export, and translator handoff.
+  - title: Opt-in adapters
+    details: Integrate bare RGSS, Pokemon Essentials, or custom starter kits without patching the core.
+  - title: Legacy test matrix
+    details: Ruby 1.8, 1.9, 3.0, and 3.1 coverage through local Ruby and Docker images.
+---
 
-## Start Here
+## Documentation
 
-- [Getting Started](getting-started.md): create a catalog, load the runtime, and translate strings.
-- [Runtime API](runtime-api.md): public `RGSSI18n` methods, config fields, and error types.
-- [Catalog Format](catalog-format.md): JSON catalog shape, key rules, and file layout.
-- [Message Syntax](message-syntax.md): interpolation, select, plural, and escaping.
-- [Validation CLI](validation-cli.md): load tests, schema checks, cross-locale validation, pseudolocalization, and import/export.
+Use the sidebar to browse guides, adapter integration notes, tooling workflows, and project planning.
 
-## Integration
-
-- [Bare RGSS Adapter](adapters/bare-rgss.md): integrate in a plain RPG Maker XP/RGSS project.
-- [Pokemon Essentials Adapter](adapters/pokemon-essentials.md): integrate in Essentials v16-v21/BES projects.
-- [Third-Party Adapters](adapters/third-party.md): build and test an adapter for another starter kit or engine convention.
-
-## Tooling
-
-- [TMS Workflows](tooling/tms.md): translation management workflows and interchange formats.
-- [Crowdin](tooling/crowdin.md)
-- [SimpleLocalize](tooling/simplelocalize.md)
-- [Tolgee](tooling/tolgee.md)
-- [XLIFF And PO](tooling/xliff-po.md)
-
-## Project Notes
-
-- [Pokemon Essentials Migration](migration/pokemon-essentials.md)
-- [Compatibility](compatibility.md)
-- [CI](ci.md)
-- [Roadmap](roadmap.md)
-
-## Related Files
-
-- [README](../README.md): project overview, installation, and usage
-- [CONTRIBUTING](../CONTRIBUTING.md): development setup and pull request expectations
-- [docker/README.md](../docker/README.md): legacy Ruby Docker images
+- [Getting Started](/getting-started): create a catalog, load the runtime, and translate strings.
+- [Runtime API](/runtime-api): public `RGSSI18n` methods, config fields, and error types.
+- [Validation CLI](/validation-cli): load tests, schema checks, and import/export commands.
+- [Pokemon Essentials Adapter](/adapters/pokemon-essentials): integrate Essentials v16-v21 and BES projects.

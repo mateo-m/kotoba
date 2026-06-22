@@ -15,9 +15,29 @@ This runs:
 - unit and compatibility tests
 - Dockerfile checks
 
+## Documentation Site
+
+The docs are published with [VitePress](https://vitepress.dev/).
+
+Preview locally:
+
+```sh
+bun install
+bun run docs:dev
+```
+
+Build and preview the static output:
+
+```sh
+bun run docs:build
+bun run docs:preview
+```
+
 ## GitHub Actions
 
 The checked-in workflow at `.github/workflows/ci.yml` runs the same lint command after installing Bun. It expects the legacy Ruby Docker images to be buildable on the runner.
+
+Docs deploy through `.github/workflows/docs.yml` on pushes to `main`. In the repository Pages settings, choose **GitHub Actions** as the build source.
 
 ## Cross-Version Matrix
 
