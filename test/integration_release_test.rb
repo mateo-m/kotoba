@@ -6,8 +6,13 @@ $LOAD_PATH.unshift(tool_path) unless $LOAD_PATH.include?(tool_path)
 require "integration_release"
 
 class IntegrationReleaseTest < KotobaTestCase
+  def kotoba_version
+    path = File.expand_path(File.join(File.dirname(__FILE__), "..", "kotoba", "VERSION"))
+    File.read(path).strip
+  end
+
   def test_version_reads_kotoba_version_file
-    assert_equal("0.1.0", KotobaTools::IntegrationRelease.version)
+    assert_equal(kotoba_version, KotobaTools::IntegrationRelease.version)
   end
 
   def test_full_adapter_matrix_excludes_blocked_adapter
@@ -38,7 +43,7 @@ class IntegrationReleaseTest < KotobaTestCase
   def test_manifest_includes_version_adapter_and_files
     manifest = KotobaTools::IntegrationRelease.manifest("bare_rgss")
 
-    assert_equal("0.1.0", manifest["kotoba_version"])
+    assert_equal(kotoba_version, manifest["kotoba_version"])
     assert_equal("bare_rgss", manifest["adapter"])
     assert(manifest["files"].include?("adapters/bare_rgss.rb"))
   end
