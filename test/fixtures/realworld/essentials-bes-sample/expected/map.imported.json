@@ -4,13 +4,19 @@
       "map_9001": {
         "event_0001": {
           "line_0001": "Welcome to the area.",
-          "line_0002": "Please follow the path ahead."
+          "line_0002": "Please follow the path ahead.",
+          "line_0003": "Take the left path",
+          "line_0004": "Take the right path",
+          "line_0005": "Stay on the trail."
         }
       }
     }
   },
   "source_text": {
     "Please follow the path ahead.": "sample.maps.map_9001.event_0001.line_0002",
+    "Stay on the trail.": "sample.maps.map_9001.event_0001.line_0005",
+    "Take the left path": "sample.maps.map_9001.event_0001.line_0003",
+    "Take the right path": "sample.maps.map_9001.event_0001.line_0004",
     "Welcome to the area.": "sample.maps.map_9001.event_0001.line_0001"
   }
 }

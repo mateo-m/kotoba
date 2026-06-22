@@ -87,6 +87,14 @@ module RGSSI18nTools
       "items" => {"name" => 2, "name_plural" => 3, "description" => 6},
       "abilities" => {"name" => 2, "description" => 3}
     }
+    PBS_SECTION_PROFILES = {
+      "pokemon" => {
+        "Name" => "name",
+        "Kind" => "kind",
+        "Pokedex" => "pokedex",
+        "FormName" => "form_name"
+      }
+    }
 
     def self.load_json(path)
       RGSSI18n::JSON.parse(File.open(path, "rb") { |file| file.read }, {
@@ -183,6 +191,9 @@ module RGSSI18nTools
     end
 
     def self.extract_pbs(namespace, path)
+      if PBS_SECTION_PROFILES.has_key?(namespace.to_s)
+        return extract_pbs_sections(namespace, path, PBS_SECTION_PROFILES[namespace.to_s])
+      end
       profile = PBS_PROFILES[namespace.to_s] || PBS_PROFILES["moves"]
       entries = {}
       File.open(path, "rb") do |file|
@@ -196,6 +207,45 @@ module RGSSI18nTools
         end
       end
       {"data" => {namespace.to_s => entries}}
+    end
+
+    def self.extract_pbs_sections(namespace, path, field_map)
+      entries = {}
+      current = {}
+      current_id = nil
+      File.open(path, "rb") do |file|
+        file.each_line do |line|
+          text = line.sub(/#.*$/, "").strip
+          next if text == ""
+          if text[0, 1] == "[" && text[-1, 1] == "]"
+            store_pbs_section_entry(entries, current_id, current)
+            current_id = text[1...-1]
+            current = {}
+          elsif text =~ /\A([^=]+)=(.*)\z/
+            key = $1.strip
+            value = $2.strip
+            if field_map.has_key?(key)
+              current[field_map[key]] = value
+            end
+            if key == "InternalName"
+              current["internal_name"] = value
+            end
+          end
+        end
+      end
+      store_pbs_section_entry(entries, current_id, current)
+      {"data" => {namespace.to_s => entries}}
+    end
+
+    def self.store_pbs_section_entry(entries, section_id, current)
+      return if current.empty?
+
+      id = current["internal_name"] || section_id
+      return if id.nil? || id == ""
+
+      entry = current.dup
+      entry.delete("internal_name")
+      entries[normalize_identifier(id)] = entry
     end
 
     def self.import_text_english(path, namespace)
@@ -721,7 +771,40 @@ module RGSSI18nTools
       if code == 108
         return [params[0].to_s].find_all { |line| line != "" }
       end
+      if code == 102
+        start = numeric_pbs_value?(params[0]) ? 1 : 0
+        lines = []
+        index = start
+        while index < params.length
+          param = params[index]
+          lines << param.to_s if param.is_a?(String) && param != ""
+          index += 1
+        end
+        return lines
+      end
+      if code == 355 || code == 655
+        script = params[0].to_s
+        return [] if script == ""
+        intl = extract_script_intl_sources(script)
+        return intl unless intl.empty?
+        return []
+      end
       []
+    end
+
+    def self.extract_script_intl_sources(script)
+      result = []
+      script.scan(/_INTL\s*\(\s*"((?:\\"|[^"])*)"/) do
+        result << unquote($1)
+      end
+      script.scan(/_ISPRINTF\s*\(\s*"((?:\\"|[^"])*)"/) do
+        result << unquote($1)
+      end
+      result
+    end
+
+    def self.numeric_pbs_value?(value)
+      value.to_s =~ /\A-?\d+\z/
     end
 
     def self.merge_nested_hash(target, source)

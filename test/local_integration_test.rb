@@ -55,4 +55,16 @@ class LocalIntegrationTest < RGSSI18nTestCase
     catalog = RGSSI18nTools::CatalogTools.import_map_rxdata(map_path, "local_maps")
     assert(!catalog.empty?)
   end
+
+  def test_local_pokemon_pbs_extract_when_present
+    path = LocalFixtureConfig.game_path("essentials_bes_sample")
+    return unless path && File.directory?(path)
+
+    pokemon = File.join(path, "PBS", "pokemon.txt")
+    return unless File.file?(pokemon)
+
+    require "catalog_tools"
+    catalog = RGSSI18nTools::CatalogTools.extract_pbs("pokemon", pokemon)
+    assert(!catalog["data"]["pokemon"].empty?)
+  end
 end

@@ -75,15 +75,16 @@ Pseudolocalization preserves placeholders and RPG Maker control codes. Use it to
 
 ## PBS Extraction
 
-Extract common text from PBS-style CSV files. Supported namespaces: `moves`, `items`, and `abilities`.
+Extract common text from PBS-style CSV files and sectioned PBS files. Supported namespaces: `moves`, `items`, `abilities`, and `pokemon`.
 
 ```sh
 bin/ruby18 bin/rgss-i18n pbs-extract moves PBS/moves.txt Locales/en.moves.json
 bin/ruby18 bin/rgss-i18n pbs-extract items PBS/items.txt Locales/en.items.json
 bin/ruby18 bin/rgss-i18n pbs-extract abilities PBS/abilities.txt Locales/en.abilities.json
+bin/ruby18 bin/rgss-i18n pbs-extract pokemon PBS/pokemon.txt Locales/en.pokemon.json
 ```
 
-The output uses the `data.<namespace>.<id>` shape used by adapter helpers. Items include `name`, `name_plural`, and `description`. Abilities include `name` and `description`.
+The output uses the `data.<namespace>.<id>` shape used by adapter helpers. Items include `name`, `name_plural`, and `description`. Abilities include `name` and `description`. Pokemon sections include `name`, `kind`, `pokedex`, and optional `form_name`.
 
 ## messages.dat Extraction
 
@@ -145,7 +146,7 @@ Import map dialogue into a runtime catalog with `source_text` mappings:
 bin/ruby18 bin/rgss-i18n map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
 ```
 
-The importer reads event command codes `101` (show text), `401` (continuation), and `108` (comment). Copy external `.rxdata` files into the repository before running `bin/ruby18` through Docker.
+The importer reads event command codes `101` (show text), `401` (continuation), `102` (choices), `108` (comment), and `_INTL` / `_ISPRINTF` strings inside script commands `355` and `655`. Copy external `.rxdata` files into the repository before running `bin/ruby18` through Docker.
 
 ## Translator Handoff Package
 

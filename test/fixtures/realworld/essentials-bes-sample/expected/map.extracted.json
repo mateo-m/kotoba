@@ -11,6 +11,12 @@
           }, {
             "code": 401,
             "lines": ["Please follow the path ahead."]
+          }, {
+            "code": 102,
+            "lines": ["Take the left path", "Take the right path"]
+          }, {
+            "code": 355,
+            "lines": ["Stay on the trail."]
           }]
         }
       }

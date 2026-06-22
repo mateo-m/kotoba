@@ -1,0 +1,12 @@
+# Generic PBS excerpt for migration QA.
+[9001]
+Name=Sproutling
+InternalName=SPROUTLING
+Kind=Seed
+Pokedex=A small creature that stores energy in its leaves.
+
+[9002]
+Name=Flamework
+InternalName=FLAMEWORK
+Kind=Fox
+Pokedex=A swift creature with a warm core flame.

@@ -131,8 +131,11 @@ class CatalogToolsTest < RGSSI18nTestCase
 
     assert_equal("rpg_maker_xp_map", extracted["format"])
     assert_equal("map_0001", extracted["map_id"])
-    assert_equal("Hello there.", extracted["events"]["event_0001"]["pages"]["page_01"]["commands"][0]["lines"][0])
-    assert_equal("Welcome to the shop.", extracted["events"]["event_0001"]["pages"]["page_01"]["commands"][1]["lines"][0])
+    commands = extracted["events"]["event_0001"]["pages"]["page_01"]["commands"]
+    assert_equal("Hello there.", commands[0]["lines"][0])
+    assert_equal("Welcome to the shop.", commands[1]["lines"][0])
+    assert_equal(["Option A", "Option B"], commands[2]["lines"])
+    assert_equal(["Check the path ahead."], commands[3]["lines"])
   ensure
     File.delete(path) if path && File.exist?(path)
   end
@@ -143,7 +146,27 @@ class CatalogToolsTest < RGSSI18nTestCase
 
     assert_equal("maps.maps.map_0001.event_0001.line_0001", catalog["source_text"]["Hello there."])
     assert_equal("Hello there.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0001"])
-    assert_equal("Welcome to the shop.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0002"])
+    assert_equal("Option A", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0003"])
+    assert_equal("Check the path ahead.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0005"])
+  ensure
+    File.delete(path) if path && File.exist?(path)
+  end
+
+  def test_extract_pbs_pokemon_sections_extract_translatable_fields
+    path = File.join(File.dirname(__FILE__), "tmp_pokemon.txt")
+    File.open(path, "wb") do |file|
+      file.write("[9001]\n")
+      file.write("Name=Sproutling\n")
+      file.write("InternalName=SPROUTLING\n")
+      file.write("Kind=Seed\n")
+      file.write("Pokedex=A small creature.\n")
+    end
+
+    catalog = RGSSI18nTools::CatalogTools.extract_pbs("pokemon", path)
+
+    assert_equal("Sproutling", catalog["data"]["pokemon"]["sproutling"]["name"])
+    assert_equal("Seed", catalog["data"]["pokemon"]["sproutling"]["kind"])
+    assert_equal("A small creature.", catalog["data"]["pokemon"]["sproutling"]["pokedex"])
   ensure
     File.delete(path) if path && File.exist?(path)
   end
@@ -223,8 +246,10 @@ class CatalogToolsTest < RGSSI18nTestCase
     path = File.join(File.dirname(__FILE__), filename)
     cmd1 = RPG::EventCommand.new(101, 0, ["", 0, 0, 2, "Hello there."])
     cmd2 = RPG::EventCommand.new(401, 0, ["Welcome to the shop."])
+    cmd3 = RPG::EventCommand.new(102, 0, [0, "Option A", "Option B"])
+    cmd4 = RPG::EventCommand.new(355, 0, ["pbMessage(_INTL(\"Check the path ahead.\"))"])
     page = RPG::Event::Page.new
-    page.list = [cmd1, cmd2]
+    page.list = [cmd1, cmd2, cmd3, cmd4]
     event = RPG::Event.new
     event.id = 1
     event.name = "Guide"

@@ -57,6 +57,15 @@ class RealworldFixtureTest < RGSSI18nTestCase
     assert_equal(expected("abilities.extracted.json"), actual)
   end
 
+  def test_pbs_pokemon_extract_matches_golden
+    actual = RGSSI18nTools::CatalogTools.extract_pbs(
+      "pokemon",
+      File.join(ROOT, "pbs", "pokemon.excerpt.txt")
+    )
+
+    assert_equal(expected("pokemon.extracted.json"), actual)
+  end
+
   def test_text_english_import_matches_golden
     actual = RGSSI18nTools::CatalogTools.import_text_english(
       File.join(ROOT, "text_english", "dialogue.excerpt.txt"),
