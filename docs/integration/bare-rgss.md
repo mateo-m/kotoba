@@ -1,10 +1,10 @@
-# Bare RGSS Game Integration
+# Bare RGSS integration
 
-Use this path for a plain RPG Maker XP/RGSS project that is not using Pokemon Essentials.
+For plain RPG Maker XP / RGSS projects — no Pokemon Essentials.
 
-Install `kotoba-bare-rgss.zip` from [GitHub Releases](/installation) into your game root, or copy only the `kotoba/` and `adapters/` trees from that archive. Load `examples/boot_kotoba.rb` from your boot scripts after setting `config.catalog_paths`.
+Install `kotoba-bare-rgss.zip` from [GitHub Releases](/essential/installation) into your game root, or copy only the `kotoba/` and `adapters/` trees from that archive. Load `examples/boot_kotoba.rb` after setting `config.catalog_paths`.
 
-## Project Layout
+## Project layout
 
 ```text
 Game/

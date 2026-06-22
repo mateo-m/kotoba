@@ -1,6 +1,8 @@
 # Runtime API
 
-The public runtime namespace is `Kotoba`. Runtime code is Ruby 1.8-compatible, so examples avoid keyword arguments, safe navigation, and newer standard library assumptions.
+The public namespace is `Kotoba`. Runtime code targets Ruby 1.8, so examples avoid keyword arguments, safe navigation, and stdlib features newer than RGSS1.
+
+Need a walkthrough first? See [Quick Start](/essential/quick-start).
 
 ## Setup
 

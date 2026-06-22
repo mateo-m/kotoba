@@ -1,8 +1,8 @@
-# Message Syntax
+# Message syntax
 
-The runtime supports a small next-intl-style subset. It is not full ICU MessageFormat.
+Kotoba supports a small next-intl-style subset for variables, `select`, and cardinal `plural`. It is not full ICU MessageFormat.
 
-## Static Text
+## Static text
 
 ```json
 {

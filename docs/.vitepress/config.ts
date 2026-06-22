@@ -12,35 +12,53 @@ export default defineConfig({
   lastUpdated: true,
   themeConfig: {
     nav: [
-      { text: "Guide", link: "/getting-started" },
-      { text: "Adapters", link: "/adapters/" },
-      { text: "Tooling", link: "/tooling/tms" },
-      { text: "Roadmap", link: "/roadmap" },
+      { text: "Docs", link: "/table-of-contents" },
+      { text: "Quick Start", link: "/essential/quick-start" },
+      { text: "Integration", link: "/integration/" },
+      { text: "Tooling", link: "/tooling/" },
     ],
     sidebar: [
       {
-        text: "Start Here",
+        text: "Introduction",
+        collapsed: false,
         items: [
-          { text: "Getting Started", link: "/getting-started" },
-          { text: "Installing In A Game", link: "/installation" },
-          { text: "Runtime API", link: "/runtime-api" },
-          { text: "Catalog Format", link: "/catalog-format" },
-          { text: "Message Syntax", link: "/message-syntax" },
-          { text: "Validation CLI", link: "/validation-cli" },
+          { text: "Table of Contents", link: "/table-of-contents" },
+          { text: "Quick Start", link: "/essential/quick-start" },
+          { text: "Installing In A Game", link: "/essential/installation" },
+        ],
+      },
+      {
+        text: "Essential",
+        collapsed: false,
+        items: [
+          { text: "Catalog Format", link: "/essential/catalog-format" },
+          { text: "Message Syntax", link: "/essential/message-syntax" },
+          { text: "Runtime API", link: "/essential/runtime-api" },
         ],
       },
       {
         text: "Integration",
+        collapsed: false,
         items: [
-          { text: "Adapters Overview", link: "/adapters/" },
-          { text: "Bare RGSS", link: "/adapters/bare-rgss" },
-          { text: "Pokemon Essentials", link: "/adapters/pokemon-essentials" },
-          { text: "Third-Party Adapters", link: "/adapters/third-party" },
+          { text: "Overview", link: "/integration/" },
+          { text: "Bare RGSS", link: "/integration/bare-rgss" },
+          {
+            text: "Pokemon Essentials",
+            link: "/integration/pokemon-essentials",
+          },
+          { text: "Third-Party Adapters", link: "/integration/third-party" },
+          {
+            text: "Essentials Migration",
+            link: "/integration/pokemon-essentials-migration",
+          },
         ],
       },
       {
         text: "Tooling",
+        collapsed: false,
         items: [
+          { text: "Overview", link: "/tooling/" },
+          { text: "Validation CLI", link: "/tooling/validation-cli" },
           { text: "TMS Workflows", link: "/tooling/tms" },
           { text: "Crowdin", link: "/tooling/crowdin" },
           { text: "SimpleLocalize", link: "/tooling/simplelocalize" },
@@ -49,16 +67,20 @@ export default defineConfig({
         ],
       },
       {
-        text: "Project Notes",
+        text: "Reference",
+        collapsed: true,
         items: [
-          {
-            text: "Pokemon Essentials Migration",
-            link: "/migration/pokemon-essentials",
-          },
-          { text: "Compatibility", link: "/compatibility" },
-          { text: "Docker Images", link: "/docker-images" },
-          { text: "CI", link: "/ci" },
-          { text: "Roadmap", link: "/roadmap" },
+          { text: "Map Event Codes", link: "/reference/map-event-codes" },
+          { text: "Compatibility", link: "/reference/compatibility" },
+        ],
+      },
+      {
+        text: "Contributors",
+        collapsed: true,
+        items: [
+          { text: "CI", link: "/contributors/ci" },
+          { text: "Docker Images", link: "/contributors/docker-images" },
+          { text: "Roadmap", link: "/contributors/roadmap" },
         ],
       },
     ],

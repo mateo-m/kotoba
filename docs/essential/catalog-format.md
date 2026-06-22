@@ -1,6 +1,6 @@
-# Catalog Format
+# Catalog format
 
-Catalogs are strict JSON objects. The runtime reads them directly; there is no Marshal, `.dat`, or RPG Maker compile step in the core runtime.
+Catalogs are strict JSON objects. Kotoba reads them directly at runtime — no Marshal, `.dat`, or RPG Maker compile step in the core.
 
 ## Shape
 
@@ -24,23 +24,11 @@ Lookups use dot-separated paths:
 Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
 ```
 
-Avoid dots inside key names. Dots are reserved for lookup segments.
+Avoid dots inside key names. Dots separate lookup segments only.
 
-## Valid Leaves
+## Valid leaves
 
-Only strings are valid message leaves. These are rejected:
-
-```json
-{
-  "menu": {
-    "enabled": true,
-    "order": 1,
-    "items": ["Potion"]
-  }
-}
-```
-
-Rejecting non-string leaves at load time is intentional. A bad catalog should not become a missing translation later.
+Only strings are valid message leaves. Numbers, booleans, arrays, and nested objects at a leaf path are rejected at load time so bad data surfaces early instead of as silent missing translations.
 
 ## JSON Rules
 

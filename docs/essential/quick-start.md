@@ -1,10 +1,12 @@
-# Getting Started
+# Quick Start
 
-This guide loads Kotoba from a repository checkout. If you are integrating into a shipped RPG Maker or Essentials game, start with [Installing in a game](/installation) and use a release integration ZIP instead.
+Load Kotoba from a repository checkout and translate a few strings in minutes.
 
-## 1. Create A Catalog
+Shipping a game? Use a [release integration ZIP](/essential/installation) instead of copying files from this repo by hand.
 
-Create `Locales/en.json`:
+## Create a catalog
+
+Add `Locales/en.json`:
 
 ```json
 {
@@ -19,9 +21,9 @@ Create `Locales/en.json`:
 }
 ```
 
-Catalogs are strict JSON. Leaves must be strings, and lookup keys use dots between nested object names.
+Catalogs are strict JSON. Leaves must be strings. Lookup keys join nested names with dots — see [Catalog format](/essential/catalog-format).
 
-## 2. Load The Runtime
+## Load the runtime
 
 ```ruby
 require_relative "kotoba/core"
@@ -37,7 +39,7 @@ end
 Kotoba.load!
 ```
 
-## 3. Translate Strings
+## Translate strings
 
 ```ruby
 Kotoba.t("menu.save")
@@ -56,7 +58,7 @@ Kotoba.t("battle.item_count", {"count" => 2})
 _T("menu.save")
 ```
 
-## 4. Add Another Locale
+## Add another locale
 
 Create `Locales/fr.json`:
 
@@ -73,7 +75,7 @@ Create `Locales/fr.json`:
 }
 ```
 
-Update config:
+Point config at both files:
 
 ```ruby
 Kotoba.configure do |config|
@@ -94,19 +96,17 @@ Kotoba.t("menu.save")
 # => "Sauvegarder"
 ```
 
-## 5. Validate Before Shipping
-
-Run:
+## Validate before you ship
 
 ```sh
 bin/ruby18 bin/kotoba load-test Locales/en.json
 bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
-The first command checks JSON and message syntax. The second checks missing keys, placeholder mismatches, and RPG Maker control-code mismatches.
+`load-test` checks JSON and message syntax. `validate` checks missing keys, placeholder mismatches, and RPG Maker control-code drift.
 
-## Related Guides
+## Next steps
 
-- For a plain RPG Maker XP project, read [Bare RGSS Adapter](adapters/bare-rgss.md).
-- For Pokemon Essentials, read [Pokemon Essentials Adapter](adapters/pokemon-essentials.md).
-- For a custom starter kit, read [Third-Party Adapters](adapters/third-party.md).
+- Plain RPG Maker XP → [Bare RGSS](/integration/bare-rgss)
+- Pokemon Essentials → [Pokemon Essentials](/integration/pokemon-essentials)
+- Custom starter kit → [Third-party adapters](/integration/third-party)

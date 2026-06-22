@@ -1,12 +1,14 @@
 # Validation CLI
 
-The CLI entrypoint is `bin/kotoba`. Run it through Ruby 1.8:
+`bin/kotoba` is the CLI entrypoint. Run every command through Ruby 1.8:
 
 ```sh
 bin/ruby18 bin/kotoba <command> ...
 ```
 
-## Load Test
+Use it on a dev machine with this repository cloned. Shipped games only need the runtime from a release ZIP.
+
+## Load test
 
 ```sh
 bin/ruby18 bin/kotoba load-test Locales/en.json
@@ -150,7 +152,7 @@ Import map dialogue into a runtime catalog with `source_text` mappings:
 bin/ruby18 bin/kotoba map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
 ```
 
-The importer reads event command codes `101` (show text), `401` (continuation), `102` (choices), `402` (choice branch), `108` (comment), `408` (comment continuation), and `_INTL` / `_ISPRINTF` strings inside script commands `355`, `356`, `655`, and `657` (double- or single-quoted). See `docs/map-event-codes.md` for the full checklist. Copy external `.rxdata` files into the repository before running `bin/ruby18` through Docker.
+The importer reads event command codes `101` (show text), `401` (continuation), `102` (choices), `402` (choice branch), `108` (comment), `408` (comment continuation), and `_INTL` / `_ISPRINTF` strings inside script commands `355`, `356`, `655`, and `657` (double- or single-quoted). See [Map event codes](/reference/map-event-codes) for the full checklist. Copy external `.rxdata` files into the repository before running `bin/ruby18` through Docker.
 
 ## Translator Handoff Package
 

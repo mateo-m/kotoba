@@ -1,20 +1,20 @@
-# Migration From Pokemon Essentials
+# Essentials migration
 
-The current adapters are compatibility bridges, not a full migration tool. They are designed to let an existing Essentials project adopt stable JSON catalogs gradually.
+Essentials adapters bridge legacy `_INTL` calls — they are not a one-click full migration. Adopt stable JSON catalogs area by area.
 
-## Old Shape
+## The problem with source-English keys
 
-Legacy Essentials text often starts as source-English strings passed to `_INTL`:
+Legacy Essentials text often passes the English sentence straight into `_INTL`:
 
 ```ruby
 _INTL("A wild {1} appeared!", name)
 ```
 
-This is convenient at first, but it makes the English sentence part of the API. If the English text changes, translations can break.
+This works until the English copy changes — then every translation keyed on that sentence breaks.
 
-## Bridge Shape
+## Bridge with `source_text`
 
-Use `source_text` mappings during migration:
+During migration, map legacy source strings to stable keys:
 
 ```json
 {
@@ -27,21 +27,21 @@ Use `source_text` mappings during migration:
 }
 ```
 
-The adapter maps source text to a stable key and then evaluates the stable runtime message.
+The adapter resolves the source string to a stable key, then evaluates the runtime message.
 
-## New Shape
+## Prefer stable keys in new code
 
-New scripts should call stable keys directly:
+New scripts should call keys directly:
 
 ```ruby
 Kotoba.t("battle.wild_appeared", {"pokemon" => name})
 ```
 
-Stable keys make refactors safer and reduce translator churn.
+Stable keys survive refactors and keep translator diffs small.
 
-## Practical Migration Plan
+## Migration plan
 
-1. Install the matching Essentials adapter from a [release integration ZIP](/installation).
+1. Install the matching Essentials adapter from a [release integration ZIP](/essential/installation).
 2. Add `Locales/en.json`.
 3. Add only the strings you are actively translating.
 4. Route `_INTL` through the adapter for the chosen project area.
@@ -50,9 +50,9 @@ Stable keys make refactors safer and reduce translator churn.
 7. Add translated locale files.
 8. Convert new or frequently edited scripts to direct `Kotoba.t` calls.
 
-Avoid trying to migrate every string in one pass. Start with menus, battle messages, or one plugin.
+Avoid migrating every string at once. Start with menus, battle text, or one plugin.
 
-## Import Helpers
+## Import helpers
 
 If the game ships compiled translations in `Data/messages.dat`, inspect it first:
 

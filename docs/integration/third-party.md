@@ -182,4 +182,4 @@ Run:
 bin/ruby18 bin/lint
 ```
 
-For core adapter changes, also run the cross-version Docker matrix in [Compatibility](../compatibility.md).
+For core adapter changes, also run the cross-version Docker matrix in [Compatibility](/reference/compatibility).

@@ -1,8 +1,8 @@
-# TMS Workflows
+# TMS workflows
 
-The runtime format is nested per-locale JSON. Translation management systems may prefer flat JSON, multi-language JSON, XLIFF, or PO. The CLI converts between those interchange formats and runtime JSON.
+Kotoba keeps nested per-locale JSON at runtime. Translation tools often want flat JSON, multi-language JSON, XLIFF, or PO — the CLI converts between those formats and your catalogs.
 
-## Source Of Truth
+## Source of truth
 
 Keep runtime catalogs as source of truth:
 

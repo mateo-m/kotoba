@@ -1,6 +1,6 @@
 # Compatibility
 
-Ruby 1.8 is the compatibility gate. Modern Ruby runs are useful, but they do not prove RPG Maker XP/RGSS compatibility.
+Ruby 1.8 is the compatibility gate. Newer Ruby versions help development and CI, but only 1.8 behavior matches what RPG Maker XP runs in production.
 
 ## Tested Rubies
 

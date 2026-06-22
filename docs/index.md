@@ -7,21 +7,21 @@ hero:
   tagline: JSON catalogs, locale fallbacks, and dialog syntax for Ruby 1.8 RPG Maker XP and Essentials projects
   actions:
     - theme: brand
-      text: Get Started
-      link: /getting-started
+      text: Table of Contents
+      link: /table-of-contents
     - theme: alt
-      text: Roadmap
-      link: /roadmap
+      text: Install in a game
+      link: /essential/installation
 
 features:
   - title: Ruby 1.8 first
-    details: Runtime code targets RPG Maker XP and RGSS1 constraints instead of modern Ruby only.
+    details: Runtime code targets RPG Maker XP and RGSS1 — not modern Ruby only.
   - title: JSON catalogs
-    details: Load nested locale files at runtime with fallback chains such as fr-CA -> fr -> en.
+    details: Load nested locale files at runtime with fallback chains such as fr-CA → fr → en.
   - title: Game text syntax
     details: Variables, select, plural branches, and apostrophe escaping for dialog-heavy projects.
   - title: Validation tooling
-    details: CLI commands for load tests, cross-locale checks, Essentials imports, map extraction, and translator handoff.
+    details: CLI for load tests, cross-locale checks, Essentials imports, map extraction, and TMS handoff.
   - title: Opt-in adapters
     details: Integrate bare RGSS, Pokemon Essentials, or custom starter kits without patching the core.
   - title: Legacy test matrix
@@ -30,10 +30,4 @@ features:
 
 ## Documentation
 
-Use the sidebar to browse guides, adapter integration notes, tooling workflows, and project planning.
-
-- [Getting Started](/getting-started): create a catalog, load the runtime, and translate strings.
-- [Installing in a game](/installation): release ZIPs, boot scripts, and adapter matrix.
-- [Runtime API](/runtime-api): public `Kotoba` methods, config fields, and error types.
-- [Validation CLI](/validation-cli): load tests, schema checks, and import/export commands.
-- [Pokemon Essentials Adapter](/adapters/pokemon-essentials): integrate Essentials v16-v21 and BES projects.
+Open the [table of contents](/table-of-contents) for the full outline, or start with [Quick Start](/essential/quick-start) if you are working from a git clone.

@@ -91,7 +91,7 @@ Please make sure:
 
 If your change affects public behavior, update the relevant file under `docs/`.
 
-Start from [docs/index.md](docs/index.md) to find the right page.
+Start from [docs/table-of-contents.md](docs/table-of-contents.md) to find the right page.
 
 ## Support
 
@@ -104,4 +104,4 @@ If something is unclear, open an issue with:
 
 ## Roadmap
 
-Future work is tracked in [docs/roadmap.md](docs/roadmap.md). If you want to pick up a planned item, mention it in an issue first.
+Future work is tracked in [docs/contributors/roadmap.md](docs/contributors/roadmap.md). If you want to pick up a planned item, mention it in an issue first.

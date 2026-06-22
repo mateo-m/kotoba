@@ -22,7 +22,7 @@ Download the integration ZIP for your adapter target from [GitHub Releases](http
 load "examples/boot_kotoba.rb"
 ```
 
-See [Installing in a game](docs/installation.md) for the full ZIP matrix and boot steps.
+See [Installing in a game](docs/essential/installation.md) for the full ZIP matrix and boot steps.
 
 ### Try the runtime from this repository
 
@@ -55,7 +55,7 @@ end
 Kotoba.load!
 ```
 
-For a full walkthrough, read [Getting Started](docs/getting-started.md).
+For a full walkthrough, read [Quick Start](docs/essential/quick-start.md).
 
 ## Usage
 
@@ -102,9 +102,9 @@ Runtime options such as locale defaults, catalog paths, fallback chains, and err
 
 See:
 
-- [Runtime API](docs/runtime-api.md)
-- [Catalog Format](docs/catalog-format.md)
-- [Message Syntax](docs/message-syntax.md)
+- [Runtime API](docs/essential/runtime-api.md)
+- [Catalog Format](docs/essential/catalog-format.md)
+- [Message Syntax](docs/essential/message-syntax.md)
 
 ## Developing
 
@@ -147,7 +147,7 @@ docker build --platform linux/amd64 \
   -f docker/ruby-legacy/Dockerfile .
 ```
 
-See [Compatibility](docs/compatibility.md), [CI](docs/ci.md), and [docker/README.md](docker/README.md) for more detail.
+See [Compatibility](docs/reference/compatibility.md), [CI](docs/contributors/ci.md), and [docker/README.md](docker/README.md) for more detail.
 
 ## Contributing
 
@@ -165,15 +165,15 @@ Preview locally:
 bun run docs:dev
 ```
 
-- [Documentation site](docs/index.md) (source in `docs/`)
-- [Getting Started](docs/getting-started.md)
-- [Installing in a game](docs/installation.md)
-- [Bare RGSS integration](docs/adapters/bare-rgss.md)
-- [Pokemon Essentials integration](docs/adapters/pokemon-essentials.md)
-- [Third-party adapters](docs/adapters/third-party.md)
-- [Validation CLI](docs/validation-cli.md)
-- [Roadmap](docs/roadmap.md)
+- [Table of contents](docs/table-of-contents.md)
+- [Quick Start](docs/essential/quick-start.md)
+- [Installing in a game](docs/essential/installation.md)
+- [Bare RGSS integration](docs/integration/bare-rgss.md)
+- [Pokemon Essentials integration](docs/integration/pokemon-essentials.md)
+- [Third-party adapters](docs/integration/third-party.md)
+- [Validation CLI](docs/tooling/validation-cli.md)
+- [Roadmap](docs/contributors/roadmap.md)
 
 ## Roadmap
 
-Project planning and future work live in [docs/roadmap.md](docs/roadmap.md).
+Project planning and future work live in [docs/contributors/roadmap.md](docs/contributors/roadmap.md).

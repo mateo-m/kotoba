@@ -1,8 +1,8 @@
-# Pokemon Essentials Integration
+# Pokemon Essentials integration
 
-The Essentials adapters are compatibility bridges. They help an Essentials project call `Kotoba` without moving every string at once.
+Essentials adapters are compatibility bridges. They let an existing project call `Kotoba` without moving every string in one pass.
 
-Install the matching adapter with a [release integration ZIP](/installation) (`kotoba-essentials-v16.zip` through `kotoba-essentials-v21.zip`, or `kotoba-essentials-bes.zip` for BES forks). Unzip into your game root and load `examples/boot_kotoba.rb` after pointing `config.catalog_paths` at your catalogs.
+Install the matching ZIP from [Installing in a game](/essential/installation) — `kotoba-essentials-v16.zip` through `v21`, or `kotoba-essentials-bes.zip` for BES forks. Unzip into your game root and load `examples/boot_kotoba.rb` after pointing `config.catalog_paths` at your catalogs.
 
 Supported targets:
 
