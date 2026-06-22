@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide loads Kotoba from a repository checkout. If you are integrating into a shipped RPG Maker or Essentials game, start with [Installing in a game](installation.md) and use a release integration ZIP instead.
+This guide loads Kotoba from a repository checkout. If you are integrating into a shipped RPG Maker or Essentials game, start with [Installing in a game](/installation) and use a release integration ZIP instead.
 
 ## 1. Create A Catalog
 

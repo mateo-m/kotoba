@@ -2,7 +2,7 @@
 
 The Essentials adapters are compatibility bridges. They help an Essentials project call `Kotoba` without moving every string at once.
 
-Install the matching adapter with a [release integration ZIP](installation.md) (`kotoba-essentials-v16.zip` through `kotoba-essentials-v21.zip`, or `kotoba-essentials-bes.zip` for BES forks). Unzip into your game root and load `examples/boot_kotoba.rb` after pointing `config.catalog_paths` at your catalogs.
+Install the matching adapter with a [release integration ZIP](/installation) (`kotoba-essentials-v16.zip` through `kotoba-essentials-v21.zip`, or `kotoba-essentials-bes.zip` for BES forks). Unzip into your game root and load `examples/boot_kotoba.rb` after pointing `config.catalog_paths` at your catalogs.
 
 Supported targets:
 
