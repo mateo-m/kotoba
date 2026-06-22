@@ -35,9 +35,11 @@ bun run docs:preview
 
 ## GitHub Actions
 
-The checked-in workflow at `.github/workflows/ci.yml` runs the same lint command after installing Bun. It expects the legacy Ruby Docker images to be buildable on the runner.
+The checked-in workflow at `.github/workflows/ci.yml` runs after changes to runtime, adapter, tooling, test, Docker, or docs files. The `lint` and `docs` jobs run only when their respective paths change. Use **Run workflow** in Actions for a full manual run.
 
-Docs deploy through `.github/workflows/docs.yml` on pushes to `main`. In the repository Pages settings, choose **GitHub Actions** as the build source.
+The lint job runs the same lint command after installing Bun. It expects the legacy Ruby Docker images to be buildable on the runner.
+
+Docs deploy through `.github/workflows/docs.yml` on pushes to `main` when docs-related files change. Use **Run workflow** in Actions for a manual redeploy. In the repository Pages settings, choose **GitHub Actions** as the build source.
 
 ## Cross-Version Matrix
 
