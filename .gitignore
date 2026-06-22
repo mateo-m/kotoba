@@ -2,6 +2,7 @@ node_modules/
 docs/.vitepress/cache
 docs/.vitepress/dist
 docs/.vitepress/.temp
+test/fixtures.local.yml
 
 # OS / system-generated files
 .DS_Store

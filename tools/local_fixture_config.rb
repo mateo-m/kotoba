@@ -9,7 +9,7 @@ module LocalFixtureConfig
 
   def self.load
     path = config_path
-    return {} unless File.file?(path)
+    return {"games" => {}} unless File.file?(path)
 
     games = {}
     current_key = nil
