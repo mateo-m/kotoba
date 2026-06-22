@@ -43,4 +43,16 @@ class LocalIntegrationTest < RGSSI18nTestCase
     catalog = RGSSI18nTools::CatalogTools.import_text_english_dir(core, "local_core")
     assert(!catalog.empty?)
   end
+
+  def test_local_map_rxdata_import_when_present
+    path = LocalFixtureConfig.game_path("essentials_bes_sample")
+    return unless path && File.directory?(path)
+
+    map_path = File.join(path, "Data", "Map001.rxdata")
+    return unless File.file?(map_path)
+
+    require "catalog_tools"
+    catalog = RGSSI18nTools::CatalogTools.import_map_rxdata(map_path, "local_maps")
+    assert(!catalog.empty?)
+  end
 end

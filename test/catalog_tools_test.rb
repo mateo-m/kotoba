@@ -96,6 +96,29 @@ class CatalogToolsTest < RGSSI18nTestCase
     assert_equal("bundle.sample.shop.line_0001", catalog["source_text"]["Buy potions"])
   end
 
+  def test_extract_map_rxdata_reads_show_text_commands
+    path = write_map_rxdata_fixture("Map001.rxdata")
+    extracted = RGSSI18nTools::CatalogTools.extract_map_rxdata(path)
+
+    assert_equal("rpg_maker_xp_map", extracted["format"])
+    assert_equal("map_0001", extracted["map_id"])
+    assert_equal("Hello there.", extracted["events"]["event_0001"]["pages"]["page_01"]["commands"][0]["lines"][0])
+    assert_equal("Welcome to the shop.", extracted["events"]["event_0001"]["pages"]["page_01"]["commands"][1]["lines"][0])
+  ensure
+    File.delete(path) if path && File.exist?(path)
+  end
+
+  def test_import_map_rxdata_builds_runtime_catalog
+    path = write_map_rxdata_fixture("Map001.rxdata")
+    catalog = RGSSI18nTools::CatalogTools.import_map_rxdata(path, "maps")
+
+    assert_equal("maps.maps.map_0001.event_0001.line_0001", catalog["source_text"]["Hello there."])
+    assert_equal("Hello there.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0001"])
+    assert_equal("Welcome to the shop.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0002"])
+  ensure
+    File.delete(path) if path && File.exist?(path)
+  end
+
   def test_import_essentials_pairs_builds_source_text_catalog
     path = File.join(File.dirname(__FILE__), "tmp_intl.txt")
     File.open(path, "wb") do |file|
@@ -163,6 +186,23 @@ class CatalogToolsTest < RGSSI18nTestCase
       ["", "Bulbasaur"]
     ]
     File.open(path, "wb") { |file| file.write(Marshal.dump(data)) }
+    path
+  end
+
+  def write_map_rxdata_fixture(filename)
+    require File.expand_path(File.join(File.dirname(__FILE__), "..", "tools", "rgss_rxdata_stubs"))
+    path = File.join(File.dirname(__FILE__), filename)
+    cmd1 = RPG::EventCommand.new(101, 0, ["", 0, 0, 2, "Hello there."])
+    cmd2 = RPG::EventCommand.new(401, 0, ["Welcome to the shop."])
+    page = RPG::Event::Page.new
+    page.list = [cmd1, cmd2]
+    event = RPG::Event.new
+    event.id = 1
+    event.name = "Guide"
+    event.pages = [page]
+    map = RPG::Map.new
+    map.events = {1 => event}
+    File.open(path, "wb") { |file| file.write(Marshal.dump(map)) }
     path
   end
 end
