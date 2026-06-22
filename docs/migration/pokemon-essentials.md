@@ -41,7 +41,7 @@ Stable keys make refactors safer and reduce translator churn.
 
 ## Practical Migration Plan
 
-1. Install the matching Essentials adapter.
+1. Install the matching Essentials adapter from a [release integration ZIP](installation.md).
 2. Add `Locales/en.json`.
 3. Add only the strings you are actively translating.
 4. Route `_INTL` through the adapter for the chosen project area.

@@ -2,6 +2,8 @@
 
 Adapters are opt-in integration layers. The core runtime does not patch RPG Maker or Pokemon Essentials by default.
 
+For game projects, install an adapter through a [release integration ZIP](installation.md) rather than copying files from this repository by hand.
+
 ## Registry API
 
 The public adapter registry lives in `adapters/registry.rb`:

@@ -33,6 +33,7 @@ features:
 Use the sidebar to browse guides, adapter integration notes, tooling workflows, and project planning.
 
 - [Getting Started](/getting-started): create a catalog, load the runtime, and translate strings.
+- [Installing in a game](/installation): release ZIPs, boot scripts, and adapter matrix.
 - [Runtime API](/runtime-api): public `Kotoba` methods, config fields, and error types.
 - [Validation CLI](/validation-cli): load tests, schema checks, and import/export commands.
 - [Pokemon Essentials Adapter](/adapters/pokemon-essentials): integrate Essentials v16-v21 and BES projects.

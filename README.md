@@ -14,9 +14,19 @@ Use it in bare RGSS projects, Pokemon Essentials games, or custom starter kits t
 - [Bun](https://bun.sh/) for git hooks and local tooling
 - Docker, if you want legacy Ruby images or Dockerfile linting
 
-### Add the runtime to a game project
+### Add Kotoba to a game project
 
-Copy the `kotoba/` directory into your project, or clone this repository and reference it from your game scripts.
+Download the integration ZIP for your adapter target from [GitHub Releases](https://github.com/mateo-m/kotoba/releases), unzip it into your game root, edit `examples/boot_kotoba.rb`, and load it from your RGSS boot path:
+
+```ruby
+load "examples/boot_kotoba.rb"
+```
+
+See [Installing in a game](docs/installation.md) for the full ZIP matrix and boot steps.
+
+### Try the runtime from this repository
+
+When developing against a clone, copy or reference `kotoba/` directly:
 
 ```ruby
 require_relative "kotoba/core"
@@ -157,6 +167,7 @@ bun run docs:dev
 
 - [Documentation site](docs/index.md) (source in `docs/`)
 - [Getting Started](docs/getting-started.md)
+- [Installing in a game](docs/installation.md)
 - [Bare RGSS integration](docs/adapters/bare-rgss.md)
 - [Pokemon Essentials integration](docs/adapters/pokemon-essentials.md)
 - [Third-party adapters](docs/adapters/third-party.md)

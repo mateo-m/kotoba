@@ -22,6 +22,7 @@ export default defineConfig({
         text: "Start Here",
         items: [
           { text: "Getting Started", link: "/getting-started" },
+          { text: "Installing In A Game", link: "/installation" },
           { text: "Runtime API", link: "/runtime-api" },
           { text: "Catalog Format", link: "/catalog-format" },
           { text: "Message Syntax", link: "/message-syntax" },

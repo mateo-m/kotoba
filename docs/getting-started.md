@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide starts with a plain Ruby file because that is the easiest way to verify the runtime before putting it inside RPG Maker.
+This guide loads Kotoba from a repository checkout. If you are integrating into a shipped RPG Maker or Essentials game, start with [Installing in a game](installation.md) and use a release integration ZIP instead.
 
 ## 1. Create A Catalog
 
