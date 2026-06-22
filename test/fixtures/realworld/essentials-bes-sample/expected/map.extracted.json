@@ -1,0 +1,21 @@
+{
+  "event_count": 1,
+  "events": {
+    "event_0001": {
+      "name": "Guide",
+      "pages": {
+        "page_01": {
+          "commands": [{
+            "code": 101,
+            "lines": ["Welcome to the area."]
+          }, {
+            "code": 401,
+            "lines": ["Please follow the path ahead."]
+          }]
+        }
+      }
+    }
+  },
+  "format": "rpg_maker_xp_map",
+  "map_id": "map_9001"
+}

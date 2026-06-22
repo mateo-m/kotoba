@@ -1,0 +1,16 @@
+{
+  "sample": {
+    "maps": {
+      "map_9001": {
+        "event_0001": {
+          "line_0001": "Welcome to the area.",
+          "line_0002": "Please follow the path ahead."
+        }
+      }
+    }
+  },
+  "source_text": {
+    "Please follow the path ahead.": "sample.maps.map_9001.event_0001.line_0002",
+    "Welcome to the area.": "sample.maps.map_9001.event_0001.line_0001"
+  }
+}

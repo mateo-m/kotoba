@@ -1,0 +1,18 @@
+# Generic sectioned paired-line excerpt for Text_english import QA.
+[system]
+Open the menu
+Open the menu
+Select an option
+Select an option
+Save your progress
+Save your progress
+Quit to title
+Quit to title
+
+[dialogue]
+Need anything else?
+Need anything else?
+Come back soon
+Come back soon
+The shop is closed
+The shop is closed

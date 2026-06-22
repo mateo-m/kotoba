@@ -39,6 +39,32 @@ class RealworldFixtureTest < RGSSI18nTestCase
     assert_equal(expected("moves.extracted.json"), actual)
   end
 
+  def test_text_english_import_matches_golden
+    actual = RGSSI18nTools::CatalogTools.import_text_english(
+      File.join(ROOT, "text_english", "dialogue.excerpt.txt"),
+      "sample"
+    )
+
+    assert_equal(expected("text_english.imported.json"), actual)
+  end
+
+  def test_map_rxdata_extract_matches_golden
+    actual = RGSSI18nTools::CatalogTools.extract_map_rxdata(
+      File.join(ROOT, "maps", "Map9001.rxdata")
+    )
+
+    assert_equal(expected("map.extracted.json"), actual)
+  end
+
+  def test_map_rxdata_import_matches_golden
+    actual = RGSSI18nTools::CatalogTools.import_map_rxdata(
+      File.join(ROOT, "maps", "Map9001.rxdata"),
+      "sample"
+    )
+
+    assert_equal(expected("map.imported.json"), actual)
+  end
+
   def test_essentials_bes_loads_intl_fixture_catalog
     RGSSI18n.use_adapter("essentials_bes", {
       "catalog_paths" => {"en" => [File.join(ROOT, "expected", "intl.imported.json")]},

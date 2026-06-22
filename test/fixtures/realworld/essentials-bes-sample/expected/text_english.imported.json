@@ -1,0 +1,24 @@
+{
+  "sample": {
+    "dialogue": {
+      "line_0001": "Need anything else?",
+      "line_0002": "Come back soon",
+      "line_0003": "The shop is closed"
+    },
+    "system": {
+      "line_0001": "Open the menu",
+      "line_0002": "Select an option",
+      "line_0003": "Save your progress",
+      "line_0004": "Quit to title"
+    }
+  },
+  "source_text": {
+    "Come back soon": "sample.dialogue.line_0002",
+    "Need anything else?": "sample.dialogue.line_0001",
+    "Open the menu": "sample.system.line_0001",
+    "Quit to title": "sample.system.line_0004",
+    "Save your progress": "sample.system.line_0003",
+    "Select an option": "sample.system.line_0002",
+    "The shop is closed": "sample.dialogue.line_0003"
+  }
+}
