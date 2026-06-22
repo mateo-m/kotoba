@@ -60,5 +60,3 @@
 - Add essentials-bes-sample realworld fixtures ([`3746485`](https://github.com/mateo-m/kotoba/commit/37464859091352ae09d8e0f4b869fbe8e68b6f57))
 - Add optional local integration harness ([`2d1faf3`](https://github.com/mateo-m/kotoba/commit/2d1faf301e698c805d10ce555ee44a8404f1a0b9))
 - Add essentials-bes slice 2 text and map fixtures ([`7a25c94`](https://github.com/mateo-m/kotoba/commit/7a25c94fd682379dd7b4015d059b6e58df5d5469))
-
-# Changelog
