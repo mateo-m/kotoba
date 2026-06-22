@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+unless RUBY_VERSION =~ /^1\.8\./
+  warn "bin/format must run under Ruby 1.8. Use: bin/ruby18 bin/format"
+  exit 1
+end
+
+PROJECT_ROOT = File.expand_path("..", File.dirname(__FILE__))
+TEXT_PATTERNS = [
+  "Rakefile",
+  "README.md",
+  "CONTRIBUTING.md",
+  "package.json",
+  "bun.lock",
+  "lefthook.yml",
+  ".github/**/*.yml",
+  "bin/*",
+  "runtime/**/*.rb",
+  "adapters/**/*.rb",
+  "tools/**/*.rb",
+  "examples/**/*.rb",
+  "examples/**/*.json",
+  "test/**/*.rb",
+  "schemas/**/*.json",
+  "test/fixtures/**/*.json",
+  "docker/**/*.md",
+  "docs/**/*.md",
+  "docker/**/Dockerfile"
+]
+
+def project_files
+  TEXT_PATTERNS.inject([]) do |files, pattern|
+    files + Dir[File.join(PROJECT_ROOT, pattern)]
+  end.uniq.select { |path| File.file?(path) }
+end
+
+def normalize_file(path, check_only)
+  original = File.open(path, "rb") { |file| file.read }
+  normalized = original.gsub(/[ \t]+(\r?\n)/, "\\1")
+  normalized = normalized.sub(/[ \t]+\z/, "")
+  normalized << "\n" unless normalized == "" || normalized[-1, 1] == "\n"
+
+  return false if normalized == original
+
+  if check_only
+    puts "needs formatting: " + path.sub(PROJECT_ROOT + "/", "")
+  else
+    File.open(path, "wb") { |file| file.write(normalized) }
+    puts "formatted: " + path.sub(PROJECT_ROOT + "/", "")
+  end
+  true
+end
+
+check_only = ARGV.include?("--check")
+changed = false
+
+project_files.each do |path|
+  changed = true if normalize_file(path, check_only)
+end
+
+if check_only && changed
+  warn "Run bin/format to apply formatting."
+  exit 1
+end

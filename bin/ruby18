@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+
+IMAGE="ruby-legacy:1.8.7-p374"
+ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+
+if command -v ruby >/dev/null 2>&1 && ruby -e 'exit RUBY_VERSION =~ /^1\.8\./ ? 0 : 1'; then
+  exec ruby "$@"
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Ruby 1.8 is required. Install Ruby 1.8 or Docker, then build ${IMAGE}." >&2
+  exit 1
+fi
+
+if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
+  echo "Missing Docker image ${IMAGE}." >&2
+  echo "Build it with:" >&2
+  echo "docker build --platform linux/amd64 --build-arg RUBY_MAJOR=1.8 --build-arg RUBY_VERSION=1.8.7-p374 -t ${IMAGE} -f docker/ruby-legacy/Dockerfile ." >&2
+  exit 1
+fi
+
+exec docker run --rm --platform linux/amd64 -v "$ROOT":/work -w /work "$IMAGE" ruby "$@"

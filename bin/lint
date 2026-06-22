@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+unless RUBY_VERSION =~ /^1\.8\./
+  warn "bin/lint must run under Ruby 1.8. Use: bin/ruby18 bin/lint"
+  exit 1
+end
+
+PROJECT_ROOT = File.expand_path("..", File.dirname(__FILE__))
+RUNTIME_FILES = Dir[File.join(PROJECT_ROOT, "runtime/**/*.rb")].sort
+ADAPTER_FILES = Dir[File.join(PROJECT_ROOT, "adapters/**/*.rb")].sort
+TOOL_FILES = Dir[File.join(PROJECT_ROOT, "tools/**/*.rb")].sort
+TEST_FILES = Dir[File.join(PROJECT_ROOT, "test/**/*_test.rb")].sort
+EXAMPLE_FILES = Dir[File.join(PROJECT_ROOT, "examples/**/*.rb")].sort
+BIN_FILES = Dir[File.join(PROJECT_ROOT, "bin/*")].sort.select do |path|
+  File.file?(path) && File.open(path, "rb") { |file| file.readline } =~ /ruby/
+end
+
+def run!(command)
+  puts "$ " + command
+  system(command) || exit($?.exitstatus || 1)
+end
+
+Dir.chdir(PROJECT_ROOT) do
+  run!("ruby bin/format --check")
+
+  (RUNTIME_FILES + ADAPTER_FILES + TOOL_FILES + EXAMPLE_FILES + BIN_FILES + ["Rakefile"]).each do |path|
+    run!("ruby -c " + path.sub(PROJECT_ROOT + "/", ""))
+  end
+
+  run!("ruby -Itest -e 'ARGV.each { |file| load file }' " + TEST_FILES.collect { |path| path.sub(PROJECT_ROOT + "/", "") }.join(" "))
+
+end

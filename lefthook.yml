@@ -1,0 +1,10 @@
+pre-commit:
+  parallel: false
+  commands:
+    format:
+      run: bin/ruby18 bin/format
+      stage_fixed: true
+    lint:
+      run: bin/ruby18 bin/lint
+    dockerfiles:
+      run: bin/lint-docker

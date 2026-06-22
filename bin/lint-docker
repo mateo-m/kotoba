@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Skipping Dockerfile checks because docker is not available." >&2
+  exit 0
+fi
+
+docker build --check --platform linux/amd64 \
+  --build-arg RUBY_MAJOR=1.8 \
+  --build-arg RUBY_VERSION=1.8.7-p374 \
+  -f docker/ruby-legacy/Dockerfile .
+
+docker build --check --platform linux/amd64 \
+  --build-arg RUBY_MAJOR=1.9 \
+  --build-arg RUBY_VERSION=1.9.3-p551 \
+  -f docker/ruby-legacy/Dockerfile .

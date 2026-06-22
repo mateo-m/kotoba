@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+project_root = File.expand_path("..", File.dirname(__FILE__))
+hook_dir = File.join(project_root, ".git", "hooks")
+hook_path = File.join(hook_dir, "pre-commit")
+
+unless File.directory?(File.join(project_root, ".git"))
+  warn "Not a git repository: " + project_root
+  exit 1
+end
+
+Dir.mkdir(hook_dir) unless File.directory?(hook_dir)
+
+hook = <<HOOK
+#!/bin/sh
+set -eu
+
+if command -v lefthook >/dev/null 2>&1; then
+  exec lefthook run pre-commit
+fi
+
+bin/ruby18 bin/format --check
+bin/ruby18 bin/lint
+bin/lint-docker
+HOOK
+
+File.open(hook_path, "wb") { |file| file.write(hook) }
+File.chmod(0755, hook_path)
+
+puts "Installed pre-commit hook at " + hook_path

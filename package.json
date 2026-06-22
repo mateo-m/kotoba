@@ -1,0 +1,17 @@
+{
+  "name": "rpg-maker-i18n",
+  "private": true,
+  "packageManager": "bun@1.3.14",
+  "scripts": {
+    "format": "bin/ruby18 bin/format",
+    "lint": "bin/ruby18 bin/lint && bin/lint-docker",
+    "lint:ruby": "bin/ruby18 bin/lint",
+    "lint:docker": "bin/lint-docker",
+    "hooks:install": "lefthook install",
+    "precommit": "lefthook run pre-commit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "lefthook": "^2.1.9"
+  }
+}
