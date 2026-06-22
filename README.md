@@ -82,7 +82,7 @@ bin/ruby18 bin/rgss-i18n validate Locales/en.json Locales/fr.json
 - Strict bundled JSON parser with BOM stripping and unicode escape handling
 - Message syntax for variables, `select`, cardinal `plural`, exact plural branches, `#`, and apostrophe escaping
 - Validation CLI for load tests, schema checks, cross-locale validation, and import/export
-- PBS extraction, Essentials `messages.dat` migration, paired-line import, and translator handoff packages
+- PBS extraction, Essentials `messages.dat` migration, paired-line import, `Text_english_*` import, map `.rxdata` event text import, and translator handoff packages
 - Opt-in adapters for bare RGSS and fixture-backed Pokemon Essentials targets
 - Ruby 1.8, 1.9, 3.0, and 3.1 compatibility testing through local Ruby and Docker
 

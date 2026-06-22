@@ -21,7 +21,7 @@ features:
   - title: Game text syntax
     details: Variables, select, plural branches, and apostrophe escaping for dialog-heavy projects.
   - title: Validation tooling
-    details: CLI commands for load tests, cross-locale checks, import/export, and translator handoff.
+    details: CLI commands for load tests, cross-locale checks, Essentials imports, map extraction, and translator handoff.
   - title: Opt-in adapters
     details: Integrate bare RGSS, Pokemon Essentials, or custom starter kits without patching the core.
   - title: Legacy test matrix

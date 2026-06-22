@@ -113,6 +113,38 @@ bin/ruby18 bin/rgss-i18n essentials-pairs-import intl.txt essentials Locales/en.
 
 The output contains a `source_text` map and generated stable keys under the namespace you provide.
 
+## Text_english Import
+
+Import Essentials `Text_english_*` sectioned pair files. Each `[section]` header starts a new key group; lines alternate source and target text:
+
+```sh
+bin/ruby18 bin/rgss-i18n text-english-import Text_english_core/TYPE_NAMES.txt core Locales/en.core.json
+```
+
+Import every `.txt` file in a directory:
+
+```sh
+bin/ruby18 bin/rgss-i18n text-english-import Text_english_core core Locales/en.core.json
+```
+
+Directory imports merge files under `<namespace>.<filename>.<section>.line_*` keys.
+
+## Map Event Text From `.rxdata`
+
+Extract show-text and comment commands from compiled RPG Maker XP maps:
+
+```sh
+bin/ruby18 bin/rgss-i18n map-rxdata-extract Data/Map001.rxdata build/map001.extract.json
+```
+
+Import map dialogue into a runtime catalog with `source_text` mappings:
+
+```sh
+bin/ruby18 bin/rgss-i18n map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
+```
+
+The importer reads event command codes `101` (show text), `401` (continuation), and `108` (comment). Copy external `.rxdata` files into the repository before running `bin/ruby18` through Docker.
+
 ## Translator Handoff Package
 
 Create a small folder for translators:

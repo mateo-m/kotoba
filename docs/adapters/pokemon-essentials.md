@@ -151,9 +151,23 @@ RGSSI18n.use_adapter("essentials_v21", {
 })
 ```
 
-## BES Data Names
+## BES Bridge And Data Names
 
-The BES adapter exposes small data-name helpers:
+The BES adapter supports the same `_INTL` and `_ISPRINTF` bridge as the v16-v20 adapters:
+
+```ruby
+RGSSI18n.use_adapter("essentials_bes", {
+  "catalog_paths" => {"en" => ["Locales/en.json"]},
+  "load" => true
+})
+
+RGSSI18n::Adapters::EssentialsBES._INTL("A wild {1} appeared!", "Pikachu")
+RGSSI18n::Adapters::EssentialsBES._ISPRINTF("You have {1:d} coins.", 42)
+```
+
+Use `install_global: true` only when you intentionally want project-wide `_INTL` routing. See [Optional Global Patch](#optional-global-patch).
+
+The adapter also exposes small data-name helpers:
 
 ```ruby
 RGSSI18n::Adapters::EssentialsBES.move_name("thunderbolt")

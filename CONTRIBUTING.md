@@ -28,6 +28,16 @@ bin/lint-docker
 
 Formatting, Ruby syntax checks, and the unit suite run under Ruby 1.8 to protect runtime compatibility. Dockerfile checks run separately with Docker on the host.
 
+### Optional Local Integration Tests
+
+CI runs the tracked fixture suite only. To smoke-test import commands against a full game on your machine, copy `test/fixtures.local.example.yml` to `test/fixtures.local.yml` and point `essentials_bes_sample` at your local game path. The file stays gitignored.
+
+```sh
+cp test/fixtures.local.example.yml test/fixtures.local.yml
+```
+
+Tests in `test/local_integration_test.rb` skip automatically when the configured path is missing or unavailable inside Docker.
+
 ## Making Changes
 
 1. Create a branch for your change.

@@ -35,7 +35,7 @@ Fixture provenance lives under `test/fixtures/essentials/*/SOURCE`.
 
 `essentials_v21` models split message-file loading.
 
-`essentials_bes` exposes data-name helpers for fixture-backed move, item, and ability lookup.
+`essentials_bes` provides the same `_INTL` and `_ISPRINTF` bridge shape as the v16-v20 adapters, plus data-name helpers for fixture-backed move, item, and ability lookup.
 
 ## Writing Your Own
 

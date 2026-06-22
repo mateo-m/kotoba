@@ -77,3 +77,18 @@ Common PBS-style CSV files can be extracted into `data.<namespace>.<id>` catalog
 ```sh
 bin/ruby18 bin/rgss-i18n pbs-extract moves PBS/moves.txt Locales/en.moves.json
 ```
+
+BES and v21-style projects may also ship `Text_english_core/` and `Text_english_game/` directories. Convert them with:
+
+```sh
+bin/ruby18 bin/rgss-i18n text-english-import Text_english_core core Locales/en.core.json
+bin/ruby18 bin/rgss-i18n text-english-import Text_english_game game Locales/en.game.json
+```
+
+Map event dialogue can be imported from compiled `Data/Map*.rxdata` files:
+
+```sh
+bin/ruby18 bin/rgss-i18n map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
+```
+
+Copy external game files into a local `tmp/` or `build/` directory before running `bin/ruby18` through Docker.
