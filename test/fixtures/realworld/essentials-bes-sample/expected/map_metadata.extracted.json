@@ -1,0 +1,15 @@
+{
+  "data": {
+    "map_metadata": {
+      "001": {
+        "name": "Town Square"
+      },
+      "002": {
+        "name": "Route One"
+      },
+      "003": {
+        "name": "Trail Gate"
+      }
+    }
+  }
+}

@@ -1,0 +1,80 @@
+require File.expand_path(File.join(File.dirname(__FILE__), "test_helper"))
+require "fileutils"
+
+tool_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "tools"))
+$LOAD_PATH.unshift(tool_path) unless $LOAD_PATH.include?(tool_path)
+require "integration_release"
+
+class IntegrationReleaseTest < KotobaTestCase
+  def test_version_reads_kotoba_version_file
+    assert_equal("0.1.0", KotobaTools::IntegrationRelease.version)
+  end
+
+  def test_full_adapter_matrix_excludes_blocked_adapter
+    names = KotobaTools::IntegrationRelease.target_names
+
+    assert_equal(8, names.length)
+    assert(names.include?("bare_rgss"))
+    assert(names.include?("essentials_bes"))
+    assert(names.include?("essentials_v19"))
+    assert(names.include?("essentials_v20"))
+    assert(!names.include?("essentials_v19_v20"))
+    assert(!names.include?("blocked_adapter"))
+  end
+
+  def test_package_lists_runtime_adapter_examples_and_manifest_files
+    files = KotobaTools::IntegrationRelease.package_relative_files("essentials_v18")
+
+    assert(files.include?("kotoba/core.rb"))
+    assert(files.include?("kotoba/VERSION"))
+    assert(files.include?("adapters/essentials_v18.rb"))
+    assert(files.include?("adapters/essentials_base.rb"))
+    assert(files.include?("examples/pokemon_essentials/en.json"))
+    assert(files.include?("examples/boot_kotoba.rb"))
+    assert(files.include?("INSTALL.md"))
+    assert(files.include?("MANIFEST.json"))
+  end
+
+  def test_manifest_includes_version_adapter_and_files
+    manifest = KotobaTools::IntegrationRelease.manifest("bare_rgss")
+
+    assert_equal("0.1.0", manifest["kotoba_version"])
+    assert_equal("bare_rgss", manifest["adapter"])
+    assert(manifest["files"].include?("adapters/bare_rgss.rb"))
+  end
+
+  def test_boot_ruby_targets_requested_adapter
+    boot = KotobaTools::IntegrationRelease.boot_ruby("essentials_v20")
+
+    assert(boot.index("essentials_v20"))
+    assert(boot.index('Kotoba.use_adapter("essentials_v20"'))
+  end
+
+  def test_stage_package_writes_install_boot_and_manifest
+    output = File.join(File.dirname(__FILE__), "tmp_integration_release")
+    staging = File.join(output, "stage-bare")
+    files = KotobaTools::IntegrationRelease.stage_package(staging, "bare_rgss")
+
+    assert(File.exist?(File.join(staging, "INSTALL.md")))
+    assert(File.exist?(File.join(staging, "MANIFEST.json")))
+    assert(File.exist?(File.join(staging, "examples", "boot_kotoba.rb")))
+    assert(File.exist?(File.join(staging, "kotoba", "core.rb")))
+    assert(files.include?("examples/boot_kotoba.rb"))
+  ensure
+    FileUtils.rm_rf(output) if output
+  end
+
+  def test_build_zip_creates_archive_when_zip_command_exists
+    return unless system("which zip > /dev/null 2>&1")
+
+    output = File.join(File.dirname(__FILE__), "tmp_integration_zip")
+    path = KotobaTools::IntegrationRelease.build_zip(output, "bare_rgss")
+
+    assert(File.exist?(path))
+    listing = `unzip -l #{path.shellescape}`
+    assert(listing.index("kotoba/core.rb"))
+    assert(!listing.index(".staging"))
+  ensure
+    FileUtils.rm_rf(output) if output
+  end
+end

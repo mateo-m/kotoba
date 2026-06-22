@@ -5,7 +5,7 @@ Kotoba.configure do |config|
   config.default_locale = "en"
   config.available_locales = ["en", "fr"]
   config.catalog_paths = {
-    "en" => ["Locales/en.json"],
+    "en" => ["examples/bare_rgss/en.json"],
     "fr" => ["Locales/fr.json"]
   }
   config.show_missing_keys = true

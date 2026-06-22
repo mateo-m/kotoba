@@ -21,7 +21,6 @@ Unknown adapter names raise `Kotoba::AdapterError`.
 - `essentials_v18`
 - `essentials_v19`
 - `essentials_v20`
-- `essentials_v19_v20`
 - `essentials_v21`
 - `essentials_bes`
 
@@ -31,7 +30,7 @@ Fixture provenance lives under `test/fixtures/essentials/*/SOURCE`.
 
 `bare_rgss` loads configured catalog paths and translates strings prefixed with `i18n:` through `Kotoba::Adapters::BareRGSS.translate_message`.
 
-`essentials_v16`, `essentials_v17`, `essentials_v18`, `essentials_v19`, `essentials_v20`, and `essentials_v19_v20` provide source-text bridge behavior matching the legacy `_INTL` and `_ISPRINTF` shape. The v19 and v20 adapter names are version-specific registrations backed by the shared v19/v20 implementation.
+`essentials_v16`, `essentials_v17`, `essentials_v18`, `essentials_v19`, and `essentials_v20` provide source-text bridge behavior matching the legacy `_INTL` and `_ISPRINTF` shape. The v19 and v20 adapters are separate modules with the same bridge behavior.
 
 `essentials_v21` models split message-file loading.
 

@@ -25,6 +25,19 @@ class Tone
   end
 end
 
+class Color
+  attr_accessor :red, :green, :blue, :alpha
+
+  def self._load(data)
+    obj = new
+    obj.red = data[0]
+    obj.green = data[1]
+    obj.blue = data[2]
+    obj.alpha = data[3]
+    obj
+  end
+end
+
 module RGSSRxdataStubs
   def self.install_marshal_loader(klass, attrs)
     klass.class_eval do

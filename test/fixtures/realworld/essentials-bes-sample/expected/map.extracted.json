@@ -15,11 +15,20 @@
             "code": 102,
             "lines": ["Take the left path", "Take the right path"]
           }, {
+            "code": 402,
+            "lines": ["Take the left path"]
+          }, {
+            "code": 402,
+            "lines": ["Take the right path"]
+          }, {
             "code": 355,
             "lines": ["Stay on the trail."]
           }, {
             "code": 108,
             "lines": ["Checkpoint ahead."]
+          }, {
+            "code": 408,
+            "lines": ["Trail marker noted."]
           }, {
             "code": 356,
             "lines": ["Warp activated."]

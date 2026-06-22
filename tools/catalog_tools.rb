@@ -102,6 +102,12 @@ module KotobaTools
         "EndSpeech" => "end_speech",
         "EndBattle" => "end_battle",
         "RegSpeech" => "reg_speech"
+      },
+      "trainer_types" => {
+        "Name" => "name"
+      },
+      "map_metadata" => {
+        "Name" => "name"
       }
     }
 
@@ -795,15 +801,22 @@ module KotobaTools
         return [text].find_all { |line| line != "" }
       end
       if code == 102
-        start = numeric_pbs_value?(params[0]) ? 1 : 0
-        lines = []
-        index = start
-        while index < params.length
-          param = params[index]
-          lines << param.to_s if param.is_a?(String) && param != ""
-          index += 1
+        return extract_choice_lines(params)
+      end
+      if code == 402
+        if params.length > 1 && params[1].is_a?(String)
+          return [params[1]].find_all { |line| line != "" }
         end
-        return lines
+        if params[0].is_a?(String)
+          return [params[0]].find_all { |line| line != "" }
+        end
+        return []
+      end
+      if code == 408
+        text = params[0].to_s
+        intl = extract_script_intl_sources(text)
+        return intl unless intl.empty?
+        return [text].find_all { |line| line != "" }
       end
       if code == 355 || code == 356 || code == 655 || code == 657
         script = params[0].to_s
@@ -830,6 +843,20 @@ module KotobaTools
         result << unquote($1)
       end
       result
+    end
+
+    def self.extract_choice_lines(params)
+      lines = []
+      params.each do |param|
+        if param.is_a?(Array)
+          param.each do |choice|
+            lines << choice.to_s if choice.is_a?(String) && choice != ""
+          end
+        elsif param.is_a?(String) && param != ""
+          lines << param.to_s
+        end
+      end
+      lines
     end
 
     def self.numeric_pbs_value?(value)

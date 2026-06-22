@@ -1,0 +1,229 @@
+kotoba_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "kotoba"))
+$LOAD_PATH.unshift(kotoba_path) unless $LOAD_PATH.include?(kotoba_path)
+
+require "fileutils"
+
+module KotobaTools
+  module IntegrationRelease
+    PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+    VERSION_PATH = File.join(PROJECT_ROOT, "kotoba", "VERSION")
+    KOTOBA_FILES = Dir[File.join(PROJECT_ROOT, "kotoba", "**", "*.rb")].sort.collect do |path|
+      path.sub(PROJECT_ROOT + "/", "")
+    end + ["kotoba/VERSION"]
+
+    ADAPTER_TARGETS = {
+      "bare_rgss" => {
+        "zip_name" => "kotoba-bare-rgss.zip",
+        "adapter_files" => ["adapters/registry.rb", "adapters/bare_rgss.rb"],
+        "example_catalog" => "examples/bare_rgss/en.json"
+      },
+      "essentials_bes" => {
+        "zip_name" => "kotoba-essentials-bes.zip",
+        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_bes.rb"],
+        "example_catalog" => "examples/pokemon_essentials/en.json"
+      },
+      "essentials_v16" => {
+        "zip_name" => "kotoba-essentials-v16.zip",
+        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v16.rb"],
+        "example_catalog" => "examples/pokemon_essentials/en.json"
+      },
+      "essentials_v17" => {
+        "zip_name" => "kotoba-essentials-v17.zip",
+        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v17.rb"],
+        "example_catalog" => "examples/pokemon_essentials/en.json"
+      },
+      "essentials_v18" => {
+        "zip_name" => "kotoba-essentials-v18.zip",
+        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v18.rb"],
+        "example_catalog" => "examples/pokemon_essentials/en.json"
+      },
+      "essentials_v19" => {
+        "zip_name" => "kotoba-essentials-v19.zip",
+        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v19.rb"],
+        "example_catalog" => "examples/pokemon_essentials/en.json"
+      },
+      "essentials_v20" => {
+        "zip_name" => "kotoba-essentials-v20.zip",
+        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v20.rb"],
+        "example_catalog" => "examples/pokemon_essentials/en.json"
+      },
+      "essentials_v21" => {
+        "zip_name" => "kotoba-essentials-v21.zip",
+        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_v21.rb"],
+        "example_catalog" => "examples/pokemon_essentials/en.json"
+      }
+    }
+
+    def self.version
+      File.open(VERSION_PATH, "rb") { |file| file.read }.strip
+    end
+
+    def self.target_names
+      ADAPTER_TARGETS.keys.sort
+    end
+
+    def self.target(name)
+      ADAPTER_TARGETS[name.to_s]
+    end
+
+    def self.package_relative_files(adapter_name)
+      config = target(adapter_name)
+      raise ArgumentError, "unknown adapter " + adapter_name.to_s if config.nil?
+
+      files = KOTOBA_FILES + config["adapter_files"] + [
+        config["example_catalog"],
+        "examples/boot_kotoba.rb",
+        "INSTALL.md",
+        "MANIFEST.json"
+      ]
+      files.sort
+    end
+
+    def self.manifest(adapter_name, files = nil)
+      listed = files || package_relative_files(adapter_name)
+      {
+        "kotoba_version" => version,
+        "adapter" => adapter_name.to_s,
+        "files" => listed
+      }
+    end
+
+    def self.install_markdown(adapter_name)
+      config = target(adapter_name)
+      raise ArgumentError, "unknown adapter " + adapter_name.to_s if config.nil?
+
+      <<MARKDOWN
+# Kotoba #{version} — #{adapter_name}
+
+Copy this archive into your game project root (next to `Game.exe`).
+
+## Files
+
+- `kotoba/` — runtime core
+- `adapters/` — `#{adapter_name}` adapter
+- `examples/boot_kotoba.rb` — starter boot script
+- `examples/pokemon_essentials/en.json` or `examples/bare_rgss/en.json` — sample catalog
+
+## Boot
+
+Load `examples/boot_kotoba.rb` from your RGSS boot path after adjusting catalog paths.
+
+```ruby
+load "examples/boot_kotoba.rb"
+```
+
+The boot script calls:
+
+```ruby
+Kotoba.use_adapter("#{adapter_name}", {"load" => true})
+```
+
+## Catalogs
+
+Point `config.catalog_paths` at your locale JSON files. Use `bin/kotoba` from the development repository for migration and validation workflows.
+
+## Verify
+
+Run `load-test` on each locale catalog after copying files into your project.
+MARKDOWN
+    end
+
+    def self.boot_ruby(adapter_name)
+      config = target(adapter_name)
+      raise ArgumentError, "unknown adapter " + adapter_name.to_s if config.nil?
+
+      adapter_file = config["adapter_files"].find { |path| path =~ /#{adapter_name}\.rb\z/ }
+      catalog_path = config["example_catalog"]
+
+      lines = []
+      lines << "require File.join(\".\", \"kotoba\", \"core\")"
+      lines << "require File.join(\".\", \"adapters\", \"" + File.basename(adapter_file) + "\")"
+      lines << ""
+      lines << "Kotoba.configure do |config|"
+      lines << "  config.default_locale = \"en\""
+      lines << "  config.available_locales = [\"en\"]"
+      lines << "  config.catalog_paths = {"
+      lines << "    \"en\" => [\"" + catalog_path + "\"]"
+      lines << "  }"
+      lines << "end"
+      lines << ""
+      lines << "Kotoba.use_adapter(\"#{adapter_name}\", {\"load\" => true})"
+      lines.join("\n") + "\n"
+    end
+
+    def self.stage_package(staging_root, adapter_name)
+      config = target(adapter_name)
+      raise ArgumentError, "unknown adapter " + adapter_name.to_s if config.nil?
+
+      FileUtils.rm_rf(staging_root)
+      FileUtils.mkdir_p(staging_root)
+
+      package_relative_files(adapter_name).each do |relative|
+        next if relative == "INSTALL.md" || relative == "MANIFEST.json"
+        next if relative == "examples/boot_kotoba.rb"
+        source = File.join(PROJECT_ROOT, relative)
+        destination = File.join(staging_root, relative)
+        FileUtils.mkdir_p(File.dirname(destination))
+        if File.directory?(source)
+          FileUtils.cp_r(source, destination)
+        else
+          FileUtils.cp(source, destination)
+        end
+      end
+
+      destination = File.join(staging_root, "examples", "boot_kotoba.rb")
+      FileUtils.mkdir_p(File.dirname(destination))
+      File.open(destination, "wb") { |file| file.write(boot_ruby(adapter_name)) }
+
+      files = Dir[File.join(staging_root, "**", "*")].find_all { |path| File.file?(path) }.collect do |path|
+        path.sub(staging_root + "/", "")
+      end.sort
+
+      File.open(File.join(staging_root, "INSTALL.md"), "wb") do |file|
+        file.write(install_markdown(adapter_name))
+      end
+      require File.join(PROJECT_ROOT, "tools", "catalog_tools")
+      KotobaTools::CatalogTools.write_json(
+        File.join(staging_root, "MANIFEST.json"),
+        manifest(adapter_name, files)
+      )
+
+      files
+    end
+
+    def self.build_zip(output_dir, adapter_name)
+      config = target(adapter_name)
+      raise ArgumentError, "unknown adapter " + adapter_name.to_s if config.nil?
+
+      FileUtils.mkdir_p(output_dir)
+      staging_root = File.join(output_dir, ".staging-" + adapter_name)
+      stage_package(staging_root, adapter_name)
+      zip_path = File.expand_path(File.join(output_dir, config["zip_name"]))
+      File.delete(zip_path) if File.exist?(zip_path)
+
+      command = "cd " + staging_root.shellescape + " && zip -rq " + zip_path.shellescape + " ."
+      unless system(command)
+        raise "zip command failed for " + adapter_name.to_s
+      end
+      FileUtils.rm_rf(staging_root)
+      zip_path
+    end
+
+    def self.build_all(output_dir)
+      target_names.collect do |name|
+        build_zip(output_dir, name)
+      end
+    end
+  end
+end
+
+class String
+  def shellescape
+    return "''" if self == ""
+    if self =~ /\A[a-zA-Z0-9_\/.,+-]+\z/
+      self
+    else
+      "'" + self.gsub("'", "'\\\\''") + "'"
+    end
+  end unless method_defined?(:shellescape)
+end

@@ -5,7 +5,8 @@ $LOAD_PATH.unshift(adapter_path) unless $LOAD_PATH.include?(adapter_path)
 require "essentials_v16"
 require "essentials_v17"
 require "essentials_v18"
-require "essentials_v19_v20"
+require "essentials_v19"
+require "essentials_v20"
 require "essentials_v21"
 require "essentials_bes"
 
@@ -16,13 +17,22 @@ class EssentialsAdapterTest < KotobaTestCase
     File.join(FIXTURE_ROOT, *parts)
   end
 
-  def test_v19_v20_intl_bridge_uses_source_map_fixture
-    Kotoba.use_adapter("essentials_v19_v20", {
+  def test_v19_intl_bridge_uses_source_map_fixture
+    Kotoba.use_adapter("essentials_v19", {
       "catalog_paths" => {"en" => [fixture("v19_v20", "source_map.json")]},
       "load" => true
     })
 
-    assert_equal("A wild Pikachu appeared!", Kotoba::Adapters::EssentialsV19V20._INTL("A wild {1} appeared!", "Pikachu"))
+    assert_equal("A wild Pikachu appeared!", Kotoba::Adapters::EssentialsV19._INTL("A wild {1} appeared!", "Pikachu"))
+  end
+
+  def test_v20_intl_bridge_uses_source_map_fixture
+    Kotoba.use_adapter("essentials_v20", {
+      "catalog_paths" => {"en" => [fixture("v19_v20", "source_map.json")]},
+      "load" => true
+    })
+
+    assert_equal("A wild Rattata appeared!", Kotoba::Adapters::EssentialsV20._INTL("A wild {1} appeared!", "Rattata"))
   end
 
   def test_v16_intl_bridge_uses_source_map_fixture
@@ -97,23 +107,27 @@ class EssentialsAdapterTest < KotobaTestCase
     assert(names.include?("essentials_v18"))
     assert(names.include?("essentials_v19"))
     assert(names.include?("essentials_v20"))
-    assert(names.include?("essentials_v19_v20"))
+    assert(!names.include?("essentials_v19_v20"))
     assert(names.include?("essentials_v21"))
     assert(names.include?("essentials_bes"))
   end
 
-  def test_v19_and_v20_names_use_shared_fixture_backed_adapter
+  def test_v19_and_v20_are_separate_modules
     options = {
       "catalog_paths" => {"en" => [fixture("v19_v20", "source_map.json")]},
       "load" => true
     }
 
     Kotoba.use_adapter("essentials_v19", options)
-    assert_equal("A wild Pidgey appeared!", Kotoba::Adapters::EssentialsV19V20._INTL("A wild {1} appeared!", "Pidgey"))
+    assert_equal("A wild Pidgey appeared!", Kotoba::Adapters::EssentialsV19._INTL("A wild {1} appeared!", "Pidgey"))
 
     Kotoba.reset!
-    Kotoba.use_adapter("essentials_v20", options)
-    assert_equal("A wild Rattata appeared!", Kotoba::Adapters::EssentialsV19V20._INTL("A wild {1} appeared!", "Rattata"))
+    Kotoba.use_adapter("essentials_v20", {
+      "catalog_paths" => {"en" => [fixture("v19_v20", "source_map.json")]},
+      "load" => true
+    })
+    assert_equal("A wild Rattata appeared!", Kotoba::Adapters::EssentialsV20._INTL("A wild {1} appeared!", "Rattata"))
+    assert(Kotoba::Adapters::EssentialsV19 != Kotoba::Adapters::EssentialsV20)
   end
 
   def test_essentials_global_patch_is_opt_in

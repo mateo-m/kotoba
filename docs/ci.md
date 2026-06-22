@@ -49,6 +49,31 @@ The lint job runs the same lint command after installing Bun. It expects the leg
 
 Docs deploy through `.github/workflows/docs.yml` on pushes to `main` when docs-related files change. Use **Run workflow** in Actions for a manual redeploy. In the repository Pages settings, choose **GitHub Actions** as the build source.
 
+## Releases
+
+Cut a release locally with `scripts/release.sh` (same git-cliff layout as [empo-app](https://github.com/mateo-m/empo-app)):
+
+```sh
+brew install git-cliff gh   # once
+scripts/release.sh patch    # or minor, major, or an explicit 0.1.0
+```
+
+The script:
+
+1. Prepends git-cliff notes to `CHANGELOG.md` and bumps `kotoba/VERSION`.
+2. Runs `bun run lint` (skip with `RELEASE_SKIP_LINT=1`).
+3. Builds integration ZIPs into `dist/`.
+4. Creates a signed commit and tag, pushes `main` + the tag.
+5. Runs `gh release create` with the ZIPs and a **What's changed** body.
+
+Preview notes before cutting:
+
+```sh
+git-cliff --config cliff.toml --unreleased --tag v0.1.0
+```
+
+To rebuild assets or refresh notes for an existing tag, run the **Release** workflow manually in GitHub Actions and pass the tag name.
+
 ## Cross-Version Matrix
 
 For release verification, also run:

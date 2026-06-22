@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+tool_root = File.expand_path(File.join(File.dirname(__FILE__), "..", "tools"))
+$LOAD_PATH.unshift(tool_root) unless $LOAD_PATH.include?(tool_root)
+require "integration_release"
+
+output = ARGV.shift || File.join(File.dirname(__FILE__), "..", "dist")
+adapter = ARGV.shift
+
+if adapter.nil? || adapter == ""
+  paths = KotobaTools::IntegrationRelease.build_all(output)
+  paths.each { |path| puts path }
+else
+  puts KotobaTools::IntegrationRelease.build_zip(output, adapter)
+end

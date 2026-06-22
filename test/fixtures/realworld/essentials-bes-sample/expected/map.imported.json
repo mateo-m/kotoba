@@ -7,22 +7,26 @@
           "line_0002": "Please follow the path ahead.",
           "line_0003": "Take the left path",
           "line_0004": "Take the right path",
-          "line_0005": "Stay on the trail.",
-          "line_0006": "Checkpoint ahead.",
-          "line_0007": "Warp activated.",
-          "line_0008": "Gate opens."
+          "line_0005": "Take the left path",
+          "line_0006": "Take the right path",
+          "line_0007": "Stay on the trail.",
+          "line_0008": "Checkpoint ahead.",
+          "line_0009": "Trail marker noted.",
+          "line_0010": "Warp activated.",
+          "line_0011": "Gate opens."
         }
       }
     }
   },
   "source_text": {
-    "Checkpoint ahead.": "sample.maps.map_9001.event_0001.line_0006",
-    "Gate opens.": "sample.maps.map_9001.event_0001.line_0008",
+    "Checkpoint ahead.": "sample.maps.map_9001.event_0001.line_0008",
+    "Gate opens.": "sample.maps.map_9001.event_0001.line_0011",
     "Please follow the path ahead.": "sample.maps.map_9001.event_0001.line_0002",
-    "Stay on the trail.": "sample.maps.map_9001.event_0001.line_0005",
-    "Take the left path": "sample.maps.map_9001.event_0001.line_0003",
-    "Take the right path": "sample.maps.map_9001.event_0001.line_0004",
-    "Warp activated.": "sample.maps.map_9001.event_0001.line_0007",
+    "Stay on the trail.": "sample.maps.map_9001.event_0001.line_0007",
+    "Take the left path": "sample.maps.map_9001.event_0001.line_0005",
+    "Take the right path": "sample.maps.map_9001.event_0001.line_0006",
+    "Trail marker noted.": "sample.maps.map_9001.event_0001.line_0009",
+    "Warp activated.": "sample.maps.map_9001.event_0001.line_0010",
     "Welcome to the area.": "sample.maps.map_9001.event_0001.line_0001"
   }
 }

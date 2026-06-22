@@ -67,4 +67,33 @@ class LocalIntegrationTest < KotobaTestCase
     catalog = KotobaTools::CatalogTools.extract_pbs("pokemon", pokemon)
     assert(!catalog["data"]["pokemon"].empty?)
   end
+
+  def test_local_map_sample_set_has_no_extractable_text_gaps
+    path = LocalFixtureConfig.game_path("essentials_bes_sample")
+    return unless path && File.directory?(path)
+
+    require "catalog_tools"
+    require "rgss_rxdata_stubs"
+    map_paths = [File.join(path, "Data", "Map001.rxdata")]
+    map_paths.each do |map_path|
+      next unless File.file?(map_path)
+      map = Marshal.load(File.binread(map_path))
+      next unless map && map.events
+      map.events.each do |_, event|
+        next unless event && event.pages
+        event.pages.each do |page|
+          next unless page && page.list
+          page.list.each do |command|
+            next unless command
+            extracted = KotobaTools::CatalogTools.extract_event_command_text(command)
+            next unless extracted.empty?
+            params = command.parameters || []
+            next unless params.any? { |param| param.is_a?(String) && param.to_s.strip != "" }
+            next if [111, 118, 119, 204, 231].include?(command.code)
+            flunk("unextracted text in command #{command.code}: #{params.inspect}")
+          end
+        end
+      end
+    end
+  end
 end

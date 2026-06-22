@@ -1,0 +1,12 @@
+# Generic PBS excerpt for migration QA.
+[GUIDE]
+Name=Guide
+InternalName=GUIDE
+
+[SCOUT]
+Name=Scout
+InternalName=SCOUT
+
+[RANGER]
+Name=Ranger
+InternalName=RANGER

@@ -1,0 +1,15 @@
+{
+  "data": {
+    "trainer_types": {
+      "guide": {
+        "name": "Guide"
+      },
+      "ranger": {
+        "name": "Ranger"
+      },
+      "scout": {
+        "name": "Scout"
+      }
+    }
+  }
+}

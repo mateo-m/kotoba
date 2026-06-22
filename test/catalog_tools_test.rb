@@ -135,10 +135,12 @@ class CatalogToolsTest < KotobaTestCase
     assert_equal("Hello there.", commands[0]["lines"][0])
     assert_equal("Welcome to the shop.", commands[1]["lines"][0])
     assert_equal(["Option A", "Option B"], commands[2]["lines"])
-    assert_equal(["Check the path ahead."], commands[3]["lines"])
-    assert_equal(["Checkpoint ahead."], commands[4]["lines"])
-    assert_equal(["Warp engaged."], commands[5]["lines"])
-    assert_equal(["Gate opens."], commands[6]["lines"])
+    assert_equal(["Option A"], commands[3]["lines"])
+    assert_equal(["Check the path ahead."], commands[4]["lines"])
+    assert_equal(["Checkpoint ahead."], commands[5]["lines"])
+    assert_equal(["Trail marker noted."], commands[6]["lines"])
+    assert_equal(["Warp engaged."], commands[7]["lines"])
+    assert_equal(["Gate opens."], commands[8]["lines"])
   ensure
     File.delete(path) if path && File.exist?(path)
   end
@@ -150,9 +152,11 @@ class CatalogToolsTest < KotobaTestCase
     assert_equal("maps.maps.map_0001.event_0001.line_0001", catalog["source_text"]["Hello there."])
     assert_equal("Hello there.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0001"])
     assert_equal("Option A", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0003"])
-    assert_equal("Check the path ahead.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0005"])
-    assert_equal("Checkpoint ahead.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0006"])
-    assert_equal("Gate opens.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0008"])
+    assert_equal("Option A", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0005"])
+    assert_equal("Check the path ahead.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0006"])
+    assert_equal("Checkpoint ahead.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0007"])
+    assert_equal("Trail marker noted.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0008"])
+    assert_equal("Gate opens.", catalog["maps"]["maps"]["map_0001"]["event_0001"]["line_0010"])
   ensure
     File.delete(path) if path && File.exist?(path)
   end
@@ -215,6 +219,52 @@ class CatalogToolsTest < KotobaTestCase
     assert_equal("Take this map.", scout["reg_speech"])
   ensure
     File.delete(path) if path && File.exist?(path)
+  end
+
+  def test_extract_pbs_trainer_types_sections_extract_names
+    path = File.join(File.dirname(__FILE__), "tmp_trainer_types.txt")
+    File.open(path, "wb") do |file|
+      file.write("[GUIDE]\n")
+      file.write("Name=Guide\n")
+      file.write("InternalName=GUIDE\n")
+    end
+
+    catalog = KotobaTools::CatalogTools.extract_pbs("trainer_types", path)
+
+    assert_equal("Guide", catalog["data"]["trainer_types"]["guide"]["name"])
+  ensure
+    File.delete(path) if path && File.exist?(path)
+  end
+
+  def test_extract_pbs_map_metadata_sections_extract_names
+    path = File.join(File.dirname(__FILE__), "tmp_map_metadata.txt")
+    File.open(path, "wb") do |file|
+      file.write("[001]\n")
+      file.write("Name=Town Square\n")
+    end
+
+    catalog = KotobaTools::CatalogTools.extract_pbs("map_metadata", path)
+
+    assert_equal("Town Square", catalog["data"]["map_metadata"]["001"]["name"])
+  ensure
+    File.delete(path) if path && File.exist?(path)
+  end
+
+  def test_extract_event_command_text_handles_nested_choice_arrays
+    require File.expand_path(File.join(File.dirname(__FILE__), "..", "tools", "rgss_rxdata_stubs"))
+    command = RPG::EventCommand.new(102, 0, [["Yes", "No"], 2])
+    lines = KotobaTools::CatalogTools.extract_event_command_text(command)
+
+    assert_equal(["Yes", "No"], lines)
+  end
+
+  def test_extract_event_command_text_handles_choice_branch_and_comment_more
+    require File.expand_path(File.join(File.dirname(__FILE__), "..", "tools", "rgss_rxdata_stubs"))
+    branch = RPG::EventCommand.new(402, 0, [0, "Yes"])
+    comment = RPG::EventCommand.new(408, 0, ["More notes."])
+
+    assert_equal(["Yes"], KotobaTools::CatalogTools.extract_event_command_text(branch))
+    assert_equal(["More notes."], KotobaTools::CatalogTools.extract_event_command_text(comment))
   end
 
   def test_import_essentials_pairs_builds_source_text_catalog
@@ -292,13 +342,15 @@ class CatalogToolsTest < KotobaTestCase
     path = File.join(File.dirname(__FILE__), filename)
     cmd1 = RPG::EventCommand.new(101, 0, ["", 0, 0, 2, "Hello there."])
     cmd2 = RPG::EventCommand.new(401, 0, ["Welcome to the shop."])
-    cmd3 = RPG::EventCommand.new(102, 0, [0, "Option A", "Option B"])
-    cmd4 = RPG::EventCommand.new(355, 0, ["pbMessage(_INTL(\"Check the path ahead.\"))"])
-    cmd5 = RPG::EventCommand.new(108, 0, ["Checkpoint ahead."])
-    cmd6 = RPG::EventCommand.new(356, 0, ["pbMessage(_ISPRINTF(\"Warp engaged.\"))"])
-    cmd7 = RPG::EventCommand.new(657, 0, ["pbMessage(_INTL('Gate opens.'))"])
+    cmd3 = RPG::EventCommand.new(102, 0, [["Option A", "Option B"], 2])
+    cmd4 = RPG::EventCommand.new(402, 0, [0, "Option A"])
+    cmd5 = RPG::EventCommand.new(355, 0, ["pbMessage(_INTL(\"Check the path ahead.\"))"])
+    cmd6 = RPG::EventCommand.new(108, 0, ["Checkpoint ahead."])
+    cmd7 = RPG::EventCommand.new(408, 0, ["Trail marker noted."])
+    cmd8 = RPG::EventCommand.new(356, 0, ["pbMessage(_ISPRINTF(\"Warp engaged.\"))"])
+    cmd9 = RPG::EventCommand.new(657, 0, ["pbMessage(_INTL('Gate opens.'))"])
     page = RPG::Event::Page.new
-    page.list = [cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7]
+    page.list = [cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7, cmd8, cmd9]
     event = RPG::Event.new
     event.id = 1
     event.name = "Guide"

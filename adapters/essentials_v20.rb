@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), "essentials_base")
 
 module Kotoba
   module Adapters
-    module EssentialsV19V20
+    module EssentialsV20
       def self.install(options)
         EssentialsBase.install_source_map(options)
         EssentialsBase.install_intl_globals(self, options)
@@ -19,6 +19,4 @@ module Kotoba
   end
 end
 
-Kotoba.register_adapter("essentials_v19_v20", Kotoba::Adapters::EssentialsV19V20)
-Kotoba.register_adapter("essentials_v19", Kotoba::Adapters::EssentialsV19V20)
-Kotoba.register_adapter("essentials_v20", Kotoba::Adapters::EssentialsV19V20)
+Kotoba.register_adapter("essentials_v20", Kotoba::Adapters::EssentialsV20)

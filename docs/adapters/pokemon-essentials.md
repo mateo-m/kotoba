@@ -9,7 +9,6 @@ Supported targets:
 - `essentials_v18`
 - `essentials_v19`
 - `essentials_v20`
-- `essentials_v19_v20`
 - `essentials_v21`
 - `essentials_bes`
 
@@ -28,7 +27,7 @@ Kotoba.use_adapter("essentials_v18", {
 })
 ```
 
-Use the adapter matching your Essentials version. For v19 and v20, prefer `essentials_v19` or `essentials_v20`; `essentials_v19_v20` remains available as the shared implementation alias.
+Use the adapter matching your Essentials version. `essentials_v19` and `essentials_v20` are separate modules with the same `_INTL` / `_ISPRINTF` bridge shape.
 
 ## Catalog For Legacy `_INTL`
 
