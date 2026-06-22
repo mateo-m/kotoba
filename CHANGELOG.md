@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.0 - 2026-06-22
+
+### Bug Fixes
+
+- Read kotoba version from VERSION file ([`e2136dd`](https://github.com/mateo-m/kotoba/commit/e2136ddfd1e1bdbdadb78e3e8a2988268319d7d2))
+
+### Chores
+
+- Remove duplicated title ([`04165d6`](https://github.com/mateo-m/kotoba/commit/04165d6ce1b6501fccca8c4905b8cae98651ce2e))
+
+### Features
+
+- Add spreadsheet handoff and human validation ([`d854613`](https://github.com/mateo-m/kotoba/commit/d854613571de32fc7abc4ea7cb4485255f3450fa))
+
 ## 0.1.0 - 2026-06-22
 
 ### Bug Fixes
