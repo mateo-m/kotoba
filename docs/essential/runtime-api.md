@@ -35,7 +35,7 @@ Missing translation fields:
 
 - `strict`: raise `Kotoba::MissingTranslationError` for missing keys.
 - `diagnostics`: append missing keys to `diagnostics_file`.
-- `diagnostics_file`: missing-key log path.
+- `diagnostics_file`: missing-key log path. Default: `kotoba_missing.log`.
 - `show_missing_keys`: render `"translation missing: key"`.
 - `missing_handler`: callable receiving `key, locale`.
 
@@ -54,7 +54,7 @@ Runtime limits and policies:
 Integration fields:
 
 - `global_helper`: installs `_T`. Default: `true`.
-- `i18n_alias`: installs `I18n = Kotoba` when no `I18n` constant exists.
+- `i18n_alias`: when `true`, sets `I18n = Kotoba` if no `I18n` constant exists yet (legacy script compatibility).
 - `file_loader`: callable receiving a path and returning file contents.
 
 ## Lifecycle
@@ -157,6 +157,13 @@ Global helper:
 
 ```ruby
 _T("menu.save")
+```
+
+Inline catalog markers in database or event text use the `kotoba:` prefix:
+
+```ruby
+Kotoba::Adapters::BareRGSS.translate_message("kotoba:menu.save", nil)
+# => "Save"
 ```
 
 Source-text mappings are looked up directly under the `source_text` catalog object:

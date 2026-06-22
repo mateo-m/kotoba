@@ -18,10 +18,10 @@ class BareRGSSAdapterTest < KotobaTestCase
     assert_equal("Save", Kotoba.t("menu.save"))
   end
 
-  def test_translate_message_resolves_i18n_marker
+  def test_translate_message_resolves_kotoba_marker
     Kotoba.load_hash("en", {"menu" => {"save" => "Save"}})
 
-    assert_equal("Save", Kotoba::Adapters::BareRGSS.translate_message("i18n:menu.save", nil))
+    assert_equal("Save", Kotoba::Adapters::BareRGSS.translate_message("kotoba:menu.save", nil))
     assert_equal("Plain text", Kotoba::Adapters::BareRGSS.translate_message("Plain text", nil))
   end
 
@@ -34,6 +34,6 @@ class BareRGSSAdapterTest < KotobaTestCase
       "install_global" => true
     })
 
-    assert_equal("Save", _KOTOBA_MESSAGE("i18n:menu.save", nil))
+    assert_equal("Save", _KOTOBA_MESSAGE("kotoba:menu.save", nil))
   end
 end

@@ -35,7 +35,7 @@ module Kotoba
       @fallbacks = {"default" => ["en"]}
       @strict = false
       @diagnostics = false
-      @diagnostics_file = "i18n_missing.log"
+      @diagnostics_file = "kotoba_missing.log"
       @show_missing_keys = false
       @global_helper = true
       @i18n_alias = false

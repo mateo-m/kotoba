@@ -27,7 +27,7 @@ Fixture provenance is under `test/fixtures/essentials/*/SOURCE`.
 
 ## What each adapter does
 
-**`bare_rgss`** loads configured catalogs and translates strings prefixed with `i18n:` through `Kotoba::Adapters::BareRGSS.translate_message`.
+**`bare_rgss`** loads configured catalogs and translates strings prefixed with `kotoba:` through `Kotoba::Adapters::BareRGSS.translate_message`.
 
 **`essentials_v16`–`essentials_v20`** bridge legacy `_INTL` and `_ISPRINTF` calls through `source_text` mappings. v19 and v20 are separate modules with the same bridge shape.
 

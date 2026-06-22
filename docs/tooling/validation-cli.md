@@ -47,8 +47,8 @@ The report includes `ok`, `error_count`, grouped error counts, and the raw error
 
 ```sh
 bin/ruby18 bin/kotoba schema catalog Locales/en.json
-bin/ruby18 bin/kotoba schema metadata i18n.metadata.json
-bin/ruby18 bin/kotoba schema validation i18n.validation.json
+bin/ruby18 bin/kotoba schema metadata metadata.json
+bin/ruby18 bin/kotoba schema validation validation.json
 ```
 
 Schemas live under `schemas/`.

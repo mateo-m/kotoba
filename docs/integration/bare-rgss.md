@@ -49,9 +49,9 @@ The exact folder names can change, but keep paths simple. Old RGSS Ruby is not a
 Create a script section near the top of your RPG Maker scripts:
 
 ```ruby
-I18N_ROOT = "."
+KOTOBA_ROOT = "."
 
-require File.join(I18N_ROOT, "kotoba", "core")
+require File.join(KOTOBA_ROOT, "kotoba", "core")
 
 Kotoba.configure do |config|
   config.default_locale = "en"
@@ -149,9 +149,9 @@ Kotoba.configure do |config|
 end
 ```
 
-## Optional: `i18n:` Prefix Adapter
+## Optional: `kotoba:` prefix adapter
 
-If you want database or event text to carry translation keys inline (`"i18n:menu.save"`) instead of calling `_T` in script, copy the optional bare adapter too:
+If you want database or event text to carry translation keys inline (`"kotoba:menu.save"`) instead of calling `_T` in script, copy the optional bare adapter too:
 
 ```text
   adapters/
@@ -162,8 +162,10 @@ If you want database or event text to carry translation keys inline (`"i18n:menu
 Boot with:
 
 ```ruby
-require File.join(I18N_ROOT, "kotoba", "core")
-require File.join(I18N_ROOT, "adapters", "bare_rgss")
+KOTOBA_ROOT = "."
+
+require File.join(KOTOBA_ROOT, "kotoba", "core")
+require File.join(KOTOBA_ROOT, "adapters", "bare_rgss")
 
 Kotoba.configure do |config|
   config.default_locale = "en"
@@ -176,17 +178,17 @@ end
 Kotoba.use_adapter("bare_rgss", {"load" => true})
 ```
 
-Strings prefixed with `i18n:` translate through the adapter; plain strings pass through unchanged:
+Strings prefixed with `kotoba:` translate through the adapter; plain strings pass through unchanged:
 
 ```ruby
-Kotoba::Adapters::BareRGSS.translate_message("i18n:menu.save", nil)
+Kotoba::Adapters::BareRGSS.translate_message("kotoba:menu.save", nil)
 # => "Save"
 
 Kotoba::Adapters::BareRGSS.translate_message("Save", nil)
 # => "Save"
 ```
 
-Most bare RGSS projects do not need this. Prefer `_T("menu.save")` in script unless you already store `i18n:` markers in data.
+Most bare RGSS projects do not need this. Prefer `_T("menu.save")` in script unless you already store `kotoba:` markers in data.
 
 ## Validate Before Copying Into The Game
 

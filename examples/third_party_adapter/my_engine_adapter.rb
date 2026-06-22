@@ -16,8 +16,8 @@ module Kotoba
       end
 
       def self.translate_text(text, variables)
-        if text.to_s[0, 5] == "i18n:"
-          return Kotoba.t(text.to_s[5, text.to_s.length - 5], variables || {})
+        if text.to_s[0, 7] == "kotoba:"
+          return Kotoba.t(text.to_s[7, text.to_s.length - 7], variables || {})
         end
         text
       end

@@ -13,7 +13,7 @@ install(options)
 Register it by name:
 
 ```ruby
-Kotoba.register_adapter("my_engine", MyEngineI18nAdapter)
+Kotoba.register_adapter("my_engine", Kotoba::Adapters::MyEngine)
 ```
 
 Install it later:
@@ -47,16 +47,16 @@ module Kotoba
       end
 
       def self.translate_text(text, variables)
-        if text.to_s[0, 5] == "i18n:"
-          return Kotoba.t(text.to_s[5, text.to_s.length - 5], variables || {})
+        if text.to_s[0, 7] == "kotoba:"
+          return Kotoba.t(text.to_s[7, text.to_s.length - 7], variables || {})
         end
         text
       end
 
       def self.install_global_helper
-        return if Object.method_defined?(:_MYI18N)
+        return if Object.method_defined?(:_MY_KOTOBA)
         Object.class_eval do
-          def _MYI18N(key, variables = nil, options = nil)
+          def _MY_KOTOBA(key, variables = nil, options = nil)
             Kotoba.t(key, variables || {}, options || {})
           end
         end
@@ -84,7 +84,7 @@ Kotoba.use_adapter("my_engine", {
   "install_global" => true
 })
 
-_MYI18N("menu.save")
+_MY_KOTOBA("menu.save")
 ```
 
 ## Source-Text Bridge Example
