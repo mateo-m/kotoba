@@ -39,6 +39,24 @@ class RealworldFixtureTest < RGSSI18nTestCase
     assert_equal(expected("moves.extracted.json"), actual)
   end
 
+  def test_pbs_items_extract_matches_golden
+    actual = RGSSI18nTools::CatalogTools.extract_pbs(
+      "items",
+      File.join(ROOT, "pbs", "items.excerpt.txt")
+    )
+
+    assert_equal(expected("items.extracted.json"), actual)
+  end
+
+  def test_pbs_abilities_extract_matches_golden
+    actual = RGSSI18nTools::CatalogTools.extract_pbs(
+      "abilities",
+      File.join(ROOT, "pbs", "abilities.excerpt.txt")
+    )
+
+    assert_equal(expected("abilities.extracted.json"), actual)
+  end
+
   def test_text_english_import_matches_golden
     actual = RGSSI18nTools::CatalogTools.import_text_english(
       File.join(ROOT, "text_english", "dialogue.excerpt.txt"),

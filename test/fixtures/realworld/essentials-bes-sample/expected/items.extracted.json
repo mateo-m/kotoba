@@ -1,0 +1,21 @@
+{
+  "data": {
+    "items": {
+      "antidote": {
+        "description": "Cures poison.",
+        "name": "Antidote",
+        "name_plural": "Antidotes"
+      },
+      "potion": {
+        "description": "Restores 20 HP.",
+        "name": "Potion",
+        "name_plural": "Potions"
+      },
+      "repel": {
+        "description": "Repels weak wild Pokemon.",
+        "name": "Repel",
+        "name_plural": "Repels"
+      }
+    }
+  }
+}

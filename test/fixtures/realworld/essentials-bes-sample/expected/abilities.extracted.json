@@ -1,0 +1,18 @@
+{
+  "data": {
+    "abilities": {
+      "blaze": {
+        "description": "Powers up Fire moves in a pinch.",
+        "name": "Blaze"
+      },
+      "overgrow": {
+        "description": "Powers up Grass moves in a pinch.",
+        "name": "Overgrow"
+      },
+      "torrent": {
+        "description": "Powers up Water moves in a pinch.",
+        "name": "Torrent"
+      }
+    }
+  }
+}

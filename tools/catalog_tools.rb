@@ -82,6 +82,11 @@ module RGSSI18nTools
       "script_texts"
     ]
     MESSAGE_SECTION_NAMES_V18 = MESSAGE_SECTION_NAMES[0, 23] + ["trainer_lose_text", "script_texts"]
+    PBS_PROFILES = {
+      "moves" => {"name" => 2, "description" => -1},
+      "items" => {"name" => 2, "name_plural" => 3, "description" => 6},
+      "abilities" => {"name" => 2, "description" => 3}
+    }
 
     def self.load_json(path)
       RGSSI18n::JSON.parse(File.open(path, "rb") { |file| file.read }, {
@@ -178,6 +183,7 @@ module RGSSI18nTools
     end
 
     def self.extract_pbs(namespace, path)
+      profile = PBS_PROFILES[namespace.to_s] || PBS_PROFILES["moves"]
       entries = {}
       File.open(path, "rb") do |file|
         file.each_line do |line|
@@ -186,7 +192,7 @@ module RGSSI18nTools
           fields = split_csv_line(row)
           next if fields.length < 2
           id = normalize_identifier(fields[1] || fields[0])
-          entries[id] = pbs_entry(fields)
+          entries[id] = pbs_entry(fields, profile)
         end
       end
       {"data" => {namespace.to_s => entries}}
@@ -532,11 +538,19 @@ module RGSSI18nTools
       text
     end
 
-    def self.pbs_entry(fields)
+    def self.pbs_entry(fields, profile)
       entry = {}
-      entry["name"] = fields[2] if fields[2] && fields[2] != ""
-      entry["description"] = fields[fields.length - 1] if fields.length > 3 && fields[fields.length - 1] != ""
+      profile.each do |key, index|
+        value = pbs_field(fields, index)
+        entry[key] = value if value && value != ""
+      end
       entry
+    end
+
+    def self.pbs_field(fields, index)
+      position = index < 0 ? fields.length + index : index
+      return nil if position < 0 || position >= fields.length
+      fields[position]
     end
 
     def self.split_csv_line(line)

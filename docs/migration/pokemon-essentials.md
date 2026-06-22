@@ -76,6 +76,8 @@ Common PBS-style CSV files can be extracted into `data.<namespace>.<id>` catalog
 
 ```sh
 bin/ruby18 bin/rgss-i18n pbs-extract moves PBS/moves.txt Locales/en.moves.json
+bin/ruby18 bin/rgss-i18n pbs-extract items PBS/items.txt Locales/en.items.json
+bin/ruby18 bin/rgss-i18n pbs-extract abilities PBS/abilities.txt Locales/en.abilities.json
 ```
 
 BES and v21-style projects may also ship `Text_english_core/` and `Text_english_game/` directories. Convert them with:

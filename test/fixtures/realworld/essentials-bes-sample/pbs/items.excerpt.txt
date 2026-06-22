@@ -1,0 +1,4 @@
+# Generic PBS excerpt for migration QA.
+1,POTION,Potion,Potions,1,200,"Restores 20 HP.",2,0,0,
+2,ANTIDOTE,Antidote,Antidotes,1,100,"Cures poison.",2,0,0,
+3,REPEL,Repel,Repels,1,400,"Repels weak wild Pokemon.",2,0,0,

@@ -79,6 +79,35 @@ class CatalogToolsTest < RGSSI18nTestCase
     File.delete(path) if path && File.exist?(path)
   end
 
+  def test_extract_pbs_items_profile_includes_plural_name
+    path = File.join(File.dirname(__FILE__), "tmp_items.txt")
+    File.open(path, "wb") do |file|
+      file.write("1,POTION,Potion,Potions,1,200,\"Restores 20 HP.\",2,0,0,\n")
+    end
+
+    catalog = RGSSI18nTools::CatalogTools.extract_pbs("items", path)
+
+    assert_equal("Potion", catalog["data"]["items"]["potion"]["name"])
+    assert_equal("Potions", catalog["data"]["items"]["potion"]["name_plural"])
+    assert_equal("Restores 20 HP.", catalog["data"]["items"]["potion"]["description"])
+  ensure
+    File.delete(path) if path && File.exist?(path)
+  end
+
+  def test_extract_pbs_abilities_profile_extracts_description
+    path = File.join(File.dirname(__FILE__), "tmp_abilities.txt")
+    File.open(path, "wb") do |file|
+      file.write("1,OVERGROW,Overgrow,\"Powers up Grass moves in a pinch.\"\n")
+    end
+
+    catalog = RGSSI18nTools::CatalogTools.extract_pbs("abilities", path)
+
+    assert_equal("Overgrow", catalog["data"]["abilities"]["overgrow"]["name"])
+    assert_equal("Powers up Grass moves in a pinch.", catalog["data"]["abilities"]["overgrow"]["description"])
+  ensure
+    File.delete(path) if path && File.exist?(path)
+  end
+
   def test_import_text_english_builds_sectioned_source_text_catalog
     path = File.join(File.dirname(__FILE__), "fixtures", "text_english", "sample.txt")
     catalog = RGSSI18nTools::CatalogTools.import_text_english(path, "text")

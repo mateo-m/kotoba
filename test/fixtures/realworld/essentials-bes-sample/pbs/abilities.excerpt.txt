@@ -1,0 +1,4 @@
+# Generic PBS excerpt for migration QA.
+1,OVERGROW,Overgrow,"Powers up Grass moves in a pinch."
+2,BLAZE,Blaze,"Powers up Fire moves in a pinch."
+3,TORRENT,Torrent,"Powers up Water moves in a pinch."

@@ -75,13 +75,15 @@ Pseudolocalization preserves placeholders and RPG Maker control codes. Use it to
 
 ## PBS Extraction
 
-Extract common text from PBS-style CSV files:
+Extract common text from PBS-style CSV files. Supported namespaces: `moves`, `items`, and `abilities`.
 
 ```sh
 bin/ruby18 bin/rgss-i18n pbs-extract moves PBS/moves.txt Locales/en.moves.json
+bin/ruby18 bin/rgss-i18n pbs-extract items PBS/items.txt Locales/en.items.json
+bin/ruby18 bin/rgss-i18n pbs-extract abilities PBS/abilities.txt Locales/en.abilities.json
 ```
 
-The output uses the `data.<namespace>.<id>` shape used by adapter helpers.
+The output uses the `data.<namespace>.<id>` shape used by adapter helpers. Items include `name`, `name_plural`, and `description`. Abilities include `name` and `description`.
 
 ## messages.dat Extraction
 
