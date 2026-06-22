@@ -21,7 +21,7 @@ Checks:
 - valid string leaves
 - message syntax
 
-## Cross-Locale Validation
+## Cross-locale validation
 
 ```sh
 bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
@@ -35,15 +35,38 @@ Checks:
 
 Use the source locale as the first argument.
 
+Plain-language output for translators and hobby developers:
+
+```sh
+bin/ruby18 bin/kotoba validate --human Locales/en.json Locales/fr.json
+```
+
 Write a JSON report:
 
 ```sh
 bin/ruby18 bin/kotoba validate-report Locales/en.json Locales/fr.json build/validation-report.json
+bin/ruby18 bin/kotoba validate-report --human Locales/en.json Locales/fr.json build/validation-report.json
 ```
 
 The report includes `ok`, `error_count`, grouped error counts, and the raw errors.
 
-## Schema Validation
+## Spreadsheet export and import
+
+Export a translator-friendly CSV with `key`, `english`, `translation`, `context`, and `notes` columns:
+
+```sh
+bin/ruby18 bin/kotoba spreadsheet-export Locales/en.json build/translate.csv i18n.metadata.json
+```
+
+Import a completed spreadsheet back to nested JSON:
+
+```sh
+bin/ruby18 bin/kotoba spreadsheet-import Locales/en.json build/translate.csv Locales/fr.json
+```
+
+See [Spreadsheet handoff](/translators/handoff) for the full volunteer workflow.
+
+## Schema validation
 
 ```sh
 bin/ruby18 bin/kotoba schema catalog Locales/en.json

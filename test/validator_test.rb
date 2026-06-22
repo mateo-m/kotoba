@@ -54,6 +54,24 @@ class ValidatorTest < KotobaTestCase
     assert(instance.errors.join("\n").index("control-code mismatch battle.colored"))
   end
 
+  def test_validate_human_mode_reports_plain_language_errors
+    instance = validator
+
+    assert_equal(false, instance.validate(fixture("en.json"), [fixture("fr_missing.json")], true))
+    message = instance.errors.join("\n")
+    assert(message.index("still needs a translation"))
+    assert(message.index("English:"))
+  end
+
+  def test_validate_human_mode_reports_placeholder_guidance
+    instance = validator
+
+    assert_equal(false, instance.validate(fixture("en.json"), [fixture("fr_placeholder_bad.json")], true))
+    message = instance.errors.join("\n")
+    assert(message.index("keep the same {placeholders}"))
+    assert(message.index("{pokemon}"))
+  end
+
   def test_report_groups_validation_errors
     instance = validator
     instance.validate(fixture("en.json"), [fixture("fr_missing.json")])

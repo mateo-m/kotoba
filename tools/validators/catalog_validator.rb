@@ -52,7 +52,7 @@ module KotobaTools
       false
     end
 
-    def validate(source_path, locale_paths)
+    def validate(source_path, locale_paths, human = false)
       source = load_catalog(source_path)
       source_messages = flatten_catalog(source)
       compile_messages(source, [])
@@ -62,7 +62,7 @@ module KotobaTools
         locale = load_catalog(path)
         compile_messages(locale, [])
         messages = flatten_catalog(locale)
-        ok = false unless validate_locale(path, source_messages, messages)
+        ok = false unless validate_locale(path, source_messages, messages, human)
       end
 
       ok
@@ -182,26 +182,68 @@ module KotobaTools
       end
     end
 
-    def validate_locale(path, source_messages, messages)
+    def validate_locale(path, source_messages, messages, human)
       ok = true
       source_messages.each do |key, source_message|
         unless messages.has_key?(key)
-          @errors << path + ": missing key " + key
+          if human
+            @errors << human_missing_key(path, key, source_message)
+          else
+            @errors << path + ": missing key " + key
+          end
           ok = false
           next
         end
 
         target_message = messages[key]
         if placeholders(source_message) != placeholders(target_message)
-          @errors << path + ": placeholder mismatch " + key
+          if human
+            @errors << human_placeholder_mismatch(path, key, source_message, target_message)
+          else
+            @errors << path + ": placeholder mismatch " + key
+          end
           ok = false
         end
         if control_codes(source_message) != control_codes(target_message)
-          @errors << path + ": control-code mismatch " + key
+          if human
+            @errors << human_control_code_mismatch(path, key, source_message, target_message)
+          else
+            @errors << path + ": control-code mismatch " + key
+          end
           ok = false
         end
       end
       ok
+    end
+
+    def human_missing_key(path, key, source_message)
+      "In " + File.basename(path) + ": this line still needs a translation (key: " + key + "). English: \"" + truncate_for_human(source_message) + "\""
+    end
+
+    def human_placeholder_mismatch(path, key, source_message, target_message)
+      expected = placeholders(source_message)
+      actual = placeholders(target_message)
+      missing = expected - actual
+      extra = actual - expected
+      parts = ["In " + File.basename(path) + ": keep the same {placeholders} as English for \"" + truncate_for_human(source_message) + "\" (key: " + key + ")."]
+      parts << "Missing: " + format_placeholder_list(missing) + "." unless missing.empty?
+      parts << "Unexpected: " + format_placeholder_list(extra) + "." unless extra.empty?
+      parts.join(" ")
+    end
+
+    def human_control_code_mismatch(path, key, source_message, _target_message)
+      codes = control_codes(source_message)
+      "In " + File.basename(path) + ": copy the RPG Maker color codes from English for \"" + truncate_for_human(source_message) + "\" (key: " + key + "). Expected codes: " + codes.join(", ")
+    end
+
+    def truncate_for_human(message)
+      text = message.to_s
+      return text if text.length <= 80
+      text[0, 77] + "..."
+    end
+
+    def format_placeholder_list(values)
+      values.collect { |value| "{" + value + "}" }.join(", ")
     end
 
     def placeholders(message)

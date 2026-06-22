@@ -67,6 +67,14 @@ export default defineConfig({
         ],
       },
       {
+        text: "Translators",
+        collapsed: false,
+        items: [
+          { text: "For Translators", link: "/translators/" },
+          { text: "Spreadsheet Handoff", link: "/translators/handoff" },
+        ],
+      },
+      {
         text: "Reference",
         collapsed: true,
         items: [

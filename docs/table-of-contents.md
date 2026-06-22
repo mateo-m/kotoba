@@ -10,6 +10,8 @@ The sidebar lists every page. Use this one as a map.
 | --- | --- |
 | Drop Kotoba into a shipped game | [Installing in a game](/essential/installation) |
 | Try the runtime from a git clone | [Quick Start](/essential/quick-start) |
+| Send strings to a volunteer translator | [Spreadsheet handoff](/translators/handoff) |
+| Translate lines yourself (no JSON) | [For translators](/translators/) |
 | Move an Essentials project off `_INTL` gradually | [Essentials migration](/integration/pokemon-essentials-migration) |
 | Work on Kotoba itself | [CI and releases](/contributors/ci) |
 
@@ -35,12 +37,19 @@ Opt-in adapters for bare RGSS, Pokemon Essentials, and custom kits:
 
 ## Tooling
 
-Validate catalogs, import game data, and hand strings to a TMS:
+Validate catalogs, import game data, and hand strings to a TMS or spreadsheet:
 
 - [Overview](/tooling/) — workflow and format guides
+- [Spreadsheet handoff](/translators/handoff) — CSV export/import for volunteers
+- [For translators](/translators/) — rules to share with non-technical volunteers
 - [Validation CLI](/tooling/validation-cli) — load tests, imports, and cross-locale checks
 - [TMS workflows](/tooling/tms) — nested JSON as source of truth
 - [Crowdin](/tooling/crowdin) · [SimpleLocalize](/tooling/simplelocalize) · [Tolgee](/tooling/tolgee) · [XLIFF and PO](/tooling/xliff-po)
+
+## Translators
+
+- [For translators](/translators/) — what to edit in the spreadsheet
+- [Spreadsheet handoff](/translators/handoff) — developer workflow for Essentials and fan projects
 
 ## Reference
 

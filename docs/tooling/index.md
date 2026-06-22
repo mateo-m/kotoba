@@ -19,6 +19,7 @@ bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 
 | Guide | Use when |
 | --- | --- |
+| [Spreadsheet handoff](/translators/handoff) | Volunteer translators and Google Sheets workflows |
 | [Validation CLI](/tooling/validation-cli) | Load tests, schema checks, PBS imports, map extraction |
 | [TMS workflows](/tooling/tms) | General interchange rules and round-trips |
 | [Crowdin](/tooling/crowdin) | Crowdin JSON |

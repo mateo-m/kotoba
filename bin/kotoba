@@ -11,8 +11,8 @@ require "catalog_tools"
 def usage
   puts "Usage:"
   puts "  bin/kotoba load-test FILE..."
-  puts "  bin/kotoba validate SOURCE_FILE LOCALE_FILE..."
-  puts "  bin/kotoba validate-report SOURCE_FILE LOCALE_FILE... OUTPUT_JSON"
+  puts "  bin/kotoba validate [--human] SOURCE_FILE LOCALE_FILE..."
+  puts "  bin/kotoba validate-report [--human] SOURCE_FILE LOCALE_FILE... OUTPUT_JSON"
   puts "  bin/kotoba schema catalog|metadata|validation FILE"
   puts "  bin/kotoba pbs-extract NAMESPACE INPUT_PBS OUTPUT_JSON"
   puts "  bin/kotoba messages-dat-extract INPUT_DAT OUTPUT_JSON"
@@ -23,10 +23,20 @@ def usage
   puts "  bin/kotoba map-rxdata-import INPUT_RXDATA NAMESPACE OUTPUT_JSON"
   puts "  bin/kotoba flat-export INPUT_JSON OUTPUT_JSON"
   puts "  bin/kotoba flat-import INPUT_JSON OUTPUT_JSON"
+  puts "  bin/kotoba spreadsheet-export SOURCE_JSON OUTPUT_CSV [METADATA_JSON] [LOCALE_JSON]"
+  puts "  bin/kotoba spreadsheet-import SOURCE_JSON INPUT_CSV OUTPUT_JSON"
   puts "  bin/kotoba pseudo INPUT_JSON OUTPUT_JSON"
   puts "  bin/kotoba tms-export PROFILE LOCALE INPUT_JSON OUTPUT_JSON"
   puts "  bin/kotoba tms-import PROFILE LOCALE INPUT_JSON OUTPUT_JSON"
   puts "  bin/kotoba handoff OUTPUT_DIR LOCALE SOURCE_JSON [METADATA_JSON]"
+end
+
+def human_flag?
+  if ARGV[0] == "--human"
+    ARGV.shift
+    return true
+  end
+  false
 end
 
 command = ARGV.shift
@@ -36,14 +46,16 @@ ok = false
 if command == "load-test"
   ok = ARGV.length > 0 && validator.load_test(ARGV)
 elsif command == "validate"
+  human = human_flag?
   source = ARGV.shift
-  ok = source && ARGV.length > 0 && validator.validate(source, ARGV)
+  ok = source && ARGV.length > 0 && validator.validate(source, ARGV, human)
 elsif command == "validate-report"
+  human = human_flag?
   output = ARGV.pop
   source = ARGV.shift
   ok = output && source && ARGV.length > 0
   if ok
-    validator.validate(source, ARGV)
+    validator.validate(source, ARGV, human)
     KotobaTools::CatalogTools.write_json(output, validator.report)
     ok = validator.errors.empty?
   end
@@ -106,6 +118,40 @@ elsif command == "flat-import"
   output = ARGV.shift
   ok = input && output
   KotobaTools::CatalogTools.write_json(output, KotobaTools::CatalogTools.unflatten(KotobaTools::CatalogTools.load_json(input))) if ok
+elsif command == "spreadsheet-export"
+  source = ARGV.shift
+  output = ARGV.shift
+  metadata = ARGV[0] && File.file?(ARGV[0]) ? ARGV.shift : nil
+  locale = ARGV[0] && File.file?(ARGV[0]) ? ARGV.shift : nil
+  ok = source && output
+  if ok
+    begin
+      source_catalog = KotobaTools::CatalogTools.load_json(source)
+      locale_catalog = locale ? KotobaTools::CatalogTools.load_json(locale) : nil
+      metadata_catalog = metadata ? KotobaTools::CatalogTools.load_json(metadata) : nil
+      File.open(output, "wb") do |file|
+        file.write(KotobaTools::CatalogTools.spreadsheet_export(source_catalog, locale_catalog, metadata_catalog))
+      end
+    rescue ArgumentError => error
+      validator.errors << error.message
+      ok = false
+    end
+  end
+elsif command == "spreadsheet-import"
+  source = ARGV.shift
+  input = ARGV.shift
+  output = ARGV.shift
+  ok = source && input && output
+  if ok
+    begin
+      source_catalog = KotobaTools::CatalogTools.load_json(source)
+      csv_source = File.open(input, "rb") { |file| file.read }
+      KotobaTools::CatalogTools.write_json(output, KotobaTools::CatalogTools.spreadsheet_import(source_catalog, csv_source))
+    rescue ArgumentError => error
+      validator.errors << error.message
+      ok = false
+    end
+  end
 elsif command == "pseudo"
   input = ARGV.shift
   output = ARGV.shift

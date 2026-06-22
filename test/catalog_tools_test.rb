@@ -319,9 +319,41 @@ class CatalogToolsTest < KotobaTestCase
     assert(File.exist?(File.join(output, "source.en.json")))
     assert(File.exist?(File.join(output, "flat.en.json")))
     assert(File.exist?(File.join(output, "pseudo.en.json")))
+    assert(File.exist?(File.join(output, "spreadsheet.en.csv")))
   ensure
     File.delete(source) if source && File.exist?(source)
     FileUtils.rm_rf(output) if output
+  end
+
+  def test_spreadsheet_export_and_import_round_trip
+    metadata = {
+      "battle.wild_appeared" => {
+        "context" => "Wild battle intro",
+        "description" => "Shown when a wild Pokemon appears."
+      }
+    }
+    locale = {
+      "battle" => {
+        "wild_appeared" => "Un {pokemon} sauvage apparait !"
+      }
+    }
+    csv = KotobaTools::CatalogTools.spreadsheet_export(sample_catalog, locale, metadata)
+    imported = KotobaTools::CatalogTools.spreadsheet_import(sample_catalog, csv)
+
+    assert(csv.index("key,english,translation,context,notes"))
+    assert(csv.index("Wild battle intro"))
+    assert_equal("Un {pokemon} sauvage apparait !", imported["battle"]["wild_appeared"])
+  end
+
+  def test_spreadsheet_import_rejects_unknown_keys
+    csv = "key,english,translation,context,notes\nmissing.key,Hello,Hola,,\n"
+    raised = false
+    begin
+      KotobaTools::CatalogTools.spreadsheet_import(sample_catalog, csv)
+    rescue ArgumentError
+      raised = true
+    end
+    assert_equal(true, raised)
   end
 
   def write_messages_dat_fixture
