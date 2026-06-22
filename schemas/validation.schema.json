@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/rgss-i18n/validation.schema.json",
+  "title": "RGSS i18n validation config",
+  "type": "object",
+  "properties": {
+    "source_locale": {
+      "type": "string"
+    },
+    "locales": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "fallbacks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "control_codes": {
+      "type": "string",
+      "enum": ["ignore", "warn", "error"]
+    }
+  },
+  "additionalProperties": false
+}

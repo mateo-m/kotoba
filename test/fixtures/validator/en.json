@@ -1,0 +1,6 @@
+{
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!",
+    "colored": "\\c[2]{name}\\c[0]"
+  }
+}

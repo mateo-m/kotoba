@@ -1,0 +1,6 @@
+{
+  "battle": {
+    "wild_appeared": "Un {pokemon} sauvage apparait!",
+    "colored": "{name}"
+  }
+}

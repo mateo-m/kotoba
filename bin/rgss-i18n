@@ -1,0 +1,129 @@
+#!/usr/bin/env ruby
+
+tool_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "tools", "validators"))
+$LOAD_PATH.unshift(tool_path) unless $LOAD_PATH.include?(tool_path)
+tool_root = File.expand_path(File.join(File.dirname(__FILE__), "..", "tools"))
+$LOAD_PATH.unshift(tool_root) unless $LOAD_PATH.include?(tool_root)
+
+require "catalog_validator"
+require "catalog_tools"
+
+def usage
+  puts "Usage:"
+  puts "  bin/rgss-i18n load-test FILE..."
+  puts "  bin/rgss-i18n validate SOURCE_FILE LOCALE_FILE..."
+  puts "  bin/rgss-i18n validate-report SOURCE_FILE LOCALE_FILE... OUTPUT_JSON"
+  puts "  bin/rgss-i18n schema catalog|metadata|validation FILE"
+  puts "  bin/rgss-i18n pbs-extract NAMESPACE INPUT_PBS OUTPUT_JSON"
+  puts "  bin/rgss-i18n messages-dat-extract INPUT_DAT OUTPUT_JSON"
+  puts "  bin/rgss-i18n messages-dat-migrate INPUT_DAT NAMESPACE OUTPUT_JSON"
+  puts "  bin/rgss-i18n essentials-pairs-import INPUT_TXT NAMESPACE OUTPUT_JSON"
+  puts "  bin/rgss-i18n flat-export INPUT_JSON OUTPUT_JSON"
+  puts "  bin/rgss-i18n flat-import INPUT_JSON OUTPUT_JSON"
+  puts "  bin/rgss-i18n pseudo INPUT_JSON OUTPUT_JSON"
+  puts "  bin/rgss-i18n tms-export PROFILE LOCALE INPUT_JSON OUTPUT_JSON"
+  puts "  bin/rgss-i18n tms-import PROFILE LOCALE INPUT_JSON OUTPUT_JSON"
+  puts "  bin/rgss-i18n handoff OUTPUT_DIR LOCALE SOURCE_JSON [METADATA_JSON]"
+end
+
+command = ARGV.shift
+validator = RGSSI18nTools::CatalogValidator.new
+ok = false
+
+if command == "load-test"
+  ok = ARGV.length > 0 && validator.load_test(ARGV)
+elsif command == "validate"
+  source = ARGV.shift
+  ok = source && ARGV.length > 0 && validator.validate(source, ARGV)
+elsif command == "validate-report"
+  output = ARGV.pop
+  source = ARGV.shift
+  ok = output && source && ARGV.length > 0
+  if ok
+    validator.validate(source, ARGV)
+    RGSSI18nTools::CatalogTools.write_json(output, validator.report)
+    ok = validator.errors.empty?
+  end
+elsif command == "schema"
+  schema_name = ARGV.shift
+  path = ARGV.shift
+  ok = schema_name && path && validator.schema(schema_name, path)
+elsif command == "pbs-extract"
+  namespace = ARGV.shift
+  input = ARGV.shift
+  output = ARGV.shift
+  ok = namespace && input && output
+  RGSSI18nTools::CatalogTools.write_json(output, RGSSI18nTools::CatalogTools.extract_pbs(namespace, input)) if ok
+elsif command == "messages-dat-extract"
+  input = ARGV.shift
+  output = ARGV.shift
+  ok = input && output
+  RGSSI18nTools::CatalogTools.write_json(output, RGSSI18nTools::CatalogTools.extract_messages_dat(input)) if ok
+elsif command == "messages-dat-migrate"
+  input = ARGV.shift
+  namespace = ARGV.shift
+  output = ARGV.shift
+  ok = input && namespace && output
+  RGSSI18nTools::CatalogTools.write_json(output, RGSSI18nTools::CatalogTools.migrate_messages_dat(input, namespace)) if ok
+elsif command == "essentials-pairs-import"
+  input = ARGV.shift
+  namespace = ARGV.shift
+  output = ARGV.shift
+  ok = input && namespace && output
+  RGSSI18nTools::CatalogTools.write_json(output, RGSSI18nTools::CatalogTools.import_essentials_pairs(input, namespace)) if ok
+elsif command == "flat-export"
+  input = ARGV.shift
+  output = ARGV.shift
+  ok = input && output
+  RGSSI18nTools::CatalogTools.write_json(output, RGSSI18nTools::CatalogTools.flatten(RGSSI18nTools::CatalogTools.load_json(input))) if ok
+elsif command == "flat-import"
+  input = ARGV.shift
+  output = ARGV.shift
+  ok = input && output
+  RGSSI18nTools::CatalogTools.write_json(output, RGSSI18nTools::CatalogTools.unflatten(RGSSI18nTools::CatalogTools.load_json(input))) if ok
+elsif command == "pseudo"
+  input = ARGV.shift
+  output = ARGV.shift
+  ok = input && output
+  RGSSI18nTools::CatalogTools.write_json(output, RGSSI18nTools::CatalogTools.pseudolocalize_catalog(RGSSI18nTools::CatalogTools.load_json(input))) if ok
+elsif command == "tms-export"
+  profile = ARGV.shift
+  locale = ARGV.shift
+  input = ARGV.shift
+  output = ARGV.shift
+  ok = profile && locale && input && output
+  if ok
+    exported = RGSSI18nTools::CatalogTools.export_profile(profile, locale, RGSSI18nTools::CatalogTools.load_json(input))
+    if exported.is_a?(String)
+      File.open(output, "wb") { |file| file.write(exported) }
+    else
+      RGSSI18nTools::CatalogTools.write_json(output, exported)
+    end
+  end
+elsif command == "tms-import"
+  profile = ARGV.shift
+  locale = ARGV.shift
+  input = ARGV.shift
+  output = ARGV.shift
+  ok = profile && locale && input && output
+  if ok
+    source = profile == "xliff" || profile == "po" ? File.open(input, "rb") { |file| file.read } : RGSSI18nTools::CatalogTools.load_json(input)
+    RGSSI18nTools::CatalogTools.write_json(output, RGSSI18nTools::CatalogTools.import_profile(profile, locale, source))
+  end
+elsif command == "handoff"
+  output_dir = ARGV.shift
+  locale = ARGV.shift
+  source = ARGV.shift
+  metadata = ARGV.shift
+  ok = output_dir && locale && source
+  RGSSI18nTools::CatalogTools.write_handoff_package(output_dir, locale, source, metadata) if ok
+else
+  usage
+  exit 1
+end
+
+unless ok
+  validator.errors.each { |error| warn error }
+  usage if validator.errors.empty?
+  exit 1
+end

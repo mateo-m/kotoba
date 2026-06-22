@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/rgss-i18n/catalog.schema.json",
+  "title": "RGSS i18n catalog",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "#/$defs/catalogNode"
+  },
+  "$defs": {
+    "catalogNode": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/catalogNode"
+          }
+        }
+      ]
+    }
+  }
+}

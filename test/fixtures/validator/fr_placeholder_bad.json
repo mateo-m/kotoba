@@ -1,0 +1,6 @@
+{
+  "battle": {
+    "wild_appeared": "Un {monster} sauvage apparait!",
+    "colored": "\\c[2]{name}\\c[0]"
+  }
+}

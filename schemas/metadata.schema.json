@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/rgss-i18n/metadata.schema.json",
+  "title": "RGSS i18n metadata",
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "description": {
+        "type": "string"
+      },
+      "speaker": {
+        "type": "string"
+      },
+      "context": {
+        "type": "string"
+      },
+      "max_length": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "source": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": false
+  }
+}
