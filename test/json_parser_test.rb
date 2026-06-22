@@ -46,4 +46,10 @@ class JSONParserTest < RGSSI18nTestCase
       RGSSI18n::JSON.parse(%({"a":{"b":{"c":1}}}), {"max_depth" => 2})
     end
   end
+
+  def test_can_reject_duplicate_object_keys
+    assert_raise(RGSSI18n::JSONParseError) do
+      RGSSI18n::JSON.parse(%({"menu":{"save":"Save","save":"Store"}}), {"duplicate_keys" => "error"})
+    end
+  end
 end

@@ -5,6 +5,7 @@ module RGSSI18n
     attr_accessor :available_locales
     attr_accessor :locale_names
     attr_accessor :catalog_paths
+    attr_accessor :catalog_discovery_paths
     attr_accessor :fallbacks
     attr_accessor :strict
     attr_accessor :diagnostics
@@ -17,8 +18,12 @@ module RGSSI18n
     attr_accessor :max_loaded_catalog_bytes
     attr_accessor :max_json_depth
     attr_accessor :max_message_depth
+    attr_accessor :duplicate_key_policy
+    attr_accessor :missing_variable_policy
     attr_accessor :file_loader
     attr_accessor :missing_handler
+    attr_accessor :warning_handler
+    attr_accessor :locale_change_handler
 
     def initialize
       @source_locale = "en"
@@ -26,6 +31,7 @@ module RGSSI18n
       @available_locales = ["en"]
       @locale_names = {"en" => "English"}
       @catalog_paths = {}
+      @catalog_discovery_paths = []
       @fallbacks = {"default" => ["en"]}
       @strict = false
       @diagnostics = false
@@ -38,8 +44,12 @@ module RGSSI18n
       @max_loaded_catalog_bytes = 32 * 1024 * 1024
       @max_json_depth = 64
       @max_message_depth = 16
+      @duplicate_key_policy = "override"
+      @missing_variable_policy = "keep"
       @file_loader = nil
       @missing_handler = nil
+      @warning_handler = nil
+      @locale_change_handler = nil
     end
   end
 end

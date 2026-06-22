@@ -16,6 +16,7 @@ module RGSSI18n
       @locale = normalize_locale(@config.default_locale)
       @catalogs = {}
       @loaded_bytes = 0
+      @locale_change_handlers = []
       install_global_helpers!
     end
 
@@ -37,12 +38,21 @@ module RGSSI18n
     end
 
     def locale=(value)
+      old_locale = @locale
       @locale = normalize_locale(value)
       load_locale_chain(@locale)
+      notify_locale_change(old_locale, @locale) unless old_locale == @locale
     end
 
     def available_locales
       config.available_locales.collect { |value| normalize_locale(value) }
+    end
+
+    def on_locale_change(handler = nil, &block)
+      @locale_change_handlers = [] if @locale_change_handlers.nil?
+      callback = handler || block
+      @locale_change_handlers << callback if callback
+      callback
     end
 
     def fallback_chain(locale_value)
@@ -80,7 +90,7 @@ module RGSSI18n
 
       @catalogs = {} if @catalogs.nil?
       @catalogs[normalized] = {}
-      paths = fetch_hash_value(config.catalog_paths, normalized) || []
+      paths = (fetch_hash_value(config.catalog_paths, normalized) || []) + discovered_catalog_paths(normalized)
       paths.each do |path|
         load_path(normalized, path)
       end
@@ -94,7 +104,10 @@ module RGSSI18n
     end
 
     def load_json(locale_value, source)
-      parsed = JSON.parse(source, {"max_depth" => config.max_json_depth})
+      parsed = JSON.parse(source, {
+        "max_depth" => config.max_json_depth,
+        "duplicate_keys" => config.duplicate_key_policy
+      })
       load_hash(locale_value, parsed)
     end
 
@@ -103,7 +116,7 @@ module RGSSI18n
       normalized = normalize_locale(locale_value)
       @catalogs = {} if @catalogs.nil?
       @catalogs[normalized] = {} unless @catalogs.has_key?(normalized)
-      merge_catalog!(@catalogs[normalized], compile_catalog(catalog))
+      merge_catalog!(@catalogs[normalized], compile_catalog(catalog, []))
       @catalogs[normalized]
     end
 
@@ -114,11 +127,11 @@ module RGSSI18n
       fallback_chain(requested_locale).each do |chain_locale|
         load_locale(chain_locale)
         message = lookup(@catalogs[chain_locale], key)
-        return MessageEval.evaluate(message, vars, chain_locale) unless message.nil?
+        return evaluate_message(message, vars, chain_locale) unless message.nil?
       end
 
       default_message = fetch_hash_value(opts, "default")
-      return MessageEval.evaluate(MessageEval.compile(default_message), vars, requested_locale) unless default_message.nil?
+      return evaluate_message(MessageEval.compile(default_message, message_options), vars, requested_locale) unless default_message.nil?
       missing_translation(key, requested_locale)
     end
 
@@ -129,6 +142,20 @@ module RGSSI18n
         options = args[2]
         t(prefix.to_s + "." + key.to_s, variables, options)
       end
+    end
+
+    def source_text_key(source_text, options = nil)
+      opts = options || {}
+      requested_locale = normalize_locale(fetch_hash_value(opts, "locale") || locale)
+      fallback_chain(requested_locale).each do |chain_locale|
+        load_locale(chain_locale)
+        catalog = @catalogs[chain_locale]
+        source_texts = catalog ? catalog["source_text"] : nil
+        if source_texts.is_a?(Hash) && source_texts.has_key?(source_text.to_s)
+          return evaluate_message(source_texts[source_text.to_s], {}, chain_locale)
+        end
+      end
+      fetch_hash_value(opts, "default")
     end
 
     def normalize_locale(value)
@@ -211,6 +238,9 @@ module RGSSI18n
       if bytes > config.max_catalog_bytes
         raise CatalogError, "catalog is too large: " + path.to_s
       end
+      if bytes > config.warn_catalog_bytes
+        warn_runtime("catalog is large: " + path.to_s + " (" + bytes.to_s + " bytes)")
+      end
       @loaded_bytes = 0 if @loaded_bytes.nil?
       @loaded_bytes += bytes
       if @loaded_bytes > config.max_loaded_catalog_bytes
@@ -218,16 +248,18 @@ module RGSSI18n
       end
     end
 
-    def compile_catalog(value)
+    def compile_catalog(value, path)
       if value.is_a?(Hash)
         compiled = {}
         value.each do |key, child|
-          compiled[key.to_s] = compile_catalog(child)
+          compiled[key.to_s] = compile_catalog(child, path + [key.to_s])
         end
         return compiled
       end
-      return MessageEval.compile(value) if value.is_a?(String)
-      value
+      return MessageEval.compile(value, message_options) if value.is_a?(String)
+
+      location = path.length == 0 ? "<root>" : path.join(".")
+      raise CatalogError, "catalog value must be a string or object at " + location
     end
 
     def merge_catalog!(target, source)
@@ -235,8 +267,36 @@ module RGSSI18n
         if target[key].is_a?(Hash) && value.is_a?(Hash)
           merge_catalog!(target[key], value)
         else
+          if target.has_key?(key)
+            handle_duplicate_key(key)
+          end
           target[key] = value
         end
+      end
+    end
+
+    def evaluate_message(message, variables, locale_value)
+      return message if message.is_a?(String)
+      MessageEval.evaluate(message, variables, locale_value, message_options)
+    end
+
+    def message_options
+      {
+        "max_depth" => config.max_message_depth,
+        "missing_variable_policy" => config.missing_variable_policy
+      }
+    end
+
+    def handle_duplicate_key(key)
+      if config.duplicate_key_policy == "error"
+        raise CatalogError, "duplicate catalog key " + key.to_s
+      end
+      warn_runtime("duplicate catalog key " + key.to_s)
+    end
+
+    def warn_runtime(message)
+      if config.warning_handler
+        config.warning_handler.call(message)
       end
     end
 
@@ -248,7 +308,33 @@ module RGSSI18n
         return nil unless cursor.has_key?(part)
         cursor = cursor[part]
       end
-      cursor.is_a?(Array) ? cursor : nil
+      cursor.is_a?(Array) || cursor.is_a?(String) ? cursor : nil
+    end
+
+    def discovered_catalog_paths(locale_value)
+      paths = []
+      (config.catalog_discovery_paths || []).each do |root|
+        normalized_root = normalize_path(root)
+        direct = File.join(normalized_root, locale_value.to_s + ".json")
+        paths << direct if file_exists?(direct)
+        Dir[File.join(normalized_root, locale_value.to_s, "*.json")].sort.each do |path|
+          paths << path
+        end
+      end
+      paths
+    end
+
+    def file_exists?(path)
+      File.file?(normalize_path(path))
+    end
+
+    def notify_locale_change(old_locale, new_locale)
+      if config.locale_change_handler
+        config.locale_change_handler.call(old_locale, new_locale)
+      end
+      (@locale_change_handlers || []).each do |handler|
+        handler.call(old_locale, new_locale)
+      end
     end
 
     def missing_translation(key, locale_value)

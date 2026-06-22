@@ -2,36 +2,46 @@ module RGSSI18n
   class MessageParseError < StandardError
   end
 
+  class MessageEvaluationError < StandardError
+  end
+
   module MessageEval
-    def self.compile(message)
-      Parser.new(message.to_s).parse
+    def self.compile(message, options = nil)
+      source = message.to_s
+      return source if plain_message?(source)
+      Parser.new(source, options).parse
     end
 
-    def self.evaluate(compiled, variables, locale)
+    def self.evaluate(compiled, variables, locale, options = nil)
+      return compiled if compiled.is_a?(String)
       vars = variables || {}
-      evaluate_tokens(compiled, vars, locale, nil)
+      evaluate_tokens(compiled, vars, locale, nil, options || {})
     end
 
-    def self.evaluate_tokens(tokens, variables, locale, plural_value)
+    def self.plain_message?(message)
+      message.index("{").nil? && message.index("#").nil? && message.index("'").nil?
+    end
+
+    def self.evaluate_tokens(tokens, variables, locale, plural_value, options)
       output = ""
       tokens.each do |token|
         kind = token[0]
         if kind == :text
           output << token[1]
         elsif kind == :var
-          output << variable_value(variables, token[1]).to_s
+          output << interpolation_value(variables, token[1], options).to_s
         elsif kind == :number
           output << plural_value.to_s
         elsif kind == :select
           branch = token[2][variable_value(variables, token[1]).to_s]
           branch = token[2]["other"] if branch.nil?
-          output << evaluate_tokens(branch || [], variables, locale, plural_value)
+          output << evaluate_tokens(branch || [], variables, locale, plural_value, options)
         elsif kind == :plural
-          count = variable_value(variables, token[1]).to_i
+          count = integer_variable_value(variables, token[1])
           branch = token[2]["=" + count.to_s]
           branch = token[2][PluralRules.cardinal(locale, count)] if branch.nil?
           branch = token[2]["other"] if branch.nil?
-          output << evaluate_tokens(branch || [], variables, locale, count)
+          output << evaluate_tokens(branch || [], variables, locale, count, options)
         end
       end
       output
@@ -44,22 +54,51 @@ module RGSSI18n
       "{" + name + "}"
     end
 
+    def self.interpolation_value(variables, name, options)
+      if variables.has_key?(name) || variables.has_key?(name.to_sym)
+        return variable_value(variables, name)
+      end
+
+      policy = options["missing_variable_policy"] || options[:missing_variable_policy] || "keep"
+      return "" if policy == "empty"
+      if policy == "error"
+        raise MessageEvaluationError, "missing variable " + name
+      end
+      "{" + name + "}"
+    end
+
+    def self.integer_variable_value(variables, name)
+      unless variables.has_key?(name) || variables.has_key?(name.to_sym)
+        raise MessageEvaluationError, "missing plural variable " + name
+      end
+
+      value = variable_value(variables, name)
+      return value if value.is_a?(Integer)
+      if value.is_a?(String) && value =~ /\A-?[0-9]+\z/
+        return value.to_i
+      end
+
+      raise MessageEvaluationError, "plural variable " + name + " must be an integer"
+    end
+
     class Parser
-      def initialize(message)
+      def initialize(message, options)
         @message = message
         @index = 0
         @length = @message.length
+        @max_depth = option_value(options, "max_depth", 16)
       end
 
       def parse
-        tokens = parse_message(false, false)
+        tokens = parse_message(false, false, 0)
         error("unexpected closing brace") if current_char == "}"
         tokens
       end
 
       private
 
-      def parse_message(stop_on_brace, allow_number)
+      def parse_message(stop_on_brace, allow_number, depth)
+        error("maximum message depth exceeded") if depth > @max_depth
         tokens = []
         text = ""
 
@@ -70,7 +109,7 @@ module RGSSI18n
           if char == "{"
             append_text(tokens, text)
             text = ""
-            tokens << parse_argument(allow_number)
+            tokens << parse_argument(allow_number, depth + 1)
           elsif char == "#" && allow_number
             append_text(tokens, text)
             text = ""
@@ -88,7 +127,7 @@ module RGSSI18n
         tokens
       end
 
-      def parse_argument(allow_number)
+      def parse_argument(allow_number, depth)
         consume("{")
         skip_spaces
         name = read_identifier
@@ -107,14 +146,14 @@ module RGSSI18n
         consume(",")
 
         if argument_type == "select"
-          branches = parse_branches(false)
+          branches = parse_branches(false, depth)
           consume("}")
           require_other_branch(branches, argument_type)
           return [:select, name, branches]
         end
 
         if argument_type == "plural"
-          branches = parse_branches(true)
+          branches = parse_branches(true, depth)
           consume("}")
           require_other_branch(branches, argument_type)
           return [:plural, name, branches]
@@ -123,7 +162,7 @@ module RGSSI18n
         error("unsupported argument type " + argument_type)
       end
 
-      def parse_branches(allow_number)
+      def parse_branches(allow_number, depth)
         branches = {}
 
         loop do
@@ -134,7 +173,7 @@ module RGSSI18n
           error("missing branch selector") if selector == ""
           skip_spaces
           consume("{")
-          branches[selector] = parse_message(true, allow_number)
+          branches[selector] = parse_message(true, allow_number, depth)
           consume("}")
         end
 
@@ -176,6 +215,14 @@ module RGSSI18n
 
       def append_text(tokens, text)
         tokens << [:text, text] unless text == ""
+      end
+
+      def option_value(options, key, default_value)
+        return default_value if options.nil?
+        return options[key] if options.has_key?(key)
+        symbol_key = key.to_sym
+        return options[symbol_key] if options.has_key?(symbol_key)
+        default_value
       end
 
       def read_identifier

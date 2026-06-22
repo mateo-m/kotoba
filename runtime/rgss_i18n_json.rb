@@ -14,6 +14,7 @@ module RGSSI18n
         @index = 0
         @length = @source.length
         @max_depth = option_value(options, "max_depth", 64)
+        @duplicate_key_policy = option_value(options, "duplicate_keys", "override")
       end
 
       def parse
@@ -71,6 +72,9 @@ module RGSSI18n
           skip_whitespace
           error("object keys must be strings") unless current_char == "\""
           key = parse_string
+          if result.has_key?(key) && @duplicate_key_policy == "error"
+            error("duplicate object key " + key)
+          end
           skip_whitespace
           consume(":")
           result[key] = parse_value(depth)
