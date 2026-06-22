@@ -18,6 +18,7 @@ def usage
   puts "  bin/rgss-i18n messages-dat-extract INPUT_DAT OUTPUT_JSON"
   puts "  bin/rgss-i18n messages-dat-migrate INPUT_DAT NAMESPACE OUTPUT_JSON"
   puts "  bin/rgss-i18n essentials-pairs-import INPUT_TXT NAMESPACE OUTPUT_JSON"
+  puts "  bin/rgss-i18n text-english-import INPUT_TXT_OR_DIR NAMESPACE OUTPUT_JSON"
   puts "  bin/rgss-i18n flat-export INPUT_JSON OUTPUT_JSON"
   puts "  bin/rgss-i18n flat-import INPUT_JSON OUTPUT_JSON"
   puts "  bin/rgss-i18n pseudo INPUT_JSON OUTPUT_JSON"
@@ -71,6 +72,17 @@ elsif command == "essentials-pairs-import"
   output = ARGV.shift
   ok = input && namespace && output
   RGSSI18nTools::CatalogTools.write_json(output, RGSSI18nTools::CatalogTools.import_essentials_pairs(input, namespace)) if ok
+elsif command == "text-english-import"
+  input = ARGV.shift
+  namespace = ARGV.shift
+  output = ARGV.shift
+  ok = input && namespace && output
+  if ok
+    catalog = File.directory?(input) ?
+      RGSSI18nTools::CatalogTools.import_text_english_dir(input, namespace) :
+      RGSSI18nTools::CatalogTools.import_text_english(input, namespace)
+    RGSSI18nTools::CatalogTools.write_json(output, catalog)
+  end
 elsif command == "flat-export"
   input = ARGV.shift
   output = ARGV.shift

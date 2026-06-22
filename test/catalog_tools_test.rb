@@ -79,6 +79,23 @@ class CatalogToolsTest < RGSSI18nTestCase
     File.delete(path) if path && File.exist?(path)
   end
 
+  def test_import_text_english_builds_sectioned_source_text_catalog
+    path = File.join(File.dirname(__FILE__), "fixtures", "text_english", "sample.txt")
+    catalog = RGSSI18nTools::CatalogTools.import_text_english(path, "text")
+
+    assert_equal("text.map0.line_0001", catalog["source_text"]["Hello traveler"])
+    assert_equal("Hello traveler", catalog["text"]["map0"]["line_0001"])
+    assert_equal("Buy potions", catalog["text"]["shop"]["line_0001"])
+  end
+
+  def test_import_text_english_dir_merges_files
+    dir = File.join(File.dirname(__FILE__), "fixtures", "text_english")
+    catalog = RGSSI18nTools::CatalogTools.import_text_english_dir(dir, "bundle")
+
+    assert_equal("Hello traveler", catalog["bundle"]["sample"]["map0"]["line_0001"])
+    assert_equal("bundle.sample.shop.line_0001", catalog["source_text"]["Buy potions"])
+  end
+
   def test_import_essentials_pairs_builds_source_text_catalog
     path = File.join(File.dirname(__FILE__), "tmp_intl.txt")
     File.open(path, "wb") do |file|

@@ -192,6 +192,60 @@ module RGSSI18nTools
       {"data" => {namespace.to_s => entries}}
     end
 
+    def self.import_text_english(path, namespace)
+      source_text = {}
+      flat = {}
+      current_section = "default"
+      index = 1
+      pending = nil
+      File.open(path, "rb") do |file|
+        file.each_line do |line|
+          text = line.chomp
+          next if text == "" || text[0, 1] == "#"
+          if text[0, 1] == "[" && text[-1, 1] == "]"
+            current_section = normalize_identifier(text[1...-1])
+            index = 1
+            pending = nil
+            next
+          end
+          if pending.nil?
+            pending = text
+          else
+            key = namespace.to_s + "." + current_section + ".line_" + zero_pad(index, 4)
+            source_text[pending] = key
+            flat[key] = text == "" ? pending : text
+            index += 1
+            pending = nil
+          end
+        end
+      end
+      result = unflatten(flat)
+      result["source_text"] = source_text unless source_text.empty?
+      result
+    end
+
+    def self.import_text_english_dir(path, namespace)
+      result = {}
+      source_text = {}
+      return result unless File.directory?(path)
+
+      Dir.glob(File.join(path, "*.txt")).sort.each do |file_path|
+        file_key = normalize_identifier(File.basename(file_path, ".txt"))
+        partial = import_text_english(file_path, namespace.to_s + "." + file_key)
+        partial_source_text = partial["source_text"]
+        partial = partial.dup
+        partial.delete("source_text")
+        merge_nested_hash(result, partial)
+        if partial_source_text
+          partial_source_text.each do |source, key|
+            source_text[source] = key
+          end
+        end
+      end
+      result["source_text"] = source_text unless source_text.empty?
+      result
+    end
+
     def self.import_essentials_pairs(path, namespace)
       source_text = {}
       flat = {}
@@ -531,6 +585,16 @@ module RGSSI18nTools
       lower = char.downcase
       return ACCENTS[lower] || char if lower != char
       ACCENTS[char] || char
+    end
+
+    def self.merge_nested_hash(target, source)
+      source.each do |key, value|
+        if value.is_a?(Hash) && target[key].is_a?(Hash)
+          merge_nested_hash(target[key], value)
+        else
+          target[key] = value
+        end
+      end
     end
   end
 end

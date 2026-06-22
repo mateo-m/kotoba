@@ -31,4 +31,16 @@ class LocalIntegrationTest < RGSSI18nTestCase
     assert(RGSSI18nTools::CatalogTools.import_essentials_pairs(intl, "local_sample"))
     assert(RGSSI18nTools::CatalogTools.extract_pbs("moves", moves))
   end
+
+  def test_local_text_english_import_when_present
+    path = LocalFixtureConfig.game_path("essentials_bes_sample")
+    return unless path && File.directory?(path)
+
+    core = File.join(path, "Text_english_core")
+    return unless File.directory?(core)
+
+    require "catalog_tools"
+    catalog = RGSSI18nTools::CatalogTools.import_text_english_dir(core, "local_core")
+    assert(!catalog.empty?)
+  end
 end

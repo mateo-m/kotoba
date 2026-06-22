@@ -1,0 +1,10 @@
+# Generic sectioned paired-line excerpt for Text_english import QA.
+[map0]
+Hello traveler
+Hello traveler
+Welcome to town
+Welcome to town
+
+[shop]
+Buy potions
+Buy potions
