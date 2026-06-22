@@ -77,5 +77,3 @@ Common PBS-style CSV files can be extracted into `data.<namespace>.<id>` catalog
 ```sh
 bin/ruby18 bin/rgss-i18n pbs-extract moves PBS/moves.txt Locales/en.moves.json
 ```
-
-Migration automation planning lives in [Roadmap](../roadmap.md).
