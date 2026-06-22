@@ -8,21 +8,21 @@ adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "adapter
 $LOAD_PATH.unshift(adapter_path) unless $LOAD_PATH.include?(adapter_path)
 require "essentials_bes"
 
-class RealworldFixtureTest < RGSSI18nTestCase
+class RealworldFixtureTest < KotobaTestCase
   ROOT = File.expand_path(File.join(File.dirname(__FILE__), "fixtures", "realworld", "essentials-bes-sample"))
 
   def expected(name)
-    RGSSI18nTools::CatalogTools.load_json(File.join(ROOT, "expected", name))
+    KotobaTools::CatalogTools.load_json(File.join(ROOT, "expected", name))
   end
 
   def test_messages_dat_migrate_matches_golden
-    actual = RGSSI18nTools::CatalogTools.migrate_messages_dat(File.join(ROOT, "messages.dat"), "sample")
+    actual = KotobaTools::CatalogTools.migrate_messages_dat(File.join(ROOT, "messages.dat"), "sample")
 
     assert_equal(expected("messages.migrated.json"), actual)
   end
 
   def test_intl_pairs_import_matches_golden
-    actual = RGSSI18nTools::CatalogTools.import_essentials_pairs(
+    actual = KotobaTools::CatalogTools.import_essentials_pairs(
       File.join(ROOT, "intl.excerpt.txt"),
       "sample"
     )
@@ -31,7 +31,7 @@ class RealworldFixtureTest < RGSSI18nTestCase
   end
 
   def test_pbs_moves_extract_matches_golden
-    actual = RGSSI18nTools::CatalogTools.extract_pbs(
+    actual = KotobaTools::CatalogTools.extract_pbs(
       "moves",
       File.join(ROOT, "pbs", "moves.excerpt.txt")
     )
@@ -40,7 +40,7 @@ class RealworldFixtureTest < RGSSI18nTestCase
   end
 
   def test_pbs_items_extract_matches_golden
-    actual = RGSSI18nTools::CatalogTools.extract_pbs(
+    actual = KotobaTools::CatalogTools.extract_pbs(
       "items",
       File.join(ROOT, "pbs", "items.excerpt.txt")
     )
@@ -49,7 +49,7 @@ class RealworldFixtureTest < RGSSI18nTestCase
   end
 
   def test_pbs_abilities_extract_matches_golden
-    actual = RGSSI18nTools::CatalogTools.extract_pbs(
+    actual = KotobaTools::CatalogTools.extract_pbs(
       "abilities",
       File.join(ROOT, "pbs", "abilities.excerpt.txt")
     )
@@ -58,7 +58,7 @@ class RealworldFixtureTest < RGSSI18nTestCase
   end
 
   def test_pbs_pokemon_extract_matches_golden
-    actual = RGSSI18nTools::CatalogTools.extract_pbs(
+    actual = KotobaTools::CatalogTools.extract_pbs(
       "pokemon",
       File.join(ROOT, "pbs", "pokemon.excerpt.txt")
     )
@@ -67,7 +67,7 @@ class RealworldFixtureTest < RGSSI18nTestCase
   end
 
   def test_text_english_import_matches_golden
-    actual = RGSSI18nTools::CatalogTools.import_text_english(
+    actual = KotobaTools::CatalogTools.import_text_english(
       File.join(ROOT, "text_english", "dialogue.excerpt.txt"),
       "sample"
     )
@@ -76,7 +76,7 @@ class RealworldFixtureTest < RGSSI18nTestCase
   end
 
   def test_map_rxdata_extract_matches_golden
-    actual = RGSSI18nTools::CatalogTools.extract_map_rxdata(
+    actual = KotobaTools::CatalogTools.extract_map_rxdata(
       File.join(ROOT, "maps", "Map9001.rxdata")
     )
 
@@ -84,7 +84,7 @@ class RealworldFixtureTest < RGSSI18nTestCase
   end
 
   def test_map_rxdata_import_matches_golden
-    actual = RGSSI18nTools::CatalogTools.import_map_rxdata(
+    actual = KotobaTools::CatalogTools.import_map_rxdata(
       File.join(ROOT, "maps", "Map9001.rxdata"),
       "sample"
     )
@@ -93,12 +93,12 @@ class RealworldFixtureTest < RGSSI18nTestCase
   end
 
   def test_essentials_bes_loads_intl_fixture_catalog
-    RGSSI18n.use_adapter("essentials_bes", {
+    Kotoba.use_adapter("essentials_bes", {
       "catalog_paths" => {"en" => [File.join(ROOT, "expected", "intl.imported.json")]},
       "load" => true
     })
 
-    assert_equal("Save the game", RGSSI18n.t("sample.line_0001"))
-    assert_equal("sample.line_0003", RGSSI18n.source_text_key("No items here.", {"default" => ""}))
+    assert_equal("Save the game", Kotoba.t("sample.line_0001"))
+    assert_equal("sample.line_0003", Kotoba.source_text_key("No items here.", {"default" => ""}))
   end
 end

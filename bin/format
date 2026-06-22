@@ -15,7 +15,7 @@ TEXT_PATTERNS = [
   "lefthook.yml",
   ".github/**/*.yml",
   "bin/*",
-  "runtime/**/*.rb",
+  "kotoba/**/*.rb",
   "adapters/**/*.rb",
   "tools/**/*.rb",
   "examples/**/*.rb",

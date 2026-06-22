@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: RPG Maker i18n
-  text: Ruby internationalization for RPG Maker-era projects
-  tagline: JSON catalogs, locale fallbacks, and message syntax built for Ruby 1.8 and RGSS
+  name: Kotoba
+  text: Internationalization for retro fan games
+  tagline: JSON catalogs, locale fallbacks, and dialog syntax for Ruby 1.8 RPG Maker XP and Essentials projects
   actions:
     - theme: brand
       text: Get Started
@@ -33,6 +33,6 @@ features:
 Use the sidebar to browse guides, adapter integration notes, tooling workflows, and project planning.
 
 - [Getting Started](/getting-started): create a catalog, load the runtime, and translate strings.
-- [Runtime API](/runtime-api): public `RGSSI18n` methods, config fields, and error types.
+- [Runtime API](/runtime-api): public `Kotoba` methods, config fields, and error types.
 - [Validation CLI](/validation-cli): load tests, schema checks, and import/export commands.
 - [Pokemon Essentials Adapter](/adapters/pokemon-essentials): integrate Essentials v16-v21 and BES projects.

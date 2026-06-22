@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve RPG Maker i18n.
+Thanks for helping improve Kotoba.
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ Clone the repository:
 
 ```sh
 git clone <repository-url>
-cd rpg-maker-i18n
+cd kotoba
 ```
 
 Install tooling and git hooks:

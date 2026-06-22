@@ -1,7 +1,7 @@
-require File.join(".", "runtime", "rgss_i18n_core")
+require File.join(".", "kotoba", "core")
 require File.join(".", "adapters", "bare_rgss")
 
-RGSSI18n.configure do |config|
+Kotoba.configure do |config|
   config.default_locale = "en"
   config.available_locales = ["en", "fr"]
   config.catalog_paths = {
@@ -11,4 +11,4 @@ RGSSI18n.configure do |config|
   config.show_missing_keys = true
 end
 
-RGSSI18n.use_adapter("bare_rgss", {"load" => true})
+Kotoba.use_adapter("bare_rgss", {"load" => true})

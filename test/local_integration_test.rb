@@ -5,7 +5,7 @@ tool_path = File.join(project_root, "tools")
 $LOAD_PATH.unshift(tool_path) unless $LOAD_PATH.include?(tool_path)
 require "local_fixture_config"
 
-class LocalIntegrationTest < RGSSI18nTestCase
+class LocalIntegrationTest < KotobaTestCase
   def test_local_fixture_config_is_optional
     config = LocalFixtureConfig.load()
     assert(config["games"].is_a?(Hash))
@@ -26,10 +26,10 @@ class LocalIntegrationTest < RGSSI18nTestCase
     assert(File.file?(moves), "PBS/moves.txt must exist")
 
     require "catalog_tools"
-    assert(RGSSI18nTools::CatalogTools.extract_messages_dat(messages_dat))
-    assert(RGSSI18nTools::CatalogTools.migrate_messages_dat(messages_dat, "local_sample"))
-    assert(RGSSI18nTools::CatalogTools.import_essentials_pairs(intl, "local_sample"))
-    assert(RGSSI18nTools::CatalogTools.extract_pbs("moves", moves))
+    assert(KotobaTools::CatalogTools.extract_messages_dat(messages_dat))
+    assert(KotobaTools::CatalogTools.migrate_messages_dat(messages_dat, "local_sample"))
+    assert(KotobaTools::CatalogTools.import_essentials_pairs(intl, "local_sample"))
+    assert(KotobaTools::CatalogTools.extract_pbs("moves", moves))
   end
 
   def test_local_text_english_import_when_present
@@ -40,7 +40,7 @@ class LocalIntegrationTest < RGSSI18nTestCase
     return unless File.directory?(core)
 
     require "catalog_tools"
-    catalog = RGSSI18nTools::CatalogTools.import_text_english_dir(core, "local_core")
+    catalog = KotobaTools::CatalogTools.import_text_english_dir(core, "local_core")
     assert(!catalog.empty?)
   end
 
@@ -52,7 +52,7 @@ class LocalIntegrationTest < RGSSI18nTestCase
     return unless File.file?(map_path)
 
     require "catalog_tools"
-    catalog = RGSSI18nTools::CatalogTools.import_map_rxdata(map_path, "local_maps")
+    catalog = KotobaTools::CatalogTools.import_map_rxdata(map_path, "local_maps")
     assert(!catalog.empty?)
   end
 
@@ -64,7 +64,7 @@ class LocalIntegrationTest < RGSSI18nTestCase
     return unless File.file?(pokemon)
 
     require "catalog_tools"
-    catalog = RGSSI18nTools::CatalogTools.extract_pbs("pokemon", pokemon)
+    catalog = KotobaTools::CatalogTools.extract_pbs("pokemon", pokemon)
     assert(!catalog["data"]["pokemon"].empty?)
   end
 end

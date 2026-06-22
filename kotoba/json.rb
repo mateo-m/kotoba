@@ -1,4 +1,4 @@
-module RGSSI18n
+module Kotoba
   class JSONParseError < StandardError
   end
 

@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), "essentials_base")
 
-module RGSSI18n
+module Kotoba
   module Adapters
     module EssentialsV19V20
       def self.install(options)
@@ -19,6 +19,6 @@ module RGSSI18n
   end
 end
 
-RGSSI18n.register_adapter("essentials_v19_v20", RGSSI18n::Adapters::EssentialsV19V20)
-RGSSI18n.register_adapter("essentials_v19", RGSSI18n::Adapters::EssentialsV19V20)
-RGSSI18n.register_adapter("essentials_v20", RGSSI18n::Adapters::EssentialsV19V20)
+Kotoba.register_adapter("essentials_v19_v20", Kotoba::Adapters::EssentialsV19V20)
+Kotoba.register_adapter("essentials_v19", Kotoba::Adapters::EssentialsV19V20)
+Kotoba.register_adapter("essentials_v20", Kotoba::Adapters::EssentialsV19V20)

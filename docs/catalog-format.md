@@ -21,7 +21,7 @@ Use nested objects and string leaves:
 Lookups use dot-separated paths:
 
 ```ruby
-RGSSI18n.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
 ```
 
 Avoid dots inside key names. Dots are reserved for lookup segments.

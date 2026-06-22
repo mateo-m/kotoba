@@ -34,7 +34,7 @@ The adapter maps source text to a stable key and then evaluates the stable runti
 New scripts should call stable keys directly:
 
 ```ruby
-RGSSI18n.t("battle.wild_appeared", {"pokemon" => name})
+Kotoba.t("battle.wild_appeared", {"pokemon" => name})
 ```
 
 Stable keys make refactors safer and reduce translator churn.
@@ -48,7 +48,7 @@ Stable keys make refactors safer and reduce translator churn.
 5. Add `source_text` mappings for those strings.
 6. Run validation.
 7. Add translated locale files.
-8. Convert new or frequently edited scripts to direct `RGSSI18n.t` calls.
+8. Convert new or frequently edited scripts to direct `Kotoba.t` calls.
 
 Avoid trying to migrate every string in one pass. Start with menus, battle messages, or one plugin.
 
@@ -57,41 +57,41 @@ Avoid trying to migrate every string in one pass. Start with menus, battle messa
 If the game ships compiled translations in `Data/messages.dat`, inspect it first:
 
 ```sh
-bin/ruby18 bin/rgss-i18n messages-dat-extract Data/messages.dat build/messages.extract.json
+bin/ruby18 bin/kotoba messages-dat-extract Data/messages.dat build/messages.extract.json
 ```
 
 Then migrate it to a runtime catalog:
 
 ```sh
-bin/ruby18 bin/rgss-i18n messages-dat-migrate Data/messages.dat legacy Locales/legacy.json
+bin/ruby18 bin/kotoba messages-dat-migrate Data/messages.dat legacy Locales/legacy.json
 ```
 
 Essentials paired-line text can be converted into a source-text bridge catalog:
 
 ```sh
-bin/ruby18 bin/rgss-i18n essentials-pairs-import intl.txt essentials Locales/en.essentials.json
+bin/ruby18 bin/kotoba essentials-pairs-import intl.txt essentials Locales/en.essentials.json
 ```
 
 Common PBS-style CSV files can be extracted into `data.<namespace>.<id>` catalogs:
 
 ```sh
-bin/ruby18 bin/rgss-i18n pbs-extract moves PBS/moves.txt Locales/en.moves.json
-bin/ruby18 bin/rgss-i18n pbs-extract items PBS/items.txt Locales/en.items.json
-bin/ruby18 bin/rgss-i18n pbs-extract abilities PBS/abilities.txt Locales/en.abilities.json
-bin/ruby18 bin/rgss-i18n pbs-extract pokemon PBS/pokemon.txt Locales/en.pokemon.json
+bin/ruby18 bin/kotoba pbs-extract moves PBS/moves.txt Locales/en.moves.json
+bin/ruby18 bin/kotoba pbs-extract items PBS/items.txt Locales/en.items.json
+bin/ruby18 bin/kotoba pbs-extract abilities PBS/abilities.txt Locales/en.abilities.json
+bin/ruby18 bin/kotoba pbs-extract pokemon PBS/pokemon.txt Locales/en.pokemon.json
 ```
 
 BES and v21-style projects may also ship `Text_english_core/` and `Text_english_game/` directories. Convert them with:
 
 ```sh
-bin/ruby18 bin/rgss-i18n text-english-import Text_english_core core Locales/en.core.json
-bin/ruby18 bin/rgss-i18n text-english-import Text_english_game game Locales/en.game.json
+bin/ruby18 bin/kotoba text-english-import Text_english_core core Locales/en.core.json
+bin/ruby18 bin/kotoba text-english-import Text_english_game game Locales/en.game.json
 ```
 
 Map event dialogue can be imported from compiled `Data/Map*.rxdata` files:
 
 ```sh
-bin/ruby18 bin/rgss-i18n map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
+bin/ruby18 bin/kotoba map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
 ```
 
 Copy external game files into a local `tmp/` or `build/` directory before running `bin/ruby18` through Docker.

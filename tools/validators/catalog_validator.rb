@@ -1,9 +1,9 @@
-runtime_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "runtime"))
-$LOAD_PATH.unshift(runtime_path) unless $LOAD_PATH.include?(runtime_path)
+kotoba_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "kotoba"))
+$LOAD_PATH.unshift(kotoba_path) unless $LOAD_PATH.include?(kotoba_path)
 
-require "rgss_i18n_core"
+require "core"
 
-module RGSSI18nTools
+module KotobaTools
   class ValidationError < StandardError
   end
 
@@ -16,7 +16,7 @@ module RGSSI18nTools
 
     def load_catalog(path)
       source = File.open(path, "rb") { |file| file.read }
-      parsed = RGSSI18n::JSON.parse(source, {
+      parsed = Kotoba::JSON.parse(source, {
         "duplicate_keys" => "error",
         "max_depth" => 64
       })
@@ -30,7 +30,7 @@ module RGSSI18nTools
         compile_messages(catalog, [])
       end
       true
-    rescue RGSSI18n::JSONParseError, RGSSI18n::CatalogError, RGSSI18n::MessageParseError => error
+    rescue Kotoba::JSONParseError, Kotoba::CatalogError, Kotoba::MessageParseError => error
       @errors << error.message
       false
     end
@@ -47,7 +47,7 @@ module RGSSI18nTools
         raise ValidationError, "unknown schema " + schema_name.to_s
       end
       true
-    rescue RGSSI18n::JSONParseError, ValidationError => error
+    rescue Kotoba::JSONParseError, ValidationError => error
       @errors << error.message
       false
     end
@@ -66,7 +66,7 @@ module RGSSI18nTools
       end
 
       ok
-    rescue RGSSI18n::JSONParseError, ValidationError, RGSSI18n::MessageParseError => error
+    rescue Kotoba::JSONParseError, ValidationError, Kotoba::MessageParseError => error
       @errors << error.message
       false
     end
@@ -97,7 +97,7 @@ module RGSSI18nTools
     end
 
     def load_json(path)
-      RGSSI18n::JSON.parse(File.open(path, "rb") { |file| file.read }, {
+      Kotoba::JSON.parse(File.open(path, "rb") { |file| file.read }, {
         "duplicate_keys" => "error",
         "max_depth" => 64
       })
@@ -160,7 +160,7 @@ module RGSSI18nTools
         if value.is_a?(Hash)
           compile_messages(value, current_path)
         else
-          RGSSI18n::MessageEval.compile(value)
+          Kotoba::MessageEval.compile(value)
         end
       end
     end
@@ -205,7 +205,7 @@ module RGSSI18nTools
     end
 
     def placeholders(message)
-      tokens = RGSSI18n::MessageEval.compile(message)
+      tokens = Kotoba::MessageEval.compile(message)
       return [] if tokens.is_a?(String)
       vars = []
       collect_placeholders(tokens, vars)

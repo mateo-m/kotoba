@@ -4,11 +4,11 @@ tool_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "tools", "v
 $LOAD_PATH.unshift(tool_path) unless $LOAD_PATH.include?(tool_path)
 require "catalog_validator"
 
-class ValidatorTest < RGSSI18nTestCase
+class ValidatorTest < KotobaTestCase
   FIXTURE_ROOT = File.expand_path(File.join(File.dirname(__FILE__), "fixtures", "validator"))
 
   def validator
-    RGSSI18nTools::CatalogValidator.new
+    KotobaTools::CatalogValidator.new
   end
 
   def fixture(name)

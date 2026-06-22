@@ -6,12 +6,12 @@ Adapters are opt-in integration layers. The core runtime does not patch RPG Make
 
 The public adapter registry lives in `adapters/registry.rb`:
 
-- `RGSSI18n.register_adapter(name, adapter)`: register any adapter object that responds to `install(options)`.
-- `RGSSI18n.adapter(name)`: return a registered adapter or `nil`.
-- `RGSSI18n.available_adapters`: list registered adapter names.
-- `RGSSI18n.use_adapter(name, options = nil)`: install a registered adapter.
+- `Kotoba.register_adapter(name, adapter)`: register any adapter object that responds to `install(options)`.
+- `Kotoba.adapter(name)`: return a registered adapter or `nil`.
+- `Kotoba.available_adapters`: list registered adapter names.
+- `Kotoba.use_adapter(name, options = nil)`: install a registered adapter.
 
-Unknown adapter names raise `RGSSI18n::AdapterError`.
+Unknown adapter names raise `Kotoba::AdapterError`.
 
 ## Built-In Adapter Targets
 
@@ -29,7 +29,7 @@ Fixture provenance lives under `test/fixtures/essentials/*/SOURCE`.
 
 ## Built-In Behavior
 
-`bare_rgss` loads configured catalog paths and translates strings prefixed with `i18n:` through `RGSSI18n::Adapters::BareRGSS.translate_message`.
+`bare_rgss` loads configured catalog paths and translates strings prefixed with `i18n:` through `Kotoba::Adapters::BareRGSS.translate_message`.
 
 `essentials_v16`, `essentials_v17`, `essentials_v18`, `essentials_v19`, `essentials_v20`, and `essentials_v19_v20` provide source-text bridge behavior matching the legacy `_INTL` and `_ISPRINTF` shape. The v19 and v20 adapter names are version-specific registrations backed by the shared v19/v20 implementation.
 

@@ -23,7 +23,7 @@ The runtime supports a small next-intl-style subset. It is not full ICU MessageF
 ```
 
 ```ruby
-RGSSI18n.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
 ```
 
 String and symbol variable keys are accepted.
@@ -32,7 +32,7 @@ Missing interpolation variables follow `config.missing_variable_policy`:
 
 - `"keep"`: leave `{name}` visible.
 - `"empty"`: replace with an empty string.
-- `"error"`: raise `RGSSI18n::MessageEvaluationError`.
+- `"error"`: raise `Kotoba::MessageEvaluationError`.
 
 ## Select
 
@@ -64,7 +64,7 @@ Plural branch order:
 
 `other` is required. `#` expands to the current count inside plural branches.
 
-Plural variables must be present and integer-like. Missing or non-integer counts raise `RGSSI18n::MessageEvaluationError`; silently treating a missing count as zero would hide real bugs.
+Plural variables must be present and integer-like. Missing or non-integer counts raise `Kotoba::MessageEvaluationError`; silently treating a missing count as zero would hide real bugs.
 
 ## Nesting
 
@@ -115,7 +115,7 @@ Control codes stay in the message:
 Pass variables normally:
 
 ```ruby
-RGSSI18n.t("npc.line", {"name" => "Ari"})
+Kotoba.t("npc.line", {"name" => "Ari"})
 ```
 
 ## Current Plural Locales

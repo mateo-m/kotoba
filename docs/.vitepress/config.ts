@@ -1,13 +1,13 @@
 import { defineConfig } from "vitepress";
 
 const repositoryName =
-  process.env.VITEPRESS_REPOSITORY_NAME || "rpg-maker-i18n";
+  process.env.VITEPRESS_REPOSITORY_NAME || "kotoba";
 const githubRepository = process.env.VITEPRESS_GITHUB_REPO;
 
 export default defineConfig({
-  title: "RPG Maker i18n",
+  title: "Kotoba",
   description:
-    "Ruby internationalization for RPG Maker XP and Pokemon Essentials projects.",
+    "Internationalization for retro RPG Maker XP fan games and Pokemon Essentials projects.",
   base: process.env.VITEPRESS_BASE || `/${repositoryName}/`,
   cleanUrls: true,
   lastUpdated: true,

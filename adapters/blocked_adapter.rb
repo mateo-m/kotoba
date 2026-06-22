@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), "registry")
 
-module RGSSI18n
+module Kotoba
   module Adapters
     class BlockedAdapter
       def initialize(name, reason)

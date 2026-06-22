@@ -1,4 +1,4 @@
-module RGSSI18n
+module Kotoba
   class AdapterError < StandardError
   end
 

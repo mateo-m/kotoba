@@ -1,6 +1,6 @@
 # Third-Party Adapters
 
-Adapters connect `RGSSI18n` to a game engine, starter kit, plugin, or project convention. They should stay thin: the runtime owns locale fallback, catalog loading, message parsing, and message evaluation; adapters own integration details.
+Adapters connect `Kotoba` to a game engine, starter kit, plugin, or project convention. They should stay thin: the runtime owns locale fallback, catalog loading, message parsing, and message evaluation; adapters own integration details.
 
 ## Adapter Contract
 
@@ -13,13 +13,13 @@ install(options)
 Register it by name:
 
 ```ruby
-RGSSI18n.register_adapter("my_engine", MyEngineI18nAdapter)
+Kotoba.register_adapter("my_engine", MyEngineI18nAdapter)
 ```
 
 Install it later:
 
 ```ruby
-RGSSI18n.use_adapter("my_engine", {"load" => true})
+Kotoba.use_adapter("my_engine", {"load" => true})
 ```
 
 `use_adapter` looks up the registered adapter and calls `install(options || {})`.
@@ -31,24 +31,24 @@ Create `adapters/my_engine.rb`:
 ```ruby
 require File.join(File.dirname(__FILE__), "registry")
 
-module RGSSI18n
+module Kotoba
   module Adapters
     module MyEngine
       def self.install(options)
         paths = options["catalog_paths"] || options[:catalog_paths]
         if paths
-          RGSSI18n.configure do |config|
+          Kotoba.configure do |config|
             config.catalog_paths = paths
           end
         end
-        RGSSI18n.load! if options["load"] || options[:load]
+        Kotoba.load! if options["load"] || options[:load]
         install_global_helper if options["install_global"] || options[:install_global]
         true
       end
 
       def self.translate_text(text, variables)
         if text.to_s[0, 5] == "i18n:"
-          return RGSSI18n.t(text.to_s[5, text.to_s.length - 5], variables || {})
+          return Kotoba.t(text.to_s[5, text.to_s.length - 5], variables || {})
         end
         text
       end
@@ -57,7 +57,7 @@ module RGSSI18n
         return if Object.method_defined?(:_MYI18N)
         Object.class_eval do
           def _MYI18N(key, variables = nil, options = nil)
-            RGSSI18n.t(key, variables || {}, options || {})
+            Kotoba.t(key, variables || {}, options || {})
           end
         end
       end
@@ -65,7 +65,7 @@ module RGSSI18n
   end
 end
 
-RGSSI18n.register_adapter("my_engine", RGSSI18n::Adapters::MyEngine)
+Kotoba.register_adapter("my_engine", Kotoba::Adapters::MyEngine)
 ```
 
 Use string and symbol option keys because RPG Maker scripts and external Ruby code often mix both styles.
@@ -73,10 +73,10 @@ Use string and symbol option keys because RPG Maker scripts and external Ruby co
 ## Example Usage
 
 ```ruby
-require_relative "runtime/rgss_i18n_core"
+require_relative "kotoba/core"
 require_relative "adapters/my_engine"
 
-RGSSI18n.use_adapter("my_engine", {
+Kotoba.use_adapter("my_engine", {
   "catalog_paths" => {
     "en" => ["Locales/en.json"]
   },
@@ -112,9 +112,9 @@ Then bridge positional variables:
 
 ```ruby
 def self.intl(source_text, *args)
-  key = RGSSI18n.t("source_text." + source_text.to_s, nil, {"default" => ""})
+  key = Kotoba.t("source_text." + source_text.to_s, nil, {"default" => ""})
   return source_text if key == ""
-  RGSSI18n.t(key, {"pokemon" => args[0], "arg1" => args[0]})
+  Kotoba.t(key, {"pokemon" => args[0], "arg1" => args[0]})
 end
 ```
 
@@ -131,16 +131,16 @@ adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "a
 $LOAD_PATH.unshift(adapter_path) unless $LOAD_PATH.include?(adapter_path)
 require "my_engine"
 
-class MyEngineAdapterTest < RGSSI18nTestCase
+class MyEngineAdapterTest < KotobaTestCase
   FIXTURE_ROOT = File.expand_path(File.join(File.dirname(__FILE__), "..", "fixtures", "my_engine"))
 
   def test_adapter_loads_catalogs
-    RGSSI18n.use_adapter("my_engine", {
+    Kotoba.use_adapter("my_engine", {
       "catalog_paths" => {"en" => [File.join(FIXTURE_ROOT, "en.json")]},
       "load" => true
     })
 
-    assert_equal("Save", RGSSI18n.t("menu.save"))
+    assert_equal("Save", Kotoba.t("menu.save"))
   end
 end
 ```
@@ -162,7 +162,7 @@ Good adapter responsibilities:
 
 - configure catalog paths
 - load catalogs on install
-- bridge engine-specific markers to `RGSSI18n.t`
+- bridge engine-specific markers to `Kotoba.t`
 - optionally install global helpers
 - expose small data-name helpers for known engine data
 
@@ -170,7 +170,7 @@ Bad adapter responsibilities:
 
 - adding parser features
 - changing runtime fallback behavior
-- putting Pokemon/PBS/map assumptions into `runtime/`
+- putting Pokemon/PBS/map assumptions into `kotoba/`
 - loading large binary assets during unit tests
 - silently swallowing install failures
 

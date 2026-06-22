@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/rgss-i18n/catalog.schema.json",
-  "title": "RGSS i18n catalog",
+  "$id": "https://example.invalid/kotoba/catalog.schema.json",
+  "title": "Kotoba catalog",
   "type": "object",
   "additionalProperties": {
     "$ref": "#/$defs/catalogNode"

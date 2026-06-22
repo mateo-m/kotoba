@@ -1,6 +1,6 @@
 # Pokemon Essentials Integration
 
-The Essentials adapters are compatibility bridges. They help an Essentials project call `RGSSI18n` without moving every string at once.
+The Essentials adapters are compatibility bridges. They help an Essentials project call `Kotoba` without moving every string at once.
 
 Supported targets:
 
@@ -16,10 +16,10 @@ Supported targets:
 ## Choose The Adapter
 
 ```ruby
-require File.join(".", "runtime", "rgss_i18n_core")
+require File.join(".", "kotoba", "core")
 require File.join(".", "adapters", "essentials_v18")
 
-RGSSI18n.use_adapter("essentials_v18", {
+Kotoba.use_adapter("essentials_v18", {
   "catalog_paths" => {
     "en" => ["Locales/en.json"],
     "fr" => ["Locales/fr.json"]
@@ -58,14 +58,14 @@ The bridge turns the source string into a stable key, then evaluates the runtime
 The adapter exposes module methods:
 
 ```ruby
-RGSSI18n::Adapters::EssentialsV18._INTL("A wild {1} appeared!", "Pikachu")
+Kotoba::Adapters::EssentialsV18._INTL("A wild {1} appeared!", "Pikachu")
 # => "A wild Pikachu appeared!"
 ```
 
 `_ISPRINTF` style strings are also bridged:
 
 ```ruby
-RGSSI18n::Adapters::EssentialsV18._ISPRINTF("You have {1:d} coins.", 42)
+Kotoba::Adapters::EssentialsV18._ISPRINTF("You have {1:d} coins.", 42)
 ```
 
 Catalog messages should use runtime placeholders:
@@ -87,11 +87,11 @@ The built-in Essentials adapters currently avoid replacing global `_INTL` at fil
 
 ```ruby
 def _INTL(*args)
-  RGSSI18n::Adapters::EssentialsV18._INTL(*args)
+  Kotoba::Adapters::EssentialsV18._INTL(*args)
 end
 
 def _ISPRINTF(*args)
-  RGSSI18n::Adapters::EssentialsV18._ISPRINTF(*args)
+  Kotoba::Adapters::EssentialsV18._ISPRINTF(*args)
 end
 ```
 
@@ -102,7 +102,7 @@ Do this only after checking that your Essentials scripts do not depend on custom
 For new code, prefer stable runtime keys:
 
 ```ruby
-RGSSI18n.t("battle.wild_appeared", {"pokemon" => pokemon.name})
+Kotoba.t("battle.wild_appeared", {"pokemon" => pokemon.name})
 ```
 
 This avoids using the English source sentence as an API.
@@ -110,19 +110,19 @@ This avoids using the English source sentence as an API.
 Common places to use stable keys:
 
 ```ruby
-pbMessage(RGSSI18n.t("npc.professor_intro", {"player" => $player.name}))
+pbMessage(Kotoba.t("npc.professor_intro", {"player" => $player.name}))
 ```
 
 ```ruby
 commands = [
-  RGSSI18n.t("menu.pokemon"),
-  RGSSI18n.t("menu.bag"),
-  RGSSI18n.t("menu.save")
+  Kotoba.t("menu.pokemon"),
+  Kotoba.t("menu.bag"),
+  Kotoba.t("menu.save")
 ]
 ```
 
 ```ruby
-Kernel.pbMessage(RGSSI18n.t("items.obtained", {
+Kernel.pbMessage(Kotoba.t("items.obtained", {
   "trainer" => $player.name,
   "item" => item_name
 }))
@@ -131,7 +131,7 @@ Kernel.pbMessage(RGSSI18n.t("items.obtained", {
 For plugin code, prefer a namespace helper:
 
 ```ruby
-plugin_t = RGSSI18n.namespace("plugins.daycare")
+plugin_t = Kotoba.namespace("plugins.daycare")
 pbMessage(plugin_t.call("egg_ready"))
 ```
 
@@ -140,7 +140,7 @@ pbMessage(plugin_t.call("egg_ready"))
 The v21 adapter can load split message files through normal `catalog_paths`:
 
 ```ruby
-RGSSI18n.use_adapter("essentials_v21", {
+Kotoba.use_adapter("essentials_v21", {
   "catalog_paths" => {
     "en" => [
       "Locales/en/messages_core.json",
@@ -156,13 +156,13 @@ RGSSI18n.use_adapter("essentials_v21", {
 The BES adapter supports the same `_INTL` and `_ISPRINTF` bridge as the v16-v20 adapters:
 
 ```ruby
-RGSSI18n.use_adapter("essentials_bes", {
+Kotoba.use_adapter("essentials_bes", {
   "catalog_paths" => {"en" => ["Locales/en.json"]},
   "load" => true
 })
 
-RGSSI18n::Adapters::EssentialsBES._INTL("A wild {1} appeared!", "Pikachu")
-RGSSI18n::Adapters::EssentialsBES._ISPRINTF("You have {1:d} coins.", 42)
+Kotoba::Adapters::EssentialsBES._INTL("A wild {1} appeared!", "Pikachu")
+Kotoba::Adapters::EssentialsBES._ISPRINTF("You have {1:d} coins.", 42)
 ```
 
 Use `install_global: true` only when you intentionally want project-wide `_INTL` routing. See [Optional Global Patch](#optional-global-patch).
@@ -170,9 +170,9 @@ Use `install_global: true` only when you intentionally want project-wide `_INTL`
 The adapter also exposes small data-name helpers:
 
 ```ruby
-RGSSI18n::Adapters::EssentialsBES.move_name("thunderbolt")
-RGSSI18n::Adapters::EssentialsBES.item_name("potion")
-RGSSI18n::Adapters::EssentialsBES.ability_name("overgrow")
+Kotoba::Adapters::EssentialsBES.move_name("thunderbolt")
+Kotoba::Adapters::EssentialsBES.item_name("potion")
+Kotoba::Adapters::EssentialsBES.ability_name("overgrow")
 ```
 
 Catalog shape:
@@ -197,13 +197,13 @@ Catalog shape:
 4. Validate the source catalog.
 5. Add translated locale catalogs.
 6. Validate translated catalogs against the source catalog.
-7. Convert new code to stable `RGSSI18n.t` keys over time.
+7. Convert new code to stable `Kotoba.t` keys over time.
 
 ## Validation
 
 ```sh
-bin/ruby18 bin/rgss-i18n load-test Locales/en.json
-bin/ruby18 bin/rgss-i18n validate Locales/en.json Locales/fr.json
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
 Validation catches missing keys, placeholder mismatches, and RPG Maker control-code mismatches before the game boots.

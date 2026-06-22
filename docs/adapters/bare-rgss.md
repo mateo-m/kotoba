@@ -2,9 +2,9 @@
 
 Use this path for a plain RPG Maker XP/RGSS project that is not using Pokemon Essentials.
 
-## Project Layout
+Copy only the `kotoba/` directory into your game. The core library lives there; you do not need `adapters/` for a plain project.
 
-Copy the runtime and adapter into your game project:
+## Project Layout
 
 ```text
 Game/
@@ -14,16 +14,13 @@ Game/
     en.json
     fr.json
   Scripts/
-    rgss_i18n_config.rb
-  runtime/
-    rgss_i18n_config.rb
-    rgss_i18n_core.rb
-    rgss_i18n_json.rb
-    rgss_i18n_message_eval.rb
-    rgss_i18n_plural_rules.rb
-  adapters/
-    registry.rb
-    bare_rgss.rb
+    kotoba_boot.rb
+  kotoba/
+    config.rb
+    core.rb
+    json.rb
+    message_eval.rb
+    plural_rules.rb
 ```
 
 The exact folder names can change, but keep paths simple. Old RGSS Ruby is not a good place for clever load logic.
@@ -51,10 +48,9 @@ Create a script section near the top of your RPG Maker scripts:
 ```ruby
 I18N_ROOT = "."
 
-require File.join(I18N_ROOT, "runtime", "rgss_i18n_core")
-require File.join(I18N_ROOT, "adapters", "bare_rgss")
+require File.join(I18N_ROOT, "kotoba", "core")
 
-RGSSI18n.configure do |config|
+Kotoba.configure do |config|
   config.default_locale = "en"
   config.available_locales = ["en", "fr"]
   config.catalog_paths = {
@@ -65,7 +61,7 @@ RGSSI18n.configure do |config|
   config.show_missing_keys = true
 end
 
-RGSSI18n.use_adapter("bare_rgss", {"load" => true})
+Kotoba.load!
 ```
 
 If your game packages files in a custom archive, set `config.file_loader`:
@@ -82,33 +78,19 @@ end
 Use the runtime directly:
 
 ```ruby
-message = RGSSI18n.t("npc.greeting", {"name" => "Ari"})
+message = Kotoba.t("npc.greeting", {"name" => "Ari"})
 ```
 
-Or use the global helper:
+Or use the global helper installed by the runtime:
 
 ```ruby
 message = _T("npc.greeting", {"name" => "Ari"})
 ```
 
-If you use adapter markers, the bare adapter translates strings prefixed with `i18n:`:
-
-```ruby
-RGSSI18n::Adapters::BareRGSS.translate_message("i18n:menu.save", nil)
-# => "Save"
-```
-
-Plain strings pass through unchanged:
-
-```ruby
-RGSSI18n::Adapters::BareRGSS.translate_message("Save", nil)
-# => "Save"
-```
-
 ## Changing Locale
 
 ```ruby
-RGSSI18n.locale = "fr"
+Kotoba.locale = "fr"
 ```
 
 The runtime loads the new locale and its fallback chain on assignment.
@@ -159,18 +141,57 @@ commands = [
 For debug-only missing-key visibility:
 
 ```ruby
-RGSSI18n.configure do |config|
+Kotoba.configure do |config|
   config.show_missing_keys = $DEBUG ? true : false
 end
 ```
+
+## Optional: `i18n:` Prefix Adapter
+
+If you want database or event text to carry translation keys inline (`"i18n:menu.save"`) instead of calling `_T` in script, copy the optional bare adapter too:
+
+```text
+  adapters/
+    registry.rb
+    bare_rgss.rb
+```
+
+Boot with:
+
+```ruby
+require File.join(I18N_ROOT, "kotoba", "core")
+require File.join(I18N_ROOT, "adapters", "bare_rgss")
+
+Kotoba.configure do |config|
+  config.default_locale = "en"
+  config.catalog_paths = {
+    "en" => ["Locales/en.json"],
+    "fr" => ["Locales/fr.json"]
+  }
+end
+
+Kotoba.use_adapter("bare_rgss", {"load" => true})
+```
+
+Strings prefixed with `i18n:` translate through the adapter; plain strings pass through unchanged:
+
+```ruby
+Kotoba::Adapters::BareRGSS.translate_message("i18n:menu.save", nil)
+# => "Save"
+
+Kotoba::Adapters::BareRGSS.translate_message("Save", nil)
+# => "Save"
+```
+
+Most bare RGSS projects do not need this. Prefer `_T("menu.save")` in script unless you already store `i18n:` markers in data.
 
 ## Validate Before Copying Into The Game
 
 Run outside RPG Maker:
 
 ```sh
-bin/ruby18 bin/rgss-i18n load-test Locales/en.json
-bin/ruby18 bin/rgss-i18n validate Locales/en.json Locales/fr.json
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
 Fix catalog errors before importing files into the RPG Maker project.

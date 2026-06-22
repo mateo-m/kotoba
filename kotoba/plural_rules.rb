@@ -1,4 +1,4 @@
-module RGSSI18n
+module Kotoba
   module PluralRules
     def self.cardinal(locale, value)
       n = value.to_i

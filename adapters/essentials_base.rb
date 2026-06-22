@@ -1,14 +1,14 @@
 require File.join(File.dirname(__FILE__), "registry")
 
-module RGSSI18n
+module Kotoba
   module Adapters
     module EssentialsBase
       def self.install_source_map(options)
         catalog_paths = options["catalog_paths"] || options[:catalog_paths]
-        RGSSI18n.configure do |config|
+        Kotoba.configure do |config|
           config.catalog_paths = catalog_paths if catalog_paths
         end
-        RGSSI18n.load! if options["load"] || options[:load]
+        Kotoba.load! if options["load"] || options[:load]
         true
       end
 
@@ -17,14 +17,14 @@ module RGSSI18n
         force = options["force_global"] || options[:force_global]
         @global_adapter = adapter
         Object.class_eval do
-          if force || !RGSSI18n::Adapters::EssentialsBase.global_method_defined?(:_INTL)
+          if force || !Kotoba::Adapters::EssentialsBase.global_method_defined?(:_INTL)
             def _INTL(*args)
-              RGSSI18n::Adapters::EssentialsBase.global_adapter._INTL(*args)
+              Kotoba::Adapters::EssentialsBase.global_adapter._INTL(*args)
             end
           end
-          if force || !RGSSI18n::Adapters::EssentialsBase.global_method_defined?(:_ISPRINTF)
+          if force || !Kotoba::Adapters::EssentialsBase.global_method_defined?(:_ISPRINTF)
             def _ISPRINTF(*args)
-              RGSSI18n::Adapters::EssentialsBase.global_adapter._ISPRINTF(*args)
+              Kotoba::Adapters::EssentialsBase.global_adapter._ISPRINTF(*args)
             end
           end
         end
@@ -42,12 +42,12 @@ module RGSSI18n
       def self.intl(source_text, args)
         key = source_key(source_text)
         return positional(source_text, args) if key == ""
-        RGSSI18n.t(key, positional_variables(args))
+        Kotoba.t(key, positional_variables(args))
       end
 
       def self.isprintf(source_text, args)
         key = source_key(source_text)
-        string = key == "" ? source_text.to_s : RGSSI18n.t(key, positional_variables(args), {"default" => source_text.to_s})
+        string = key == "" ? source_text.to_s : Kotoba.t(key, positional_variables(args), {"default" => source_text.to_s})
         args.each_with_index do |value, index|
           number = (index + 1).to_s
           string = string.gsub(/\{#{number}\:([^\}]+?)\}/) { |match| sprintf("%" + $1, value) }
@@ -57,7 +57,7 @@ module RGSSI18n
       end
 
       def self.source_key(source_text)
-        RGSSI18n.source_text_key(source_text, {"default" => ""})
+        Kotoba.source_text_key(source_text, {"default" => ""})
       end
 
       def self.positional_variables(args)
@@ -86,7 +86,7 @@ module RGSSI18n
 
       def self.data_name(namespace, id, field)
         key = "data." + namespace.to_s + "." + id.to_s + "." + field.to_s
-        RGSSI18n.t(key, nil, {"default" => id.to_s})
+        Kotoba.t(key, nil, {"default" => id.to_s})
       end
     end
   end

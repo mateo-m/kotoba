@@ -24,9 +24,9 @@ Catalogs are strict JSON. Leaves must be strings, and lookup keys use dots betwe
 ## 2. Load The Runtime
 
 ```ruby
-require_relative "runtime/rgss_i18n_core"
+require_relative "kotoba/core"
 
-RGSSI18n.configure do |config|
+Kotoba.configure do |config|
   config.default_locale = "en"
   config.available_locales = ["en"]
   config.catalog_paths = {
@@ -34,19 +34,19 @@ RGSSI18n.configure do |config|
   }
 end
 
-RGSSI18n.load!
+Kotoba.load!
 ```
 
 ## 3. Translate Strings
 
 ```ruby
-RGSSI18n.t("menu.save")
+Kotoba.t("menu.save")
 # => "Save"
 
-RGSSI18n.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
 # => "A wild Pikachu appeared!"
 
-RGSSI18n.t("battle.item_count", {"count" => 2})
+Kotoba.t("battle.item_count", {"count" => 2})
 # => "2 items"
 ```
 
@@ -76,7 +76,7 @@ Create `Locales/fr.json`:
 Update config:
 
 ```ruby
-RGSSI18n.configure do |config|
+Kotoba.configure do |config|
   config.default_locale = "en"
   config.available_locales = ["en", "fr"]
   config.catalog_paths = {
@@ -89,8 +89,8 @@ end
 Switch locale:
 
 ```ruby
-RGSSI18n.locale = "fr"
-RGSSI18n.t("menu.save")
+Kotoba.locale = "fr"
+Kotoba.t("menu.save")
 # => "Sauvegarder"
 ```
 
@@ -99,8 +99,8 @@ RGSSI18n.t("menu.save")
 Run:
 
 ```sh
-bin/ruby18 bin/rgss-i18n load-test Locales/en.json
-bin/ruby18 bin/rgss-i18n validate Locales/en.json Locales/fr.json
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
 The first command checks JSON and message syntax. The second checks missing keys, placeholder mismatches, and RPG Maker control-code mismatches.

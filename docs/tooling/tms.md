@@ -23,8 +23,8 @@ Export interchange files only when sending work to translators.
 5. Validate translated JSON against the source catalog.
 
 ```sh
-bin/ruby18 bin/rgss-i18n load-test Locales/en.json
-bin/ruby18 bin/rgss-i18n validate Locales/en.json Locales/fr.json
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
 ## Supported Interchange

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/rgss-i18n/metadata.schema.json",
-  "title": "RGSS i18n metadata",
+  "$id": "https://example.invalid/kotoba/metadata.schema.json",
+  "title": "Kotoba metadata",
   "type": "object",
   "additionalProperties": {
     "type": "object",

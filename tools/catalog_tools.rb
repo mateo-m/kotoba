@@ -1,7 +1,7 @@
-runtime_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "runtime"))
-$LOAD_PATH.unshift(runtime_path) unless $LOAD_PATH.include?(runtime_path)
+kotoba_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "kotoba"))
+$LOAD_PATH.unshift(kotoba_path) unless $LOAD_PATH.include?(kotoba_path)
 
-require "rgss_i18n_core"
+require "core"
 require "fileutils"
 
 class OrderedHash < Hash
@@ -45,7 +45,7 @@ class OrderedHash < Hash
   end
 end
 
-module RGSSI18nTools
+module KotobaTools
   module CatalogTools
     ACCENTS = {
       "a" => "a", "b" => "b", "c" => "c", "d" => "d", "e" => "e",
@@ -97,7 +97,7 @@ module RGSSI18nTools
     }
 
     def self.load_json(path)
-      RGSSI18n::JSON.parse(File.open(path, "rb") { |file| file.read }, {
+      Kotoba::JSON.parse(File.open(path, "rb") { |file| file.read }, {
         "duplicate_keys" => "error",
         "max_depth" => 64
       })

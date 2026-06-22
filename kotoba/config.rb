@@ -1,4 +1,4 @@
-module RGSSI18n
+module Kotoba
   class Config
     attr_accessor :source_locale
     attr_accessor :default_locale

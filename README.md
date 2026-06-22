@@ -1,8 +1,8 @@
-# RPG Maker i18n
+# Kotoba
 
-> Ruby internationalization for RPG Maker XP and Pokemon Essentials projects.
+> Internationalization for retro RPG Maker XP fan games and Pokemon Essentials projects.
 
-RPG Maker i18n is a small Ruby library for loading JSON translation catalogs, resolving locale fallbacks, and evaluating game text at runtime. It is written for Ruby 1.8 compatibility first, because RPG Maker XP and RGSS1 still run on that world.
+Kotoba is a small Ruby library for loading JSON translation catalogs, resolving locale fallbacks, and evaluating game text at runtime. It is written for Ruby 1.8 compatibility first, because RPG Maker XP and RGSS1 still run on that world.
 
 Use it in bare RGSS projects, Pokemon Essentials games, or custom starter kits through opt-in adapters.
 
@@ -16,10 +16,10 @@ Use it in bare RGSS projects, Pokemon Essentials games, or custom starter kits t
 
 ### Add the runtime to a game project
 
-Copy the `runtime/` directory into your project, or clone this repository and reference it from your game scripts.
+Copy the `kotoba/` directory into your project, or clone this repository and reference it from your game scripts.
 
 ```ruby
-require_relative "runtime/rgss_i18n_core"
+require_relative "kotoba/core"
 ```
 
 Create a catalog such as `Locales/en.json`:
@@ -35,14 +35,14 @@ Create a catalog such as `Locales/en.json`:
 Load it:
 
 ```ruby
-RGSSI18n.configure do |config|
+Kotoba.configure do |config|
   config.default_locale = "en"
   config.catalog_paths = {
     "en" => ["Locales/en.json"]
   }
 end
 
-RGSSI18n.load!
+Kotoba.load!
 ```
 
 For a full walkthrough, read [Getting Started](docs/getting-started.md).
@@ -52,14 +52,14 @@ For a full walkthrough, read [Getting Started](docs/getting-started.md).
 Translate a string:
 
 ```ruby
-RGSSI18n.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
 # => "A wild Pikachu appeared!"
 ```
 
 Load JSON directly:
 
 ```ruby
-RGSSI18n.load_json("en", File.open("Locales/en.json", "rb") { |file| file.read })
+Kotoba.load_json("en", File.open("Locales/en.json", "rb") { |file| file.read })
 ```
 
 Use the `_T` helper installed by default:
@@ -71,13 +71,13 @@ _T("menu.save")
 Validate catalogs before shipping:
 
 ```sh
-bin/ruby18 bin/rgss-i18n load-test Locales/en.json
-bin/ruby18 bin/rgss-i18n validate Locales/en.json Locales/fr.json
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
 ## Features
 
-- `RGSSI18n.t("namespace.key", vars, options)` lookup with nested JSON catalogs
+- `Kotoba.t("namespace.key", vars, options)` lookup with nested JSON catalogs
 - Locale fallback chains such as `fr-CA -> fr -> en`
 - Strict bundled JSON parser with BOM stripping and unicode escape handling
 - Message syntax for variables, `select`, cardinal `plural`, exact plural branches, `#`, and apostrophe escaping
@@ -88,7 +88,7 @@ bin/ruby18 bin/rgss-i18n validate Locales/en.json Locales/fr.json
 
 ## Configuration
 
-Runtime options such as locale defaults, catalog paths, fallback chains, and error policies are configured through `RGSSI18n.configure`.
+Runtime options such as locale defaults, catalog paths, fallback chains, and error policies are configured through `Kotoba.configure`.
 
 See:
 
@@ -102,7 +102,7 @@ Clone the repository and install dependencies:
 
 ```sh
 git clone <repository-url>
-cd rpg-maker-i18n
+cd kotoba
 bun install
 bun run hooks:install
 ```

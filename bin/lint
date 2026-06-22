@@ -6,7 +6,7 @@ unless RUBY_VERSION =~ /^1\.8\./
 end
 
 PROJECT_ROOT = File.expand_path("..", File.dirname(__FILE__))
-RUNTIME_FILES = Dir[File.join(PROJECT_ROOT, "runtime/**/*.rb")].sort
+RUNTIME_FILES = Dir[File.join(PROJECT_ROOT, "kotoba/**/*.rb")].sort
 ADAPTER_FILES = Dir[File.join(PROJECT_ROOT, "adapters/**/*.rb")].sort
 TOOL_FILES = Dir[File.join(PROJECT_ROOT, "tools/**/*.rb")].sort
 TEST_FILES = Dir[File.join(PROJECT_ROOT, "test/**/*_test.rb")].sort

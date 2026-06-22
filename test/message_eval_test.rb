@@ -1,12 +1,12 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "test_helper"))
 
-class MessageEvalTest < RGSSI18nTestCase
+class MessageEvalTest < KotobaTestCase
   def evaluate(message, variables, locale)
-    RGSSI18n::MessageEval.evaluate(RGSSI18n::MessageEval.compile(message), variables, locale)
+    Kotoba::MessageEval.evaluate(Kotoba::MessageEval.compile(message), variables, locale)
   end
 
   def evaluate_with_options(message, variables, locale, options)
-    RGSSI18n::MessageEval.evaluate(RGSSI18n::MessageEval.compile(message, options), variables, locale, options)
+    Kotoba::MessageEval.evaluate(Kotoba::MessageEval.compile(message, options), variables, locale, options)
   end
 
   def test_interpolates_string_and_symbol_variables
@@ -15,10 +15,10 @@ class MessageEvalTest < RGSSI18nTestCase
   end
 
   def test_plain_messages_compile_to_fast_path
-    compiled = RGSSI18n::MessageEval.compile("Save")
+    compiled = Kotoba::MessageEval.compile("Save")
 
     assert_equal("Save", compiled)
-    assert_equal("Save", RGSSI18n::MessageEval.evaluate(compiled, {}, "en"))
+    assert_equal("Save", Kotoba::MessageEval.evaluate(compiled, {}, "en"))
   end
 
   def test_keeps_missing_variables_visible
@@ -27,7 +27,7 @@ class MessageEvalTest < RGSSI18nTestCase
 
   def test_missing_variable_policy_can_empty_or_raise
     assert_equal("Hello, !", evaluate_with_options("Hello, {name}!", {}, "en", {"missing_variable_policy" => "empty"}))
-    assert_raise(RGSSI18n::MessageEvaluationError) do
+    assert_raise(Kotoba::MessageEvaluationError) do
       evaluate_with_options("Hello, {name}!", {}, "en", {"missing_variable_policy" => "error"})
     end
   end
@@ -50,11 +50,11 @@ class MessageEvalTest < RGSSI18nTestCase
   def test_plural_requires_present_integer_variable
     message = "{count, plural, =0 {No items} one {# item} other {# items}}"
 
-    assert_raise(RGSSI18n::MessageEvaluationError) do
+    assert_raise(Kotoba::MessageEvaluationError) do
       evaluate(message, {}, "en")
     end
 
-    assert_raise(RGSSI18n::MessageEvaluationError) do
+    assert_raise(Kotoba::MessageEvaluationError) do
       evaluate(message, {"count" => "many"}, "en")
     end
   end
@@ -74,20 +74,20 @@ class MessageEvalTest < RGSSI18nTestCase
   end
 
   def test_requires_other_branch_for_select
-    assert_raise(RGSSI18n::MessageParseError) do
-      RGSSI18n::MessageEval.compile("{gender, select, female {She}}")
+    assert_raise(Kotoba::MessageParseError) do
+      Kotoba::MessageEval.compile("{gender, select, female {She}}")
     end
   end
 
   def test_requires_other_branch_for_plural
-    assert_raise(RGSSI18n::MessageParseError) do
-      RGSSI18n::MessageEval.compile("{count, plural, one {One}}")
+    assert_raise(Kotoba::MessageParseError) do
+      Kotoba::MessageEval.compile("{count, plural, one {One}}")
     end
   end
 
   def test_enforces_message_depth_limit
-    assert_raise(RGSSI18n::MessageParseError) do
-      RGSSI18n::MessageEval.compile(
+    assert_raise(Kotoba::MessageParseError) do
+      Kotoba::MessageEval.compile(
         "{a, select, x {{b, select, y {ok} other {ok}}} other {ok}}",
         {"max_depth" => 1}
       )

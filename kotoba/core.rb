@@ -1,9 +1,9 @@
-require File.join(File.dirname(__FILE__), "rgss_i18n_config")
-require File.join(File.dirname(__FILE__), "rgss_i18n_json")
-require File.join(File.dirname(__FILE__), "rgss_i18n_plural_rules")
-require File.join(File.dirname(__FILE__), "rgss_i18n_message_eval")
+require File.join(File.dirname(__FILE__), "config")
+require File.join(File.dirname(__FILE__), "json")
+require File.join(File.dirname(__FILE__), "plural_rules")
+require File.join(File.dirname(__FILE__), "message_eval")
 
-module RGSSI18n
+module Kotoba
   class MissingTranslationError < StandardError
   end
 
@@ -178,13 +178,13 @@ module RGSSI18n
       if config.global_helper && !object_has_method?(:_T)
         Object.class_eval do
           def _T(key, variables = nil, options = nil)
-            RGSSI18n.t(key, variables, options)
+            Kotoba.t(key, variables, options)
           end
         end
       end
 
       if config.i18n_alias && !Object.const_defined?(:I18n)
-        Object.const_set(:I18n, RGSSI18n)
+        Object.const_set(:I18n, Kotoba)
       end
     end
 
@@ -361,4 +361,4 @@ module RGSSI18n
   end
 end
 
-RGSSI18n.reset!
+Kotoba.reset!

@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
     paths:
-      - "runtime/**"
+      - "kotoba/**"
       - "adapters/**"
       - "tools/**"
       - "test/**"
@@ -21,7 +21,7 @@ on:
     branches:
       - main
     paths:
-      - "runtime/**"
+      - "kotoba/**"
       - "adapters/**"
       - "tools/**"
       - "test/**"
@@ -50,7 +50,7 @@ jobs:
         with:
           filters: |
             lint:
-              - 'runtime/**'
+              - 'kotoba/**'
               - 'adapters/**'
               - 'tools/**'
               - 'test/**'
