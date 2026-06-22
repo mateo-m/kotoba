@@ -1,14 +1,13 @@
 import { defineConfig } from "vitepress";
+import { resolveBase, resolveGithubRepository } from "./repo";
 
-const repositoryName =
-  process.env.VITEPRESS_REPOSITORY_NAME || "kotoba";
-const githubRepository = process.env.VITEPRESS_GITHUB_REPO;
+const githubRepository = resolveGithubRepository();
 
 export default defineConfig({
   title: "Kotoba",
   description:
     "Internationalization for retro RPG Maker XP fan games and Pokemon Essentials projects.",
-  base: process.env.VITEPRESS_BASE || `/${repositoryName}/`,
+  base: resolveBase(),
   cleanUrls: true,
   lastUpdated: true,
   themeConfig: {

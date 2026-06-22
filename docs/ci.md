@@ -19,6 +19,14 @@ This runs:
 
 The docs are published with [VitePress](https://vitepress.dev/).
 
+GitHub Pages serves project sites at `https://<user>.github.io/<repository>/`. The docs base path comes from the repository name:
+
+- CI sets `VITEPRESS_BASE` and `VITEPRESS_REPOSITORY_NAME` from `github.event.repository.name`.
+- Local builds resolve the same value from `git remote get-url origin` when those variables are unset.
+- `bun run docs:dev` uses `/` so local navigation stays at the dev-server root.
+
+After renaming the GitHub repository, run the **Docs** workflow once so Pages picks up the new base path.
+
 Preview locally:
 
 ```sh

@@ -10,7 +10,7 @@
     "lint:docker": "bin/lint-docker",
     "hooks:install": "lefthook install",
     "precommit": "lefthook run pre-commit",
-    "docs:dev": "vitepress dev docs",
+    "docs:dev": "VITEPRESS_BASE=/ vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
