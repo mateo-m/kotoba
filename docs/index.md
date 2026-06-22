@@ -7,11 +7,11 @@ hero:
   tagline: JSON catalogs, locale fallbacks, and dialog syntax for Ruby 1.8 RPG Maker XP and Essentials projects
   actions:
     - theme: brand
+      text: Install in your game
+      link: /essential/installation
+    - theme: alt
       text: Table of Contents
       link: /table-of-contents
-    - theme: alt
-      text: Install in a game
-      link: /essential/installation
 
 features:
   - title: Ruby 1.8 first
@@ -30,4 +30,6 @@ features:
 
 ## Documentation
 
-Open the [table of contents](/table-of-contents) for the full outline, or start with [Quick Start](/essential/quick-start) if you are working from a git clone.
+**Fangame dev with a `Game.exe` folder?** Start with [Installing in a game](/essential/installation).
+**Browsing the git repo?** Use [Quick Start](/essential/quick-start).
+Full outline: [table of contents](/table-of-contents).

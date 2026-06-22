@@ -1,8 +1,8 @@
 # Quick Start
 
-Load Kotoba from a repository checkout and translate a few strings in minutes.
+Load Kotoba from a **git clone** and translate a few strings in minutes.
 
-Shipping a game? Use a [release integration ZIP](/essential/installation) instead of copying files from this repo by hand.
+**Adding Kotoba to an existing fangame with `Game.exe`?** Start with [Installing in a game](/essential/installation) instead. That page covers ZIP layout, the Script Editor, JSON catalogs, and what to expect on first playtest.
 
 ## Create a catalog
 

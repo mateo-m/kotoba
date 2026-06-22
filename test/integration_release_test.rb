@@ -36,6 +36,7 @@ class IntegrationReleaseTest < KotobaTestCase
     assert(files.include?("adapters/essentials_base.rb"))
     assert(files.include?("examples/pokemon_essentials/en.json"))
     assert(files.include?("examples/boot_kotoba.rb"))
+    assert(files.include?("examples/script_editor/essentials_smoke_test.rb"))
     assert(files.include?("INSTALL.md"))
     assert(files.include?("MANIFEST.json"))
   end
@@ -45,7 +46,16 @@ class IntegrationReleaseTest < KotobaTestCase
 
     assert_equal(kotoba_version, manifest["kotoba_version"])
     assert_equal("bare_rgss", manifest["adapter"])
+    assert(manifest["docs_install_url"].index("/essential/installation"))
     assert(manifest["files"].include?("adapters/bare_rgss.rb"))
+  end
+
+  def test_install_markdown_links_to_online_guide
+    text = KotobaTools::IntegrationRelease.install_markdown("essentials_v20")
+
+    assert(text.index("https://mateo-m.github.io/kotoba/essential/installation"))
+    assert(text.index("essentials_v20"))
+    assert(!text.index("## Troubleshooting"))
   end
 
   def test_boot_ruby_targets_requested_adapter
@@ -63,6 +73,7 @@ class IntegrationReleaseTest < KotobaTestCase
     assert(File.exist?(File.join(staging, "INSTALL.md")))
     assert(File.exist?(File.join(staging, "MANIFEST.json")))
     assert(File.exist?(File.join(staging, "examples", "boot_kotoba.rb")))
+    assert(File.exist?(File.join(staging, "examples", "script_editor", "load_only.rb")))
     assert(File.exist?(File.join(staging, "kotoba", "core.rb")))
     assert(files.include?("examples/boot_kotoba.rb"))
   ensure

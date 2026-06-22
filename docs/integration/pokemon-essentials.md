@@ -2,7 +2,11 @@
 
 Essentials adapters are compatibility bridges. They let an existing project call `Kotoba` without moving every string in one pass.
 
-Install the matching ZIP from [Installing in a game](/essential/installation) — `kotoba-essentials-v16.zip` through `v21`, or `kotoba-essentials-bes.zip` for BES forks. Unzip into your game root and load `examples/boot_kotoba.rb` after pointing `config.catalog_paths` at your catalogs.
+**First time installing?** Follow every step in [Installing in a game](/essential/installation) before reading this page. It explains ZIP extraction, the Script Editor `load` line, and the sample JSON at `examples/pokemon_essentials/en.json`.
+
+Download the matching ZIP (`kotoba-essentials-v16.zip` through `v21`, or `kotoba-essentials-bes.zip` for BES forks) from [GitHub Releases](https://github.com/mateo-m/kotoba/releases).
+
+This page covers `_INTL` bridges, catalog shape, and wiring Essentials scripts after Kotoba loads without errors.
 
 Supported targets:
 

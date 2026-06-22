@@ -66,6 +66,8 @@ The script:
 4. Creates a signed commit and tag, pushes `main` + the tag.
 5. Runs `gh release create` with the ZIPs and a **What's changed** body.
 
+Integration ZIPs ship a minimal `INSTALL.md` (adapter facts + link to the online install guide). Full install documentation lives in `docs/essential/installation.md` and deploys via the Docs workflow — not through library releases.
+
 Preview notes before cutting:
 
 ```sh

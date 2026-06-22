@@ -8,8 +8,8 @@ The sidebar lists every page. Use this one as a map.
 
 | If you want to… | Go to |
 | --- | --- |
-| Drop Kotoba into a shipped game | [Installing in a game](/essential/installation) |
-| Try the runtime from a git clone | [Quick Start](/essential/quick-start) |
+| Add Kotoba to a fangame folder with `Game.exe` (start here) | [Installing in a game](/essential/installation) |
+| Try Kotoba from a git clone on your PC | [Quick Start](/essential/quick-start) |
 | Send strings to a volunteer translator | [Spreadsheet handoff](/translators/handoff) |
 | Translate lines yourself (no JSON) | [For translators](/translators/) |
 | Move an Essentials project off `_INTL` gradually | [Essentials migration](/integration/pokemon-essentials-migration) |
@@ -20,7 +20,7 @@ The sidebar lists every page. Use this one as a map.
 Read these before adapters or tooling:
 
 - [Quick Start](/essential/quick-start) — catalog, boot, and `Kotoba.t`
-- [Installing in a game](/essential/installation) — release ZIPs and boot scripts
+- [Installing in a game](/essential/installation) — release ZIPs, copy-paste Script Editor examples, sample JSON
 - [Catalog format](/essential/catalog-format) — nested JSON and lookup keys
 - [Message syntax](/essential/message-syntax) — variables, plural, and apostrophes
 - [Runtime API](/essential/runtime-api) — configuration, loading, and errors

@@ -7,9 +7,16 @@ module KotobaTools
   module IntegrationRelease
     PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), ".."))
     VERSION_PATH = File.join(PROJECT_ROOT, "kotoba", "VERSION")
+    DOCS_SITE_URL = ENV["KOTOBA_DOCS_URL"] || "https://mateo-m.github.io/kotoba"
     KOTOBA_FILES = Dir[File.join(PROJECT_ROOT, "kotoba", "**", "*.rb")].sort.collect do |path|
       path.sub(PROJECT_ROOT + "/", "")
     end + ["kotoba/VERSION"]
+
+    SCRIPT_EDITOR_FILES = Dir[File.join(PROJECT_ROOT, "examples", "script_editor", "**", "*")].find_all do |path|
+      File.file?(path)
+    end.collect do |path|
+      path.sub(PROJECT_ROOT + "/", "")
+    end.sort
 
     ADAPTER_TARGETS = {
       "bare_rgss" => {
@@ -70,7 +77,7 @@ module KotobaTools
       config = target(adapter_name)
       raise ArgumentError, "unknown adapter " + adapter_name.to_s if config.nil?
 
-      files = KOTOBA_FILES + config["adapter_files"] + [
+      files = KOTOBA_FILES + config["adapter_files"] + SCRIPT_EDITOR_FILES + [
         config["example_catalog"],
         "examples/boot_kotoba.rb",
         "INSTALL.md",
@@ -79,11 +86,20 @@ module KotobaTools
       files.sort
     end
 
+    def self.docs_site_url
+      DOCS_SITE_URL.sub(/\/\z/, "")
+    end
+
+    def self.docs_install_url
+      docs_site_url + "/essential/installation"
+    end
+
     def self.manifest(adapter_name, files = nil)
       listed = files || package_relative_files(adapter_name)
       {
         "kotoba_version" => version,
         "adapter" => adapter_name.to_s,
+        "docs_install_url" => docs_install_url,
         "files" => listed
       }
     end
@@ -92,39 +108,39 @@ module KotobaTools
       config = target(adapter_name)
       raise ArgumentError, "unknown adapter " + adapter_name.to_s if config.nil?
 
+      sample_catalog = config["example_catalog"]
+      adapter_file = config["adapter_files"].find { |path| path =~ /#{adapter_name}\.rb\z/ }
+      adapter_basename = File.basename(adapter_file)
+      smoke_test = if adapter_name == "bare_rgss"
+        "examples/script_editor/bare_rgss_smoke_test.rb"
+      else
+        "examples/script_editor/essentials_smoke_test.rb"
+      end
+
       <<MARKDOWN
 # Kotoba #{version} — #{adapter_name}
 
-Copy this archive into your game project root (next to `Game.exe`).
+Extract this archive into the folder that contains `Game.exe`.
 
-## Files
+## Documentation
 
-- `kotoba/` — runtime core
-- `adapters/` — `#{adapter_name}` adapter
-- `examples/boot_kotoba.rb` — starter boot script
-- `examples/pokemon_essentials/en.json` or `examples/bare_rgss/en.json` — sample catalog
+The full installation guide is **online**, not copied into this ZIP:
 
-## Boot
+#{docs_install_url}
 
-Load `examples/boot_kotoba.rb` from your RGSS boot path after adjusting catalog paths.
+The website updates when documentation changes in git. You do not need a new Kotoba release just to read newer install instructions.
 
-```ruby
-load "examples/boot_kotoba.rb"
-```
+## Quick facts for this package
 
-The boot script calls:
-
-```ruby
-Kotoba.use_adapter("#{adapter_name}", {"load" => true})
-```
-
-## Catalogs
-
-Point `config.catalog_paths` at your locale JSON files. Use `bin/kotoba` from the development repository for migration and validation workflows.
-
-## Verify
-
-Run `load-test` on each locale catalog after copying files into your project.
+| Item | Value |
+| --- | --- |
+| Adapter | `#{adapter_name}` |
+| Adapter file | `#{adapter_basename}` |
+| Sample catalog | `#{sample_catalog}` |
+| Script Editor smoke test | `load "#{smoke_test}"` |
+| Copy-paste examples | `examples/script_editor/` |
+| File list | `MANIFEST.json` |
+| Online install guide | `docs_install_url` in `MANIFEST.json` |
 MARKDOWN
     end
 
@@ -136,17 +152,31 @@ MARKDOWN
       catalog_path = config["example_catalog"]
 
       lines = []
+      lines << "# Kotoba boot script — generated for #{adapter_name}"
+      lines << "#"
+      lines << "# HOW TO USE (read this):"
+      lines << "# 1. This file must sit at examples/boot_kotoba.rb next to Game.exe."
+      lines << "# 2. Do NOT double-click this file. RPG Maker does not run it that way."
+      lines << "# 3. In RPG Maker: Tools -> Script Editor -> new section named Kotoba -> add:"
+      lines << "#      load \"examples/boot_kotoba.rb\""
+      lines << "# 4. Click OK to save scripts, then playtest."
+      lines << "#"
+      lines << "# catalog_paths below loads the sample JSON at #{catalog_path}."
+      lines << "# Docs: #{docs_install_url}"
+      lines << ""
       lines << "require File.join(\".\", \"kotoba\", \"core\")"
       lines << "require File.join(\".\", \"adapters\", \"" + File.basename(adapter_file) + "\")"
       lines << ""
       lines << "Kotoba.configure do |config|"
       lines << "  config.default_locale = \"en\""
       lines << "  config.available_locales = [\"en\"]"
+      lines << "  # Locale code => JSON file path(s) relative to the game folder (where Game.exe is)."
       lines << "  config.catalog_paths = {"
       lines << "    \"en\" => [\"" + catalog_path + "\"]"
       lines << "  }"
       lines << "end"
       lines << ""
+      lines << "# Loads catalogs and activates the #{adapter_name} adapter."
       lines << "Kotoba.use_adapter(\"#{adapter_name}\", {\"load\" => true})"
       lines.join("\n") + "\n"
     end
