@@ -1,0 +1,6 @@
+# Copy to test/fixtures.local.yml (gitignored) for optional local integration tests.
+#
+# games:
+#   essentials_bes_sample: /absolute/path/to/your/essentials-bes-game
+
+games: {}
