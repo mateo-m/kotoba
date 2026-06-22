@@ -1,8 +1,17 @@
-# Generic Legacy Ruby Docker Images
+# Legacy Ruby Docker Images
 
-These images provide reusable Linux Ruby runtimes for compatibility testing against very old Ruby versions. They are generic Ruby images: Ruby is pre-installed during the image build, and project code is mounted only when running tests.
+> Reusable Linux Ruby images for compatibility testing against Ruby 1.8 and 1.9.
 
-Build them from the repository root:
+These images are generic Ruby runtimes. Ruby is installed during the image build, and project code is mounted only when you run tests.
+
+## Requirements
+
+- Docker
+- The repository checked out locally
+
+## Installing
+
+Build the images from the repository root:
 
 ```sh
 docker build --platform linux/amd64 \
@@ -18,16 +27,34 @@ docker build --platform linux/amd64 \
   -f docker/ruby-legacy/Dockerfile .
 ```
 
-Run the unit suite:
+## Usage
+
+Run the unit suite in Ruby 1.8:
 
 ```sh
-docker run --rm --platform linux/amd64 -v "$PWD":/work -w /work ruby-legacy:1.8.7-p374 ruby -Itest -e 'ARGV.each { |file| load file }' test/**/*_test.rb
-docker run --rm --platform linux/amd64 -v "$PWD":/work -w /work ruby-legacy:1.9.3-p551 ruby -Itest -e 'ARGV.each { |file| load file }' test/**/*_test.rb
+docker run --rm --platform linux/amd64 -v "$PWD":/work -w /work ruby-legacy:1.8.7-p374 \
+  ruby -Itest -e 'ARGV.each { |file| load file }' test/**/*_test.rb
 ```
 
-Check common native standard-library extensions:
+Run the unit suite in Ruby 1.9:
 
 ```sh
-docker run --rm --platform linux/amd64 ruby-legacy:1.8.7-p374 ruby -e 'require "zlib"; require "openssl"; require "readline"; require "socket"; puts "ok"'
-docker run --rm --platform linux/amd64 ruby-legacy:1.9.3-p551 ruby -e 'require "zlib"; require "openssl"; require "readline"; require "socket"; puts "ok"'
+docker run --rm --platform linux/amd64 -v "$PWD":/work -w /work ruby-legacy:1.9.3-p551 \
+  ruby -Itest -e 'ARGV.each { |file| load file }' test/**/*_test.rb
 ```
+
+Verify common native standard-library extensions:
+
+```sh
+docker run --rm --platform linux/amd64 ruby-legacy:1.8.7-p374 \
+  ruby -e 'require "zlib"; require "openssl"; require "readline"; require "socket"; puts "ok"'
+
+docker run --rm --platform linux/amd64 ruby-legacy:1.9.3-p551 \
+  ruby -e 'require "zlib"; require "openssl"; require "readline"; require "socket"; puts "ok"'
+```
+
+## Related Docs
+
+- [Compatibility](../docs/compatibility.md)
+- [CI](../docs/ci.md)
+- [README](../README.md)

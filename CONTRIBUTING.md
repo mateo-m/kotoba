@@ -1,8 +1,24 @@
 # Contributing
 
-## Pre-commit Checks
+Thanks for helping improve RPG Maker i18n.
 
-This repository uses lightweight local checks for formatting and linting:
+## Getting Started
+
+Clone the repository:
+
+```sh
+git clone <repository-url>
+cd rpg-maker-i18n
+```
+
+Install tooling and git hooks:
+
+```sh
+bun install
+bun run hooks:install
+```
+
+Run the project checks:
 
 ```sh
 bin/ruby18 bin/format
@@ -12,23 +28,70 @@ bin/lint-docker
 
 Formatting, Ruby syntax checks, and the unit suite run under Ruby 1.8 to protect runtime compatibility. Dockerfile checks run separately with Docker on the host.
 
-To install hooks with Lefthook:
+## Making Changes
+
+1. Create a branch for your change.
+2. Keep changes focused and match the existing Ruby 1.8 style.
+3. Update or add tests when behavior changes.
+4. Run the checks above before opening a pull request.
+
+For larger changes, open an issue first so the approach can be discussed before you invest time in a big diff.
+
+## Git Hooks
+
+This repository uses [Lefthook](https://github.com/evilmartians/lefthook) for git hooks.
+
+Install once:
 
 ```sh
 bun install
 bun run hooks:install
 ```
 
-If Lefthook is not installed, use the repository fallback hook:
+You can also run:
 
 ```sh
 bin/install-hooks
 ```
 
-The pre-commit checks format project text files, run Ruby syntax checks, run the unit suite, and validate Dockerfiles when Docker is available.
+On every commit, the tracked `lefthook.yml` runs:
 
-You can also run the complete pre-commit sequence with:
+- formatting (`bin/ruby18 bin/format`)
+- Ruby 1.8 lint and unit tests (`bin/ruby18 bin/lint`)
+- Dockerfile lint (`bin/lint-docker`)
+
+Run the same checks manually with:
 
 ```sh
 bun run precommit
 ```
+
+## Pull Requests
+
+Pull requests are welcome.
+
+Please make sure:
+
+- tests pass
+- formatting and lint checks pass
+- documentation is updated when public behavior changes
+- commit messages are clear and scoped to the change
+
+## Documentation
+
+If your change affects public behavior, update the relevant file under `docs/`.
+
+Start from [docs/index.md](docs/index.md) to find the right page.
+
+## Support
+
+If something is unclear, open an issue with:
+
+- what you were trying to do
+- what you expected
+- what actually happened
+- the command output or error message, if any
+
+## Roadmap
+
+Future work is tracked in [docs/roadmap.md](docs/roadmap.md). If you want to pick up a planned item, mention it in an issue first.

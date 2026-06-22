@@ -1,10 +1,12 @@
 # Documentation
 
-This directory is the canonical documentation for RPG Maker i18n.
+> Canonical documentation for RPG Maker i18n.
+
+Use this directory after the [README](../README.md) quick start when you need API details, integration guides, or tooling workflows.
 
 ## Start Here
 
-- [Getting Started](getting-started.md): install the runtime, load a catalog, and translate a string.
+- [Getting Started](getting-started.md): create a catalog, load the runtime, and translate strings.
 - [Runtime API](runtime-api.md): public `RGSSI18n` methods, config fields, and error types.
 - [Catalog Format](catalog-format.md): JSON catalog shape, key rules, and file layout.
 - [Message Syntax](message-syntax.md): interpolation, select, plural, and escaping.
@@ -30,3 +32,9 @@ This directory is the canonical documentation for RPG Maker i18n.
 - [Compatibility](compatibility.md)
 - [CI](ci.md)
 - [Roadmap](roadmap.md)
+
+## Related Files
+
+- [README](../README.md): project overview, installation, and usage
+- [CONTRIBUTING](../CONTRIBUTING.md): development setup and pull request expectations
+- [docker/README.md](../docker/README.md): legacy Ruby Docker images
