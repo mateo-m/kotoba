@@ -19,6 +19,10 @@ html_files() {
   find "$DIST" -name '*.html' -type f
 }
 
+if [[ ! -f "$DIST/.nojekyll" ]]; then
+  fail "dist is missing .nojekyll (GitHub Pages may run Jekyll and break versioned paths)"
+fi
+
 while IFS= read -r match; do
   [[ -z "$match" ]] && continue
   fail "doubled site base in $match"
@@ -43,6 +47,22 @@ for version_dir in "$DIST"/v[0-9]*.[0-9]*.[0-9]*/; do
     fail "versioned build $(basename "$version_dir") is missing target=\"_self\" on version links"
   fi
 done
+
+for install_index in "$DIST/essential/installation/index.html" "$DIST"/v*/essential/installation/index.html; do
+  [[ -f "$install_index" ]] || fail "missing directory index at ${install_index#$DIST/}"
+done
+
+for install_index in "$DIST/essential/installation/index.html" "$DIST"/v*/essential/installation/index.html; do
+  [[ -f "$install_index" ]] || continue
+  if ! grep -qE 'href="/kotoba/essential/installation/"' "$install_index" 2>/dev/null && \
+     ! grep -qE 'href="/kotoba/v[0-9]+\.[0-9]+\.[0-9]+/essential/installation/"' "$install_index" 2>/dev/null; then
+    fail "$(dirname "$install_index") is missing trailing-slash install links"
+  fi
+done
+
+if [[ -f "$DIST/essential/installation.html" ]] || compgen -G "$DIST/v*/essential/installation.html" > /dev/null; then
+  fail "flat essential/installation.html still present after Pages normalization"
+fi
 
 if [[ "$errors" -gt 0 ]]; then
   exit 1

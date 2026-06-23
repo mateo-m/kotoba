@@ -58,6 +58,11 @@ mkdir -p "$DIST"
 cp -R "$STAGING"/* "$DIST/"
 rm -rf "$STAGING"
 
+touch "$DIST/.nojekyll"
+
+echo "==> normalizing dist for GitHub Pages"
+bun "$REPO_ROOT/scripts/normalize-docs-dist-for-pages.ts" "$DIST"
+
 echo "==> checking docs site output"
 bash "$REPO_ROOT/bin/check-docs-site" "$DIST"
 

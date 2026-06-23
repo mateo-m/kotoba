@@ -10,6 +10,10 @@ on:
       - "kotoba/VERSION"
       - "package.json"
       - "bun.lock"
+      - "scripts/build-docs-site.sh"
+      - "scripts/normalize-docs-dist-for-pages.ts"
+      - "bin/check-docs-site"
+      - "bin/docs-site-url"
       - ".github/workflows/docs.yml"
   workflow_dispatch:
 
