@@ -2,6 +2,7 @@ kotoba_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "kotoba")
 $LOAD_PATH.unshift(kotoba_path) unless $LOAD_PATH.include?(kotoba_path)
 
 require "fileutils"
+require File.join(kotoba_path, "docs_routing")
 
 module KotobaTools
   module IntegrationRelease
@@ -99,7 +100,7 @@ module KotobaTools
     end
 
     def self.docs_install_url
-      docs_site_url + "/v" + version + "/essential/installation"
+      Kotoba::DocsRouting.install_url(docs_site_url, version)
     end
 
     def self.manifest(adapter_name, files = nil)

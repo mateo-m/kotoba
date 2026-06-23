@@ -2,6 +2,8 @@ require File.join(File.dirname(__FILE__), "config")
 require File.join(File.dirname(__FILE__), "json")
 require File.join(File.dirname(__FILE__), "plural_rules")
 require File.join(File.dirname(__FILE__), "message_eval")
+require File.join(File.dirname(__FILE__), "catalog_compiler")
+require File.join(File.dirname(__FILE__), "catalog_loader")
 
 module Kotoba
   class MissingTranslationError < StandardError
@@ -116,7 +118,7 @@ module Kotoba
       normalized = normalize_locale(locale_value)
       @catalogs = {} if @catalogs.nil?
       @catalogs[normalized] = {} unless @catalogs.has_key?(normalized)
-      merge_catalog!(@catalogs[normalized], compile_catalog(catalog, []))
+      merge_catalog!(@catalogs[normalized], CatalogCompiler.compile_tree(catalog, message_options))
       @catalogs[normalized]
     end
 
@@ -218,48 +220,11 @@ module Kotoba
     end
 
     def read_catalog_file(path)
-      if config.file_loader
-        return config.file_loader.call(path)
-      end
-
-      file = File.open(normalize_path(path), "rb")
-      begin
-        file.read
-      ensure
-        file.close
-      end
-    end
-
-    def normalize_path(path)
-      path.to_s.gsub("\\", "/")
+      CatalogLoader.read_file(config, path)
     end
 
     def check_catalog_size(path, bytes)
-      if bytes > config.max_catalog_bytes
-        raise CatalogError, "catalog is too large: " + path.to_s
-      end
-      if bytes > config.warn_catalog_bytes
-        warn_runtime("catalog is large: " + path.to_s + " (" + bytes.to_s + " bytes)")
-      end
-      @loaded_bytes = 0 if @loaded_bytes.nil?
-      @loaded_bytes += bytes
-      if @loaded_bytes > config.max_loaded_catalog_bytes
-        raise CatalogError, "loaded catalog bytes exceed configured limit"
-      end
-    end
-
-    def compile_catalog(value, path)
-      if value.is_a?(Hash)
-        compiled = {}
-        value.each do |key, child|
-          compiled[key.to_s] = compile_catalog(child, path + [key.to_s])
-        end
-        return compiled
-      end
-      return MessageEval.compile(value, message_options) if value.is_a?(String)
-
-      location = path.length == 0 ? "<root>" : path.join(".")
-      raise CatalogError, "catalog value must be a string or object at " + location
+      @loaded_bytes = CatalogLoader.check_size(config, path, bytes, @loaded_bytes)
     end
 
     def merge_catalog!(target, source)
@@ -312,20 +277,7 @@ module Kotoba
     end
 
     def discovered_catalog_paths(locale_value)
-      paths = []
-      (config.catalog_discovery_paths || []).each do |root|
-        normalized_root = normalize_path(root)
-        direct = File.join(normalized_root, locale_value.to_s + ".json")
-        paths << direct if file_exists?(direct)
-        Dir[File.join(normalized_root, locale_value.to_s, "*.json")].sort.each do |path|
-          paths << path
-        end
-      end
-      paths
-    end
-
-    def file_exists?(path)
-      File.file?(normalize_path(path))
+      CatalogLoader.discover_paths(config, locale_value)
     end
 
     def notify_locale_change(old_locale, new_locale)

@@ -8,6 +8,7 @@ import {
   resolveGithubRepository,
   resolveRepositoryName,
 } from "./repo";
+import { resolveInstallPath } from "./routing";
 
 function repoRootFromDocs(docsDir: string): string {
   const parent = resolve(docsDir, "..");
@@ -88,7 +89,7 @@ export function buildSharedThemeConfig(docsDir: string): DefaultTheme.Config {
   }
 
   nav.push(
-    { text: "Install", link: "/essential/installation" },
+    { text: "Install", link: `/${resolveInstallPath()}` },
     { text: "Integration", link: "/integration/" },
     { text: "Translators", link: "/translators/" },
     { text: "Catalog & API", link: "/essential/catalog-format" },
@@ -103,7 +104,7 @@ export function buildSharedThemeConfig(docsDir: string): DefaultTheme.Config {
         text: "Getting started",
         collapsed: false,
         items: [
-          { text: "Installing in a game", link: "/essential/installation" },
+          { text: "Installing in a game", link: `/${resolveInstallPath()}` },
           { text: "Quick Start (git clone)", link: "/essential/quick-start" },
           { text: "Troubleshooting", link: "/essential/troubleshooting" },
         ],

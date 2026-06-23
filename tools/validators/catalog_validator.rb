@@ -16,18 +16,15 @@ module KotobaTools
 
     def load_catalog(path)
       source = File.open(path, "rb") { |file| file.read }
-      parsed = Kotoba::JSON.parse(source, {
-        "duplicate_keys" => "error",
-        "max_depth" => 64
-      })
-      ensure_catalog_node(parsed, [])
+      parsed = Kotoba::JSON.parse(source, Kotoba::CatalogCompiler::JSON_LOAD_OPTIONS)
+      Kotoba::CatalogCompiler.ensure_node(parsed, [], ValidationError)
       parsed
     end
 
     def load_test(paths)
       paths.each do |path|
         catalog = load_catalog(path)
-        compile_messages(catalog, [])
+        Kotoba::CatalogCompiler.compile_tree(catalog)
       end
       true
     rescue Kotoba::JSONParseError, Kotoba::CatalogError, Kotoba::MessageParseError => error
@@ -38,7 +35,7 @@ module KotobaTools
     def schema(schema_name, path)
       data = load_json(path)
       if schema_name == "catalog"
-        ensure_catalog_node(data, [])
+        Kotoba::CatalogCompiler.ensure_node(data, [], ValidationError)
       elsif schema_name == "metadata"
         ensure_metadata(data)
       elsif schema_name == "validation"
@@ -54,14 +51,14 @@ module KotobaTools
 
     def validate(source_path, locale_paths, human = false)
       source = load_catalog(source_path)
-      source_messages = flatten_catalog(source)
-      compile_messages(source, [])
+      source_messages = Kotoba::CatalogCompiler.flatten(source)
+      Kotoba::CatalogCompiler.compile_tree(source)
       ok = true
 
       locale_paths.each do |path|
         locale = load_catalog(path)
-        compile_messages(locale, [])
-        messages = flatten_catalog(locale)
+        Kotoba::CatalogCompiler.compile_tree(locale)
+        messages = Kotoba::CatalogCompiler.flatten(locale)
         ok = false unless validate_locale(path, source_messages, messages, human)
       end
 
@@ -97,23 +94,7 @@ module KotobaTools
     end
 
     def load_json(path)
-      Kotoba::JSON.parse(File.open(path, "rb") { |file| file.read }, {
-        "duplicate_keys" => "error",
-        "max_depth" => 64
-      })
-    end
-
-    def ensure_catalog_node(value, path)
-      if value.is_a?(Hash)
-        value.each do |key, child|
-          ensure_catalog_node(child, path + [key.to_s])
-        end
-        return
-      end
-      return if value.is_a?(String)
-
-      location = path.length == 0 ? "<root>" : path.join(".")
-      raise ValidationError, "catalog value must be a string or object at " + location
+      Kotoba::JSON.parse(File.open(path, "rb") { |file| file.read }, Kotoba::CatalogCompiler::JSON_LOAD_OPTIONS)
     end
 
     def ensure_metadata(value)
@@ -150,34 +131,6 @@ module KotobaTools
           unless ["ignore", "warn", "error"].include?(field_value)
             raise ValidationError, "control_codes must be ignore, warn, or error"
           end
-        end
-      end
-    end
-
-    def compile_messages(catalog, path)
-      catalog.each do |key, value|
-        current_path = path + [key.to_s]
-        if value.is_a?(Hash)
-          compile_messages(value, current_path)
-        else
-          Kotoba::MessageEval.compile(value)
-        end
-      end
-    end
-
-    def flatten_catalog(catalog)
-      result = {}
-      flatten_catalog_into(catalog, [], result)
-      result
-    end
-
-    def flatten_catalog_into(catalog, path, result)
-      catalog.each do |key, value|
-        current_path = path + [key.to_s]
-        if value.is_a?(Hash)
-          flatten_catalog_into(value, current_path, result)
-        else
-          result[current_path.join(".")] = value
         end
       end
     end

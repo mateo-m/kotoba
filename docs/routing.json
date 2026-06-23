@@ -1,0 +1,4 @@
+{
+  "install_path": "essential/installation",
+  "version_path_template": "v{version}/{install_path}"
+}
