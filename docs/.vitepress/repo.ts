@@ -55,6 +55,14 @@ export function resolveDocsSiteUrl(): string | undefined {
     return explicit.replace(/\/$/, "");
   }
 
+  const envRepo = process.env.VITEPRESS_GITHUB_REPO;
+  if (envRepo) {
+    const [owner, repo] = envRepo.split("/");
+    if (owner && repo) {
+      return `https://${owner}.github.io/${repo}`;
+    }
+  }
+
   const { githubRepo } = readGitOrigin();
   if (!githubRepo) {
     return undefined;
