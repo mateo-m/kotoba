@@ -7,7 +7,6 @@ module KotobaTools
   module IntegrationRelease
     PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), ".."))
     VERSION_PATH = File.join(PROJECT_ROOT, "kotoba", "VERSION")
-    DOCS_SITE_URL = ENV["KOTOBA_DOCS_URL"] || "https://mateo-m.github.io/kotoba"
     KOTOBA_RUNTIME_FILES = Dir[File.join(PROJECT_ROOT, "kotoba", "*.rb")].find_all do |path|
       File.file?(path) && File.basename(path) != "boot.rb"
     end.collect do |path|
@@ -88,8 +87,45 @@ module KotobaTools
       files.sort
     end
 
+    def self.read_origin_remote
+      remote = `git remote get-url origin 2>/dev/null`.strip
+      return remote unless remote.empty?
+
+      config_path = File.join(PROJECT_ROOT, ".git", "config")
+      return nil unless File.file?(config_path)
+
+      in_origin = false
+      File.readlines(config_path).each do |line|
+        line = line.chomp
+        if line =~ /^\[remote "origin"\]$/
+          in_origin = true
+        elsif line =~ /^\[/
+          in_origin = false
+        elsif in_origin && line =~ /^\s+url = (.+)$/
+          return $1
+        end
+      end
+
+      nil
+    end
+
+    def self.github_pages_url_from_remote(remote)
+      return nil if remote.nil? || remote.empty?
+      return nil unless remote =~ /github\.com[:\/]([^\/]+)\/([^\/]+)/
+
+      owner = $1
+      repo = $2.sub(/\.git\z/, "")
+      "https://#{owner}.github.io/#{repo}"
+    end
+
     def self.docs_site_url
-      DOCS_SITE_URL.sub(/\/\z/, "")
+      explicit = ENV["KOTOBA_DOCS_URL"]
+      return explicit.sub(/\/\z/, "") unless explicit.nil? || explicit.empty?
+
+      url = github_pages_url_from_remote(read_origin_remote)
+      return url unless url.nil?
+
+      raise "Set KOTOBA_DOCS_URL or configure a GitHub origin remote for docs URLs"
     end
 
     def self.docs_install_url

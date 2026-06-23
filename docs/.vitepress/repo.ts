@@ -44,3 +44,22 @@ export function resolveBase(): string {
 
   return "/";
 }
+
+export function isVersionedDocsBase(base: string = resolveBase()): boolean {
+  return /\/v\d+\.\d+\.\d+\/$/.test(base);
+}
+
+export function resolveDocsSiteUrl(): string | undefined {
+  const explicit = process.env.KOTOBA_DOCS_URL;
+  if (explicit) {
+    return explicit.replace(/\/$/, "");
+  }
+
+  const github = resolveGithubRepository();
+  if (!github) {
+    return undefined;
+  }
+
+  const [owner, repo] = github.split("/");
+  return `https://${owner}.github.io/${repo}`;
+}

@@ -2,7 +2,13 @@ import type { DefaultTheme } from "vitepress";
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { resolveBase, resolveGithubRepository, resolveRepositoryName } from "./repo";
+import {
+  isVersionedDocsBase,
+  resolveBase,
+  resolveDocsSiteUrl,
+  resolveGithubRepository,
+  resolveRepositoryName,
+} from "./repo";
 
 const moduleDir = dirname(fileURLToPath(import.meta.url));
 
@@ -22,14 +28,6 @@ export function readKotobaVersion(docsDir: string): string {
   }
 }
 
-export function docsSiteUrl(): string {
-  const explicit = process.env.KOTOBA_DOCS_URL;
-  if (explicit) {
-    return explicit.replace(/\/$/, "");
-  }
-  return "https://mateo-m.github.io/kotoba";
-}
-
 export function listedDocVersions(docsDir: string): string[] {
   const versionsDir = resolve(repoRootFromDocs(docsDir), "docs-versions");
   if (!existsSync(versionsDir)) {
@@ -43,23 +41,25 @@ export function listedDocVersions(docsDir: string): string[] {
 }
 
 export function versionSwitcherItems(docsDir: string): DefaultTheme.NavItemWithChildren["items"] {
-  const base = resolveBase();
   const versions = listedDocVersions(docsDir);
-  const useAbsoluteLinks = base !== "/";
-  const siteUrl = docsSiteUrl();
+  const versionedBuild = isVersionedDocsBase();
+  const siteUrl = resolveDocsSiteUrl();
+  const crossSiteLinks = versionedBuild && siteUrl;
+  const sameTab = crossSiteLinks ? { target: "_self" as const } : {};
+
+  const linkFor = (version: "latest" | string): string => {
+    if (crossSiteLinks) {
+      return version === "latest" ? `${siteUrl}/` : `${siteUrl}/${version}/`;
+    }
+    return version === "latest" ? "/" : `/${version}/`;
+  };
 
   const items: DefaultTheme.NavItemWithChildren["items"] = [
-    {
-      text: "latest",
-      link: useAbsoluteLinks ? `${siteUrl}/` : "/",
-    },
+    { text: "latest", link: linkFor("latest"), ...sameTab },
   ];
 
   for (const version of versions) {
-    items.push({
-      text: version,
-      link: useAbsoluteLinks ? `${siteUrl}/${version}/` : `/${version}/`,
-    });
+    items.push({ text: version, link: linkFor(version), ...sameTab });
   }
 
   return items;
@@ -67,7 +67,7 @@ export function versionSwitcherItems(docsDir: string): DefaultTheme.NavItemWithC
 
 export function activeDocLabel(docsDir: string): string {
   const base = resolveBase();
-  const match = base.match(/\/(v\d+\.\d+\.\d+)\/\z/);
+  const match = base.match(/\/(v\d+\.\d+\.\d+)\/$/);
   if (match) {
     return match[1];
   }
