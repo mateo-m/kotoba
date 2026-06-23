@@ -22,9 +22,12 @@ export function readKotobaVersion(docsDir: string): string {
   }
 }
 
-export function repositoryPagesBase(): string {
-  const base = resolveBase();
-  return base.replace(/\/v\d+\.\d+\.\d+\/\z/, "/");
+export function docsSiteUrl(): string {
+  const explicit = process.env.KOTOBA_DOCS_URL;
+  if (explicit) {
+    return explicit.replace(/\/$/, "");
+  }
+  return "https://mateo-m.github.io/kotoba";
 }
 
 export function listedDocVersions(docsDir: string): string[] {
@@ -40,13 +43,23 @@ export function listedDocVersions(docsDir: string): string[] {
 }
 
 export function versionSwitcherItems(docsDir: string): DefaultTheme.NavItemWithChildren["items"] {
-  const repoBase = repositoryPagesBase();
+  const base = resolveBase();
+  const versions = listedDocVersions(docsDir);
+  const useAbsoluteLinks = base !== "/";
+  const siteUrl = docsSiteUrl();
+
   const items: DefaultTheme.NavItemWithChildren["items"] = [
-    { text: "latest", link: repoBase },
+    {
+      text: "latest",
+      link: useAbsoluteLinks ? `${siteUrl}/` : "/",
+    },
   ];
 
-  for (const version of listedDocVersions(docsDir)) {
-    items.push({ text: version, link: `${repoBase}${version}/` });
+  for (const version of versions) {
+    items.push({
+      text: version,
+      link: useAbsoluteLinks ? `${siteUrl}/${version}/` : `/${version}/`,
+    });
   }
 
   return items;
