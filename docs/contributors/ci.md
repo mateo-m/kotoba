@@ -41,6 +41,36 @@ bun run docs:build
 bun run docs:preview
 ```
 
+### Documentation versioning (policy)
+
+**Today (pre–`v0.1.0`):** docs are **not versioned**. Every push to `main` updates a single rolling site at `https://mateo-m.github.io/kotoba/`. Integration ZIPs link to the unversioned install page via `docs_install_url` in `MANIFEST.json`.
+
+**First public release:** `v0.1.0` — library, integration ZIPs, and docs share one version number (`kotoba/VERSION` = git tag without `v`).
+
+**At `v0.1.0` (implement with the release, not before):**
+
+| Piece | Behavior |
+| --- | --- |
+| **Doc snapshot** | Freeze `docs/` into a versioned tree (e.g. `docs-versions/v0.1.0/` or build from tag `v0.1.0`) |
+| **Site URLs** | `…/kotoba/` = latest (`main`); `…/kotoba/v0.1.0/…` = frozen install guide for that ZIP |
+| **ZIP `MANIFEST.json`** | `docs_install_url` pinned to `…/v0.1.0/essential/installation` |
+| **Version switcher** | Nav dropdown: `latest` · `v0.1.0` · … |
+| **No backfill** | Do not publish doc trees for pre-release tags or layouts that never shipped |
+
+**After `v0.1.0`:** each `scripts/release.sh` tag adds a new frozen doc tree. Improving docs on `main` updates `latest` only; shipped ZIPs keep their pinned URL.
+
+Doc version **always matches** `kotoba/VERSION` — no separate docs semver.
+
+Implementation checklist (for the `v0.1.0` release PR):
+
+1. Add doc snapshot step to `scripts/release.sh`.
+2. Extend `.github/workflows/docs.yml` to build `latest` + versioned folders.
+3. Pin `docs_install_url` in `tools/integration_release.rb` using `KOTOBA_DOCS_URL` + `/v{version}/`.
+4. Add VitePress version switcher (e.g. `@viteplus/versions` or equivalent).
+5. Show `kotoba/VERSION` in the docs footer.
+
+Until then, this policy is documentation-only; rolling latest remains intentional.
+
 ## GitHub Actions
 
 The checked-in workflow at `.github/workflows/ci.yml` runs after changes to runtime, adapter, tooling, test, Docker, or docs files. The `lint` and `docs` jobs run only when their respective paths change. Use **Run workflow** in Actions for a full manual run.
@@ -51,11 +81,13 @@ Docs deploy through `.github/workflows/docs.yml` on pushes to `main` when docs-r
 
 ## Releases
 
-Cut a release locally with `scripts/release.sh` (same git-cliff layout as [empo-app](https://github.com/mateo-m/empo-app)):
+**First public release:** `v0.1.0`. Pre-release work on `main` uses `kotoba/VERSION` `0.1.0` and an `Unreleased` changelog section until `scripts/release.sh` cuts the tag.
+
+Cut a release locally with `scripts/release.sh`:
 
 ```sh
 brew install git-cliff gh   # once
-scripts/release.sh patch    # or minor, major, or an explicit 0.1.0
+scripts/release.sh 0.1.0    # first release; later: patch | minor | major
 ```
 
 The script:

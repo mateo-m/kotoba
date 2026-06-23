@@ -2,9 +2,25 @@
 
 The public namespace is `Kotoba`. Runtime code targets Ruby 1.8, so examples avoid keyword arguments, safe navigation, and stdlib features newer than RGSS1.
 
-Need a walkthrough first? See [Quick Start](/essential/quick-start).
+| New to Kotoba? | Read first |
+| --- | --- |
+| Install in a fangame | [Installing in a game](/essential/installation) |
+| Catalogs and placeholders | [Catalog format](/essential/catalog-format), [Message syntax](/essential/message-syntax) |
+| Hands-on from git | [Quick Start](/essential/quick-start) |
 
 ## Setup
+
+**Catalog** (`Locales/en.json`):
+
+```json
+{
+  "menu": {
+    "save": "Save"
+  }
+}
+```
+
+**Boot:**
 
 ```ruby
 require_relative "kotoba/core"
@@ -17,6 +33,13 @@ Kotoba.configure do |config|
     "fr" => ["Locales/fr.json"]
   }
 end
+
+Kotoba.load!
+```
+
+```ruby
+Kotoba.t("menu.save")
+# => "Save"
 ```
 
 ## Configuration
@@ -80,7 +103,7 @@ end)
 
 ## Loading Catalogs
 
-Load a Ruby hash:
+Load a Ruby hash (tests and adapters):
 
 ```ruby
 Kotoba.load_hash("en", {
@@ -88,6 +111,9 @@ Kotoba.load_hash("en", {
     "save" => "Save"
   }
 })
+
+Kotoba.t("menu.save")
+# => "Save"
 ```
 
 Load JSON source:
@@ -128,6 +154,16 @@ Locales/en/*.json
 
 ## Translating
 
+**Catalog:**
+
+```json
+{
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}
+```
+
 ```ruby
 Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
 # => "A wild Pikachu appeared!"
@@ -159,14 +195,27 @@ Global helper:
 _T("menu.save")
 ```
 
-Inline catalog markers in database or event text use the `kotoba:` prefix:
+Inline catalog markers in database or event text use the `kotoba:` prefix.
+
+**Catalog** (same `menu.save` as above):
 
 ```ruby
 Kotoba::Adapters::BareRGSS.translate_message("kotoba:menu.save", nil)
 # => "Save"
 ```
 
-Source-text mappings are looked up directly under the `source_text` catalog object:
+**Migration catalog** with `source_text`:
+
+```json
+{
+  "source_text": {
+    "Hello. {1}": "legacy.line_0001"
+  },
+  "legacy": {
+    "line_0001": "Hello. {name}"
+  }
+}
+```
 
 ```ruby
 Kotoba.source_text_key("Hello. {1}")

@@ -1,8 +1,23 @@
 # Message syntax
 
-Kotoba supports a small next-intl-style subset for variables, `select`, and cardinal `plural`. It is not full ICU MessageFormat.
+Kotoba messages are plain text with optional **placeholders** — slots the game fills at runtime (Pokemon names, counts, player names, etc.).
 
-## Static text
+| Audience | Start here |
+| --- | --- |
+| **Volunteer translators** (spreadsheet) | [Placeholders and special text](/translators/placeholders) |
+| **Fangame developers** (JSON catalogs) | [Developer reference](#developer-reference) below |
+
+Kotoba supports a small game-friendly subset: variables, `select`, cardinal `plural`, apostrophes, and RPG Maker color codes. It is **not** full ICU MessageFormat.
+
+---
+
+## Developer reference
+
+Every example shows **catalog → call → result**.
+
+### Static text
+
+**Catalog** (`Locales/en.json`):
 
 ```json
 {
@@ -12,29 +27,47 @@ Kotoba supports a small next-intl-style subset for variables, `select`, and card
 }
 ```
 
-## Variables
+```ruby
+Kotoba.t("menu.save")
+# => "Save"
+```
+
+### Variables
+
+**Catalog:**
 
 ```json
 {
   "battle": {
     "wild_appeared": "A wild {pokemon} appeared!"
+  },
+  "npc": {
+    "greeting": "Hello, {name}!"
   }
 }
 ```
 
 ```ruby
 Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+# => "A wild Pikachu appeared!"
+
+Kotoba.t("npc.greeting", {"name" => "Ari"})
+# => "Hello, Ari!"
 ```
 
-String and symbol variable keys are accepted.
+String and symbol keys both work. Missing variables follow `config.missing_variable_policy`:
 
-Missing interpolation variables follow `config.missing_variable_policy`:
+| Policy | `Kotoba.t("npc.greeting", {})` returns |
+| --- | --- |
+| `"keep"` (default) | `Hello, {name}!` |
+| `"empty"` | `Hello, !` |
+| `"error"` | raises `Kotoba::MessageEvaluationError` |
 
-- `"keep"`: leave `{name}` visible.
-- `"empty"`: replace with an empty string.
-- `"error"`: raise `Kotoba::MessageEvaluationError`.
+Translators must preserve `{name}` in every locale — see [Placeholders](/translators/placeholders).
 
-## Select
+### Select
+
+**Catalog:**
 
 ```json
 {
@@ -44,9 +77,19 @@ Missing interpolation variables follow `config.missing_variable_policy`:
 }
 ```
 
+```ruby
+Kotoba.t("battle.pronoun_line", {"gender" => "female", "move" => "Thunderbolt"})
+# => "She used Thunderbolt."
+
+Kotoba.t("battle.pronoun_line", {"gender" => "unknown", "move" => "Tackle"})
+# => "They used Tackle."
+```
+
 `other` is required. Unknown selector values use `other`.
 
-## Plural
+### Plural
+
+**Catalog:**
 
 ```json
 {
@@ -56,53 +99,34 @@ Missing interpolation variables follow `config.missing_variable_policy`:
 }
 ```
 
-Plural branch order:
+```ruby
+Kotoba.t("bag.item_count", {"count" => 0})
+# => "No items"
 
-1. exact branch such as `=0`
-2. locale category such as `one`, `few`, or `many`
-3. `other`
+Kotoba.t("bag.item_count", {"count" => 1})
+# => "1 item"
 
-`other` is required. `#` expands to the current count inside plural branches.
-
-Plural variables must be present and integer-like. Missing or non-integer counts raise `Kotoba::MessageEvaluationError`; silently treating a missing count as zero would hide real bugs.
-
-## Nesting
-
-Select and plural branches can contain other message syntax:
-
-```json
-{
-  "party": {
-    "summary": "{gender, select, female {{count, plural, one {She has # Pokemon} other {She has # Pokemon}}} male {{count, plural, one {He has # Pokemon} other {He has # Pokemon}}} other {{count, plural, one {They have # Pokemon} other {They have # Pokemon}}}}"
-  }
-}
+Kotoba.t("bag.item_count", {"count" => 5})
+# => "5 items"
 ```
 
-Keep nesting shallow. `config.max_message_depth` exists to prevent runaway parser behavior.
+Branch order: exact (`=0`) → locale category (`one`, `few`, `many`) → `other`. `#` expands to the count inside plural branches. Count must be present and integer-like or evaluation raises.
 
-## Apostrophes
+### Nesting
 
-Two apostrophes become one literal apostrophe:
+Select and plural branches can contain other syntax. Keep nesting shallow — `config.max_message_depth` limits parsing depth.
 
-```text
-Bob''s item
-```
+### Apostrophes
 
-Use apostrophes to quote syntax characters:
+| Pattern | Result |
+| --- | --- |
+| `Bob''s item` | `Bob's item` |
+| `'{count}'` | `{count}` |
+| `Bob's item` | `Bob's item` |
 
-```text
-'{count}'
-```
+### RPG Maker control codes
 
-Common apostrophes in words are preserved:
-
-```text
-Bob's item
-```
-
-## RPG Maker Control Codes
-
-Control codes stay in the message:
+**Catalog:**
 
 ```json
 {
@@ -112,26 +136,21 @@ Control codes stay in the message:
 }
 ```
 
-Pass variables normally:
-
 ```ruby
 Kotoba.t("npc.line", {"name" => "Ari"})
+# => "\c[3]Ari\c[0] joined the party."
 ```
 
-## Current Plural Locales
+Validation can flag translations that drop control codes. See [Validation CLI](/tooling/validation-cli).
 
-The runtime includes compact cardinal rules for:
+### Plural locales supported today
 
-- English-style one/other languages.
-- French `0` and `1` as `one`.
-- Japanese, Korean, and Chinese as `other`.
-- Russian.
-- Polish.
-- Portuguese.
-- Arabic.
-- Czech and Slovak.
-- Slovenian.
-- Lithuanian.
-- Latvian.
+Compact cardinal rules exist for English-style one/other, French `0`/`1` as `one`, Japanese/Korean/Chinese as `other`, Russian, Polish, Portuguese, Arabic, Czech, Slovak, Slovenian, Lithuanian, and Latvian. Not a full CLDR implementation.
 
-This is enough for the current runtime tests. It is not a complete CLDR implementation.
+---
+
+## See also
+
+- [Placeholders](/translators/placeholders) — volunteer-facing guide
+- [Catalog format](/essential/catalog-format) — JSON structure
+- [Troubleshooting](/essential/troubleshooting) — visible `{name}` and missing keys

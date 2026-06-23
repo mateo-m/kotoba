@@ -9,11 +9,11 @@ You do not need to open JSON files or run commands. Your developer will send a *
 | `spreadsheet.en.csv` | Open in Google Sheets or Excel. Fill the **translation** column. |
 | `README.md` in a handoff zip | Short rules from the developer. |
 
-Columns in the spreadsheet:
+### Spreadsheet columns
 
 | Column | Edit? | Purpose |
 | --- | --- | --- |
-| `key` | No | Internal ID used by the game. |
+| `key` | No | Internal ID used by the game (e.g. `battle.wild_appeared`). |
 | `english` | No | Source text to translate from. |
 | `translation` | **Yes** | Your translated line goes here. |
 | `context` | No | Where the line appears (menu, map, Pokemon name, etc.). |
@@ -22,26 +22,32 @@ Columns in the spreadsheet:
 ## Rules
 
 1. **Translate only the `translation` column.**
-2. **Keep placeholders exactly as they appear in English**, such as `{pokemon}`, `{name}`, or `{count}`.
-3. **Keep RPG Maker color codes exactly**, such as `\c[2]` and `\c[0]`.
-4. If English uses `{1}` or `{2}` (common in Pokemon Essentials), keep the same numbers in the same places.
-5. Leave a row blank in `translation` if you are not ready to translate it yet.
-6. Do not add or remove rows. Do not rename keys.
+2. **Keep placeholders exactly as they appear in English** — `{pokemon}`, `{name}`, `{count}`, `{1}`, `{2}`, etc.
+3. **Keep RPG Maker color codes exactly** — `\c[2]`, `\c[0]`, and similar.
+4. Do not add or remove rows. Do not rename keys.
+5. Leave `translation` blank if you are not ready for that row yet.
 
-## Examples
+## Placeholders (read this)
 
-| english | Good translation | Bad translation |
+Curly braces are **not** optional decoration — the game fills them in when the line is shown.
+
+| English | Good translation | On screen (example) |
 | --- | --- | --- |
-| `A wild {pokemon} appeared!` | `Un {pokemon} sauvage apparait !` | `Un Pikachu sauvage apparait !` (removed `{pokemon}`) |
-| `\c[2]Careful!\c[0]` | `\c[2]Attention !\c[0]` | `Attention !` (removed color codes) |
-| `You have {count} items.` | `Tu as {count} objets.` | `Tu as 2 objets.` (replaced `{count}` with a number) |
+| `A wild {pokemon} appeared!` | `Un {pokemon} sauvage apparait !` | `Un Pikachu sauvage apparait !` |
+| `A wild {1} appeared!` | `¡Un {1} salvaje apareció!` | `¡Un Pikachu salvaje apareció!` |
+| `\c[2]Careful!\c[0]` | `\c[2]¡Cuidado!\c[0]` | red “¡Cuidado!” in game |
+
+**Can you move `{1}` and `{2}` for grammar?** Often yes — but every number must still appear exactly once. Ask the developer if unsure.
+
+**Full guide:** [Placeholders and special text](/translators/placeholders) (plural lines, select lines, checklist).
 
 ## When you are done
 
-Send the spreadsheet back to the developer. They will import it and check that placeholders and color codes still match.
+Send the spreadsheet back to the developer. They import it and check that placeholders and color codes still match.
 
 If something is unclear, ask the developer to add a note in the `notes` or `context` column and resend the sheet.
 
 ## See also
 
-- [Spreadsheet handoff for developers](/translators/handoff) — how your developer prepares files
+- [Placeholders and special text](/translators/placeholders) — `{1}`/`{2}`, plural, color codes
+- [Spreadsheet handoff](/translators/handoff) — how your developer prepares files

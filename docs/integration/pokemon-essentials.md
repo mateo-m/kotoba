@@ -2,7 +2,7 @@
 
 Essentials adapters are compatibility bridges. They let an existing project call `Kotoba` without moving every string in one pass.
 
-**First time installing?** Follow every step in [Installing in a game](/essential/installation) before reading this page. It explains ZIP extraction, the Script Editor `load` line, and the sample JSON at `kotoba/samples/pokemon_essentials/en.json`.
+**First time installing?** Follow [Installing in a game](/essential/installation). Sample catalog: `kotoba/samples/pokemon_essentials/en.json`.
 
 Download the matching ZIP (`kotoba-essentials-v16.zip` through `v21`, or `kotoba-essentials-bes.zip` for BES forks) from [GitHub Releases](https://github.com/mateo-m/kotoba/releases).
 
@@ -35,15 +35,15 @@ Kotoba.use_adapter("essentials_v18", {
 
 Use the adapter matching your Essentials version. `essentials_v19` and `essentials_v20` are separate modules with the same `_INTL` / `_ISPRINTF` bridge shape.
 
-## Catalog For Legacy `_INTL`
+## Catalog for legacy `_INTL`
 
-Essentials commonly uses source-English strings:
+Essentials scripts often call:
 
 ```ruby
 _INTL("A wild {1} appeared!", pokemon.name)
 ```
 
-The adapter fixtures model this with `source_text`:
+**Catalog** (`Locales/en.json`):
 
 ```json
 {
@@ -56,24 +56,16 @@ The adapter fixtures model this with `source_text`:
 }
 ```
 
-The bridge turns the source string into a stable key, then evaluates the runtime message.
+The bridge maps the English source string to a stable key, then evaluates the catalog message.
 
-## Calling The Bridge
-
-The adapter exposes module methods:
+**Bridge call and result:**
 
 ```ruby
 Kotoba::Adapters::EssentialsV18._INTL("A wild {1} appeared!", "Pikachu")
 # => "A wild Pikachu appeared!"
 ```
 
-`_ISPRINTF` style strings are also bridged:
-
-```ruby
-Kotoba::Adapters::EssentialsV18._ISPRINTF("You have {1:d} coins.", 42)
-```
-
-Catalog messages should use runtime placeholders:
+**`_ISPRINTF` example** — catalog:
 
 ```json
 {
@@ -85,6 +77,13 @@ Catalog messages should use runtime placeholders:
   }
 }
 ```
+
+```ruby
+Kotoba::Adapters::EssentialsV18._ISPRINTF("You have {1:d} coins.", 42)
+# => "You have 42 coins."
+```
+
+Volunteers translating `battle.wild_appeared` keep `{pokemon}` — see [Placeholders](/translators/placeholders).
 
 ## Optional Global Patch
 
@@ -102,42 +101,31 @@ end
 
 Do this only after checking that your Essentials scripts do not depend on custom patched behavior.
 
-## Stable-Key New Code
+## Stable-key new code
 
-For new code, prefer stable runtime keys:
+Prefer stable keys instead of English source sentences as API.
+
+**Catalog:**
+
+```json
+{
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  },
+  "menu": {
+    "pokemon": "Pokémon",
+    "bag": "Bag",
+    "save": "Save"
+  }
+}
+```
 
 ```ruby
 Kotoba.t("battle.wild_appeared", {"pokemon" => pokemon.name})
-```
+# => "A wild Pikachu appeared!"
 
-This avoids using the English source sentence as an API.
-
-Common places to use stable keys:
-
-```ruby
-pbMessage(Kotoba.t("npc.professor_intro", {"player" => $player.name}))
-```
-
-```ruby
-commands = [
-  Kotoba.t("menu.pokemon"),
-  Kotoba.t("menu.bag"),
-  Kotoba.t("menu.save")
-]
-```
-
-```ruby
-Kernel.pbMessage(Kotoba.t("items.obtained", {
-  "trainer" => $player.name,
-  "item" => item_name
-}))
-```
-
-For plugin code, prefer a namespace helper:
-
-```ruby
-plugin_t = Kotoba.namespace("plugins.daycare")
-pbMessage(plugin_t.call("egg_ready"))
+pbMessage(Kotoba.t("menu.save"))
+# => shows "Save"
 ```
 
 ## v21 Split Messages
@@ -180,7 +168,7 @@ Kotoba::Adapters::EssentialsBES.item_name("potion")
 Kotoba::Adapters::EssentialsBES.ability_name("overgrow")
 ```
 
-Catalog shape:
+**Catalog:**
 
 ```json
 {
@@ -192,6 +180,11 @@ Catalog shape:
     }
   }
 }
+```
+
+```ruby
+Kotoba::Adapters::EssentialsBES.move_name("thunderbolt")
+# => "Thunderbolt"
 ```
 
 ## Migration Workflow

@@ -2,6 +2,8 @@
 
 Use spreadsheets when your translators are volunteers or hobbyists — not TMS professionals. Kotoba still keeps nested JSON as the runtime source of truth; the spreadsheet is the friendly handoff layer.
 
+Share [For translators](/translators/) and [Placeholders and special text](/translators/placeholders) with volunteers so they know how to handle `{placeholders}` and color codes.
+
 ## Quick workflow
 
 1. Build or import your English catalog (`Locales/en.json`).

@@ -1,63 +1,65 @@
 # Table of Contents
 
-Kotoba is a small Ruby 1.8 i18n runtime for RPG Maker XP and Pokemon Essentials. It loads JSON catalogs at runtime, resolves locale fallbacks, and evaluates game-style message syntax. Adapters and CLI tools sit on top for Essentials bridges, imports, and translator handoff.
+Kotoba is a small Ruby 1.8 i18n runtime for RPG Maker XP and Pokemon Essentials. It loads JSON catalogs at runtime, resolves locale fallbacks, and evaluates game-style message syntax.
 
-The sidebar lists every page. Use this one as a map.
+Pick a path by role — you do not need to read everything.
 
-## Where to start
+## Fangame developer
 
-| If you want to… | Go to |
-| --- | --- |
-| Add Kotoba to a fangame folder with `Game.exe` (start here) | [Installing in a game](/essential/installation) |
-| Try Kotoba from a git clone on your PC | [Quick Start](/essential/quick-start) |
-| Send strings to a volunteer translator | [Spreadsheet handoff](/translators/handoff) |
-| Translate lines yourself (no JSON) | [For translators](/translators/) |
-| Move an Essentials project off `_INTL` gradually | [Essentials migration](/integration/pokemon-essentials-migration) |
-| Work on Kotoba itself | [CI and releases](/contributors/ci) |
+1. [Installing in a game](/essential/installation) — ZIP, Script Editor, first playtest
+2. [Troubleshooting](/essential/troubleshooting) — when something breaks
+3. [Catalog format](/essential/catalog-format) — JSON shape and keys
+4. [Message syntax](/essential/message-syntax) — developer reference
+5. [Pokemon Essentials](/integration/pokemon-essentials) or [Bare RGSS](/integration/bare-rgss)
+6. [Spreadsheet handoff](/translators/handoff) — send work to volunteers
 
-## Essential
+Git clone walkthrough: [Quick Start](/essential/quick-start)
 
-Read these before adapters or tooling:
+## Volunteer translator
 
-- [Quick Start](/essential/quick-start) — catalog, boot, and `Kotoba.t`
-- [Installing in a game](/essential/installation) — release ZIPs, copy-paste Script Editor examples, sample JSON
-- [Catalog format](/essential/catalog-format) — nested JSON and lookup keys
-- [Message syntax](/essential/message-syntax) — variables, plural, and apostrophes
-- [Runtime API](/essential/runtime-api) — configuration, loading, and errors
+1. [For translators](/translators/) — spreadsheet columns and rules
+2. [Placeholders and special text](/translators/placeholders) — `{name}`, `{1}`/`{2}`, plural, color codes
 
-## Integration
+## Kotoba contributor
 
-Opt-in adapters for bare RGSS, Pokemon Essentials, and custom kits:
+- [CI and releases](/contributors/ci)
+- [Docker images](/contributors/docker-images)
+- [Roadmap](/contributors/roadmap)
 
-- [Overview](/integration/) — registry API and built-in targets
-- [Bare RGSS](/integration/bare-rgss) — plain RPG Maker XP
-- [Pokemon Essentials](/integration/pokemon-essentials) — v16–v21 and BES
-- [Third-party adapters](/integration/third-party) — register your own hook
-- [Essentials migration](/integration/pokemon-essentials-migration) — `source_text` bridges
+---
 
-## Tooling
+## All pages
 
-Validate catalogs, import game data, and hand strings to a TMS or spreadsheet:
+### Getting started
 
-- [Overview](/tooling/) — workflow and format guides
-- [Spreadsheet handoff](/translators/handoff) — CSV export/import for volunteers
-- [For translators](/translators/) — rules to share with non-technical volunteers
-- [Validation CLI](/tooling/validation-cli) — load tests, imports, and cross-locale checks
-- [TMS workflows](/tooling/tms) — nested JSON as source of truth
+- [Installing in a game](/essential/installation)
+- [Quick Start](/essential/quick-start)
+- [Troubleshooting](/essential/troubleshooting)
+
+### Core guides
+
+- [Catalog format](/essential/catalog-format)
+- [Message syntax](/essential/message-syntax)
+- [Runtime API](/essential/runtime-api)
+
+### Integration
+
+- [Overview](/integration/) · [Bare RGSS](/integration/bare-rgss) · [Pokemon Essentials](/integration/pokemon-essentials)
+- [Third-party adapters](/integration/third-party) · [Essentials migration](/integration/pokemon-essentials-migration)
+
+### For translators
+
+- [For translators](/translators/) · [Placeholders](/translators/placeholders) · [Spreadsheet handoff](/translators/handoff)
+
+### Tooling
+
+- [Overview](/tooling/) · [Validation CLI](/tooling/validation-cli) · [TMS workflows](/tooling/tms)
 - [Crowdin](/tooling/crowdin) · [SimpleLocalize](/tooling/simplelocalize) · [Tolgee](/tooling/tolgee) · [XLIFF and PO](/tooling/xliff-po)
 
-## Translators
+### Reference
 
-- [For translators](/translators/) — what to edit in the spreadsheet
-- [Spreadsheet handoff](/translators/handoff) — developer workflow for Essentials and fan projects
+- [Map event codes](/reference/map-event-codes) · [Compatibility](/reference/compatibility)
 
-## Reference
+### Contributors
 
-- [Map event codes](/reference/map-event-codes) — RXDATA commands for map import
-- [Compatibility](/reference/compatibility) — Ruby 1.8 gate and Docker matrix
-
-## Contributors
-
-- [CI](/contributors/ci) — lint, docs deploy, and releases
-- [Docker images](/contributors/docker-images) — legacy Ruby images for tests
-- [Roadmap](/contributors/roadmap) — planned work
+- [CI](/contributors/ci) · [Docker images](/contributors/docker-images) · [Roadmap](/contributors/roadmap)

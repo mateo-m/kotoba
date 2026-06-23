@@ -2,7 +2,7 @@
 
 For plain RPG Maker XP / RGSS projects — no Pokemon Essentials.
 
-**First time installing?** Follow every step in [Installing in a game](/essential/installation) before reading this page. It explains ZIP extraction, the Script Editor `load` line, and the sample JSON at `kotoba/samples/bare_rgss/en.json`.
+**First time installing?** Follow [Installing in a game](/essential/installation). Sample catalog: `kotoba/samples/bare_rgss/en.json`.
 
 This page covers bare-RGSS-specific layout, boot options, and `kotoba:` inline markers after Kotoba is loading without errors.
 
@@ -31,7 +31,7 @@ The exact folder names can change, but keep paths simple. Old RGSS Ruby is not a
 
 ## Catalog
 
-`Locales/en.json`:
+**`Locales/en.json`:**
 
 ```json
 {
@@ -43,6 +43,16 @@ The exact folder names can change, but keep paths simple. Old RGSS Ruby is not a
     "greeting": "Hello, {name}!"
   }
 }
+```
+
+**Lookups and results:**
+
+```ruby
+Kotoba.t("menu.save")
+# => "Save"
+
+Kotoba.t("npc.greeting", {"name" => "Ari"})
+# => "Hello, Ari!"
 ```
 
 ## Boot Script
@@ -77,18 +87,16 @@ config.file_loader = lambda do |path|
 end
 ```
 
-## Translating Script Text
+## Translating script text
 
-Use the runtime directly:
+**Catalog** (same `Locales/en.json` as above):
 
 ```ruby
 message = Kotoba.t("npc.greeting", {"name" => "Ari"})
-```
+# => "Hello, Ari!"
 
-Or use the global helper installed by the runtime:
-
-```ruby
 message = _T("npc.greeting", {"name" => "Ari"})
+# => "Hello, Ari!"
 ```
 
 ## Changing Locale
@@ -99,47 +107,25 @@ Kotoba.locale = "fr"
 
 The runtime loads the new locale and its fallback chain on assignment.
 
-## Suggested RPG Maker Usage
+## Suggested RPG Maker usage
 
-For script calls:
+**Catalog** (`Locales/en.json`):
+
+```json
+{
+  "menu": { "save": "Save", "load": "Load" },
+  "npc": { "greeting": "Hello, {name}!" }
+}
+```
+
+**In events or scripts:**
 
 ```ruby
 pbMessage(_T("npc.greeting", {"name" => $game_player.name}))
-```
+# => "Hello, <player name>!"
 
-For custom menus:
-
-```ruby
-commands = [
-  _T("menu.save"),
-  _T("menu.load")
-]
-```
-
-For event script calls:
-
-```ruby
-$game_variables[12] = _T("menu.save")
-```
-
-For windows:
-
-```ruby
-class Window_Command
-  def localized_command(key)
-    _T("commands." + key.to_s)
-  end
-end
-```
-
-For a title screen command list:
-
-```ruby
-commands = [
-  _T("title.new_game"),
-  _T("title.continue"),
-  _T("title.shutdown")
-]
+commands = [_T("menu.save"), _T("menu.load")]
+# => ["Save", "Load"]
 ```
 
 For debug-only missing-key visibility:
@@ -180,7 +166,17 @@ end
 Kotoba.use_adapter("bare_rgss", {"load" => true})
 ```
 
-Strings prefixed with `kotoba:` translate through the adapter; plain strings pass through unchanged:
+Strings prefixed with `kotoba:` translate through the adapter; plain strings pass through.
+
+**Catalog:**
+
+```json
+{
+  "menu": {
+    "save": "Save"
+  }
+}
+```
 
 ```ruby
 Kotoba::Adapters::BareRGSS.translate_message("kotoba:menu.save", nil)
