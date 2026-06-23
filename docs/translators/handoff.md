@@ -4,6 +4,8 @@ How-to: export, send, and import translator spreadsheets.
 
 Nested JSON is the runtime source of truth. The spreadsheet is the export/import layer for people who work in Sheets or Excel.
 
+Runs on a **developer PC** with this repository cloned. Shipped games only need `kotoba/` from a release ZIP; copy finished `Locales/*.json` back into the game folder.
+
 Send translators [For translators](/translators/) and [Placeholders](/translators/placeholders) with the CSV.
 
 ## Workflow

@@ -1,5 +1,7 @@
 # XLIFF and PO
 
+Developer machine only. Interchange rules: [TMS workflows](/tooling/tms).
+
 XLIFF and PO are interchange formats. The runtime still loads nested JSON.
 
 Export:

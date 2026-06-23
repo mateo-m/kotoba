@@ -90,9 +90,9 @@ Right: `Kotoba.t("npc.greeting", {"name" => "Ari"})` → `Hello, Ari!`
 
 ### French line shows English
 
-Locale not switched, or `Locales/fr.json` not in `catalog_paths`.
+Locale not switched, or `Locales/fr.json` not listed in `kotoba/boot.rb` → `catalog_paths`.
 
-Set `available_locales` and `catalog_paths`, then `Kotoba.locale = "fr"` before the line runs.
+In `kotoba/boot.rb`, set `available_locales` and `catalog_paths`, then call `Kotoba.locale = "fr"` in script before the line runs.
 
 ---
 

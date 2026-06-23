@@ -1,5 +1,7 @@
 # Tolgee
 
+Developer machine only. Interchange rules: [TMS workflows](/tooling/tms).
+
 Tolgee can use flat dot-key JSON as an interchange format.
 
 Export:

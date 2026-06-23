@@ -4,6 +4,8 @@ Tutorial: load Kotoba from a git clone.
 
 Fangame with `Game.exe`? Use [Installing in a game](/essential/installation) instead.
 
+In a game folder, release `kotoba/boot.rb` uses `require File.join(".", "kotoba", "core")` instead of `require_relative`. Same API calls; paths are relative to `Game.exe`.
+
 ## Create a catalog
 
 Add `Locales/en.json`:

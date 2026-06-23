@@ -1,5 +1,7 @@
 # SimpleLocalize
 
+Developer machine only. Interchange rules: [TMS workflows](/tooling/tms).
+
 Single-language JSON can use the runtime catalog format directly.
 
 For multi-language JSON, export a flattened all-language shape:

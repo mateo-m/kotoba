@@ -1,6 +1,6 @@
 # Crowdin
 
-The runtime format stays nested per-locale JSON. For Crowdin, use either nested JSON directly or export flat dot keys.
+Developer machine only. Interchange rules: [TMS workflows](/tooling/tms). Runtime format stays nested per-locale JSON. For Crowdin, use nested JSON directly or export flat dot keys.
 
 Export:
 

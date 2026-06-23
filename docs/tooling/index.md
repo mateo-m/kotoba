@@ -2,6 +2,8 @@
 
 Nested per-locale JSON is the runtime source of truth. `bin/kotoba` (via `bin/ruby18`) validates catalogs, imports game data, and exports interchange formats.
 
+All tooling commands run on a **developer PC** with this repo cloned, not inside RPG Maker. See [TMS workflows](/tooling/tms) for interchange rules.
+
 ## Typical workflow
 
 1. Author or import strings into `Locales/<locale>.json`.

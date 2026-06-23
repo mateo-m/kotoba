@@ -10,6 +10,10 @@ bin/ruby18 bin/kotoba <command> ...
 
 Use it on a dev machine with this repository cloned. Shipped games only need the runtime from a release ZIP.
 
+### Working with game files
+
+Import and extract commands read paths on your PC, not inside RPG Maker. Copy `PBS/`, `Data/`, `Text_english_*`, or `.rxdata` files from your game into the repo (for example `build/mygame/…`), then point commands at those paths. When using Docker via `bin/ruby18`, inputs must stay under the repository directory.
+
 ## Load test
 
 ```sh

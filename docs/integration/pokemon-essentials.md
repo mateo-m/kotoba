@@ -22,6 +22,10 @@ Supported targets:
 
 ## Choose the adapter
 
+Your release ZIP’s `kotoba/boot.rb` already `require`s the matching adapter file and calls `Kotoba.use_adapter`. Edit that file for `catalog_paths` and locale lists ([Installing in a game §5](/essential/installation#_5-your-own-translations)).
+
+Use the snippet below only for a custom boot layout, or when reading what the generated `boot.rb` contains:
+
 ```ruby
 require File.join(".", "kotoba", "core")
 require File.join(".", "kotoba", "adapters", "essentials_v18")
@@ -36,6 +40,13 @@ Kotoba.use_adapter("essentials_v18", {
 ```
 
 Use the adapter matching your Essentials version. `essentials_v19` and `essentials_v20` are separate modules with the same `_INTL` / `_ISPRINTF` bridge shape.
+
+## `source_text` vs stable keys
+
+| Situation | Approach |
+| --- | --- |
+| Existing `_INTL("English sentence", …)` still in scripts | `source_text` map in `Locales/en.json` + adapter bridge |
+| New or refactored scripts | `Kotoba.t("battle.wild_appeared", {…})` with stable keys |
 
 ## Catalog for legacy `_INTL`
 
@@ -91,7 +102,9 @@ Volunteers translating `battle.wild_appeared` keep `{pokemon}`. See [Placeholder
 
 ## Optional global patch
 
-The built-in Essentials adapters currently avoid replacing global `_INTL` at file load time. If you want to route a project through the adapter, add a small project-local script after installing the adapter:
+The built-in Essentials adapters do not replace global `_INTL` at file load time. Your ZIP’s `kotoba/boot.rb` loads the adapter; existing game scripts still call `_INTL` until you route them through the bridge (catalog + `source_text`) or add a global patch.
+
+Add a project-local Script Editor section **after** `kotoba/boot.rb` loads, only if `_INTL` is not already reaching the adapter and you have checked for custom Essentials patches:
 
 ```ruby
 def _INTL(*args)
@@ -103,7 +116,7 @@ def _ISPRINTF(*args)
 end
 ```
 
-Do this only after checking that your Essentials scripts do not depend on custom patched behavior.
+Replace `EssentialsV18` with your adapter module. Prefer catalog + `source_text` over a global patch when you can.
 
 ## Stable-key new code
 
@@ -203,12 +216,14 @@ Kotoba::Adapters::EssentialsBES.move_name("thunderbolt")
 
 ## Validation
 
+On a developer PC with this repo cloned:
+
 ```sh
 bin/ruby18 bin/kotoba load-test Locales/en.json
 bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
-Validation catches missing keys, placeholder mismatches, and RPG Maker control-code mismatches before the game boots.
+Validation catches missing keys, placeholder mismatches, and RPG Maker control-code mismatches before playtest. Copy validated `Locales/*.json` into the game folder.
 
 ## Fixture provenance
 

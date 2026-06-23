@@ -6,6 +6,8 @@ Adapters connect Kotoba to RPG Maker XP, Pokemon Essentials, or your own engine.
 
 Shipped games: use a [release integration ZIP](/essential/installation). Do not copy adapter files from this repo by hand.
 
+Fangame devs: start with [Bare RGSS](/integration/bare-rgss) or [Pokemon Essentials](/integration/pokemon-essentials). This page documents the registry API for contributors and custom adapters.
+
 ## Registry API
 
 The public registry lives in `kotoba/adapters/registry.rb`:

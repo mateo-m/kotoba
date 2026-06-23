@@ -4,7 +4,12 @@ Reference: placeholders, select, plural, apostrophes, RPG Maker control codes.
 
 Plain text with optional placeholders: slots the game fills at runtime (names, counts, etc.).
 
-Volunteer guide: [Placeholders](/translators/placeholders). Subset of ICU MessageFormat: variables, `select`, cardinal `plural`, apostrophes, RPG Maker color codes.
+| You | Page |
+| --- | --- |
+| Volunteer (spreadsheet) | [Placeholders](/translators/placeholders) |
+| Developer (JSON in `Locales/`) | [Developer reference](#developer-reference) below |
+
+Authors edit message strings in `Locales/<locale>.json` beside `Game.exe` ([Installing in a game §5](/essential/installation#_5-your-own-translations)). Subset of ICU MessageFormat: variables, `select`, cardinal `plural`, apostrophes, RPG Maker color codes.
 
 ---
 

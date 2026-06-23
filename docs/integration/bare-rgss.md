@@ -55,6 +55,10 @@ Kotoba.t("npc.greeting", {"name" => "Ari"})
 
 ## Boot script
 
+Default for release ZIPs: edit `kotoba/boot.rb` on disk and `load "kotoba/boot.rb"` from Script Editor ([Installing in a game](/essential/installation)). The ZIP’s `boot.rb` already configures catalogs and calls `Kotoba.use_adapter("bare_rgss", …)` when you use the bare adapter package.
+
+The inline script below is equivalent if you are **not** using `kotoba/boot.rb` (custom layout, or pasting boot directly into a Script Editor section):
+
 Create a script section near the top of your RPG Maker scripts:
 
 ```ruby
@@ -136,7 +140,9 @@ end
 
 ## Optional: `kotoba:` prefix adapter
 
-If you want database or event text to carry translation keys inline (`"kotoba:menu.save"`) instead of calling `_T` in script, copy the optional bare adapter too:
+If you want database or event text to carry translation keys inline (`"kotoba:menu.save"`) instead of calling `_T` in script, the bare ZIP already ships `kotoba/adapters/bare_rgss.rb`. Edit `kotoba/boot.rb` to match the boot block below instead of pasting a second copy into Script Editor.
+
+Copy the optional bare adapter too (only if missing from your tree):
 
 ```text
   kotoba/
@@ -188,11 +194,11 @@ Most bare RGSS projects do not need this. Prefer `_T("menu.save")` in script unl
 
 ## Validate before copying into the game
 
-Run outside RPG Maker:
+Run outside RPG Maker on a PC with this repository cloned:
 
 ```sh
 bin/ruby18 bin/kotoba load-test Locales/en.json
 bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
-Fix catalog errors before importing files into the RPG Maker project.
+Fix catalog errors, then copy `Locales/*.json` into your game folder beside `Game.exe`.

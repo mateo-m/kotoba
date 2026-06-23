@@ -4,6 +4,13 @@ How-to: move from source-English `_INTL` to stable JSON catalogs.
 
 Essentials adapters bridge legacy `_INTL` calls. Adopt stable JSON catalogs one area at a time.
 
+## `source_text` vs stable keys
+
+| Situation | Approach |
+| --- | --- |
+| Existing `_INTL("English sentence", …)` still in scripts | `source_text` map in `Locales/en.json` + adapter bridge |
+| New or refactored scripts | `Kotoba.t("battle.wild_appeared", {…})` with stable keys |
+
 ## The problem with source-English keys
 
 Legacy Essentials text passes the English sentence straight into `_INTL`:
@@ -56,6 +63,10 @@ Avoid migrating every string at once. Start with menus, battle text, or one plug
 
 ## Import helpers
 
+Run these on a **developer PC** with this repository cloned (`bin/ruby18 bin/kotoba …`). They do not run inside RPG Maker.
+
+Copy files from your game folder into the repo first (for example `build/perseida/PBS/moves.txt`, `build/perseida/Data/messages.dat`). Paths in the commands below are relative to the repo root. When using Docker via `bin/ruby18`, inputs must live under the repository directory.
+
 If the game ships compiled translations in `Data/messages.dat`, inspect it first:
 
 ```sh
@@ -98,4 +109,4 @@ Map event dialogue can be imported from compiled `Data/Map*.rxdata` files:
 bin/ruby18 bin/kotoba map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
 ```
 
-Copy external game files into a local `tmp/` or `build/` directory before running `bin/ruby18` through Docker.
+Copy outputs into your game’s `Locales/` beside `Game.exe`, then point `kotoba/boot.rb` at them.

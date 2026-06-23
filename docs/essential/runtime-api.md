@@ -4,6 +4,15 @@ Reference: `Kotoba` configuration, loading, and translation.
 
 Ruby 1.8. Examples avoid keyword arguments, safe navigation, and post-RGSS1 stdlib.
 
+## Where does this code go?
+
+| You | Boot and config |
+| --- | --- |
+| Fangame with `Game.exe` | [Installing in a game](/essential/installation): `load "kotoba/boot.rb"` in **Tools → Script Editor**; edit **`kotoba/boot.rb`** on disk (`catalog_paths`, `available_locales`, adapter). |
+| Git clone | [Quick Start](/essential/quick-start): paste boot into a script you run from the repo, or mirror what `kotoba/boot.rb` does in a release ZIP. |
+
+The **Setup** block below is the API inside `kotoba/boot.rb` (or an equivalent boot script). Do not paste the whole block into Script Editor unless you are following [Bare RGSS](/integration/bare-rgss) inline boot as an alternative to `boot.rb`.
+
 ## Setup
 
 **Catalog** (`Locales/en.json`):
@@ -16,7 +25,7 @@ Ruby 1.8. Examples avoid keyword arguments, safe navigation, and post-RGSS1 stdl
 }
 ```
 
-**Boot:**
+**Boot** (inside `kotoba/boot.rb` or an equivalent script):
 
 ```ruby
 require_relative "kotoba/core"
@@ -97,7 +106,11 @@ Kotoba.on_locale_change(lambda do |old_locale, new_locale|
 end)
 ```
 
-## Loading Catalogs
+## Loading catalogs
+
+`load!` and `reload!` are what games use after `catalog_paths` is set in `kotoba/boot.rb`.
+
+`load_hash` and `load_json` are for tests, adapters, and one-off scripts. Prefer `load!` in shipped games.
 
 Load a Ruby hash (tests and adapters):
 

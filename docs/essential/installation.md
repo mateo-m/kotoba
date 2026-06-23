@@ -88,6 +88,8 @@ More scripts: `kotoba/samples/script_editor/`.
 
 ## 4. Smoke tests
 
+A passing smoke test only proves Kotoba loaded and read the **sample** catalog. It does not translate existing game dialog. After it works, continue to [§5 Your own translations](#5-your-own-translations) and [Pokemon Essentials](/integration/pokemon-essentials) or [Essentials migration](/integration/pokemon-essentials-migration) to bridge `_INTL`.
+
 ### Essentials
 
 Loads `kotoba/boot.rb`, reads the sample catalog, shows a message box.
@@ -145,18 +147,22 @@ On screen: `Kotoba says: Save`
 
 Extracting the ZIP does not translate the game. After the smoke test:
 
-1. Create `Locales/en.json` (and `fr.json`, etc.).
-2. Point `catalog_paths` in `kotoba/boot.rb` at those files.
-3. Replace the smoke-test load with `load "kotoba/boot.rb"`.
+1. Create `Locales/en.json` (and `fr.json`, etc.) next to `Game.exe`.
+2. Edit `kotoba/boot.rb` on disk: set `catalog_paths` and `available_locales`.
+3. In Script Editor, replace the smoke-test line with `load "kotoba/boot.rb"`.
 
-`kotoba/boot.rb` (Essentials v20 ZIP, paths updated):
+Inside `kotoba/boot.rb` (Essentials v20 ZIP, paths updated):
 
 ```ruby
-config.catalog_paths = {
-  "en" => ["Locales/en.json"],
-  "fr" => ["Locales/fr.json"]
-}
-config.available_locales = ["en", "fr"]
+Kotoba.configure do |config|
+  config.catalog_paths = {
+    "en" => ["Locales/en.json"],
+    "fr" => ["Locales/fr.json"]
+  }
+  config.available_locales = ["en", "fr"]
+end
 ```
 
-Then [Catalog format](/essential/catalog-format), [Pokemon Essentials](/integration/pokemon-essentials) or [Essentials migration](/integration/pokemon-essentials-migration).
+Release ZIPs already call `Kotoba.use_adapter` at the end of `boot.rb`. After editing paths, save the file and playtest. Config fields: [Runtime API](/essential/runtime-api#configuration).
+
+Next: [Catalog format](/essential/catalog-format), [Pokemon Essentials](/integration/pokemon-essentials) or [Essentials migration](/integration/pokemon-essentials-migration).

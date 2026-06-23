@@ -2,6 +2,8 @@
 
 Kotoba keeps nested per-locale JSON at runtime. Translation tools want flat JSON, multi-language JSON, XLIFF, or PO. The CLI converts between those formats and your catalogs.
 
+Commands use `bin/ruby18 bin/kotoba` on a **developer PC** with this repo cloned. See per-tool pages ([Crowdin](/tooling/crowdin), [SimpleLocalize](/tooling/simplelocalize), [Tolgee](/tooling/tolgee), [XLIFF and PO](/tooling/xliff-po)).
+
 ## Source of truth
 
 Keep runtime catalogs as source of truth:
