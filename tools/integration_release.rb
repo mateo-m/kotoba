@@ -8,11 +8,13 @@ module KotobaTools
     PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), ".."))
     VERSION_PATH = File.join(PROJECT_ROOT, "kotoba", "VERSION")
     DOCS_SITE_URL = ENV["KOTOBA_DOCS_URL"] || "https://mateo-m.github.io/kotoba"
-    KOTOBA_FILES = Dir[File.join(PROJECT_ROOT, "kotoba", "**", "*.rb")].sort.collect do |path|
+    KOTOBA_RUNTIME_FILES = Dir[File.join(PROJECT_ROOT, "kotoba", "*.rb")].find_all do |path|
+      File.file?(path) && File.basename(path) != "boot.rb"
+    end.collect do |path|
       path.sub(PROJECT_ROOT + "/", "")
-    end + ["kotoba/VERSION"]
+    end.sort + ["kotoba/VERSION"]
 
-    SCRIPT_EDITOR_FILES = Dir[File.join(PROJECT_ROOT, "examples", "script_editor", "**", "*")].find_all do |path|
+    SCRIPT_EDITOR_FILES = Dir[File.join(PROJECT_ROOT, "kotoba", "samples", "script_editor", "**", "*")].find_all do |path|
       File.file?(path)
     end.collect do |path|
       path.sub(PROJECT_ROOT + "/", "")
@@ -21,43 +23,43 @@ module KotobaTools
     ADAPTER_TARGETS = {
       "bare_rgss" => {
         "zip_name" => "kotoba-bare-rgss.zip",
-        "adapter_files" => ["adapters/registry.rb", "adapters/bare_rgss.rb"],
-        "example_catalog" => "examples/bare_rgss/en.json"
+        "adapter_files" => ["kotoba/adapters/registry.rb", "kotoba/adapters/bare_rgss.rb"],
+        "example_catalog" => "kotoba/samples/bare_rgss/en.json"
       },
       "essentials_bes" => {
         "zip_name" => "kotoba-essentials-bes.zip",
-        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_bes.rb"],
-        "example_catalog" => "examples/pokemon_essentials/en.json"
+        "adapter_files" => ["kotoba/adapters/registry.rb", "kotoba/adapters/essentials_base.rb", "kotoba/adapters/essentials_bes.rb"],
+        "example_catalog" => "kotoba/samples/pokemon_essentials/en.json"
       },
       "essentials_v16" => {
         "zip_name" => "kotoba-essentials-v16.zip",
-        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v16.rb"],
-        "example_catalog" => "examples/pokemon_essentials/en.json"
+        "adapter_files" => ["kotoba/adapters/registry.rb", "kotoba/adapters/essentials_base.rb", "kotoba/adapters/essentials_v16.rb"],
+        "example_catalog" => "kotoba/samples/pokemon_essentials/en.json"
       },
       "essentials_v17" => {
         "zip_name" => "kotoba-essentials-v17.zip",
-        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v17.rb"],
-        "example_catalog" => "examples/pokemon_essentials/en.json"
+        "adapter_files" => ["kotoba/adapters/registry.rb", "kotoba/adapters/essentials_base.rb", "kotoba/adapters/essentials_v17.rb"],
+        "example_catalog" => "kotoba/samples/pokemon_essentials/en.json"
       },
       "essentials_v18" => {
         "zip_name" => "kotoba-essentials-v18.zip",
-        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v18.rb"],
-        "example_catalog" => "examples/pokemon_essentials/en.json"
+        "adapter_files" => ["kotoba/adapters/registry.rb", "kotoba/adapters/essentials_base.rb", "kotoba/adapters/essentials_v18.rb"],
+        "example_catalog" => "kotoba/samples/pokemon_essentials/en.json"
       },
       "essentials_v19" => {
         "zip_name" => "kotoba-essentials-v19.zip",
-        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v19.rb"],
-        "example_catalog" => "examples/pokemon_essentials/en.json"
+        "adapter_files" => ["kotoba/adapters/registry.rb", "kotoba/adapters/essentials_base.rb", "kotoba/adapters/essentials_v19.rb"],
+        "example_catalog" => "kotoba/samples/pokemon_essentials/en.json"
       },
       "essentials_v20" => {
         "zip_name" => "kotoba-essentials-v20.zip",
-        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_base.rb", "adapters/essentials_v20.rb"],
-        "example_catalog" => "examples/pokemon_essentials/en.json"
+        "adapter_files" => ["kotoba/adapters/registry.rb", "kotoba/adapters/essentials_base.rb", "kotoba/adapters/essentials_v20.rb"],
+        "example_catalog" => "kotoba/samples/pokemon_essentials/en.json"
       },
       "essentials_v21" => {
         "zip_name" => "kotoba-essentials-v21.zip",
-        "adapter_files" => ["adapters/registry.rb", "adapters/essentials_v21.rb"],
-        "example_catalog" => "examples/pokemon_essentials/en.json"
+        "adapter_files" => ["kotoba/adapters/registry.rb", "kotoba/adapters/essentials_v21.rb"],
+        "example_catalog" => "kotoba/samples/pokemon_essentials/en.json"
       }
     }
 
@@ -77,9 +79,9 @@ module KotobaTools
       config = target(adapter_name)
       raise ArgumentError, "unknown adapter " + adapter_name.to_s if config.nil?
 
-      files = KOTOBA_FILES + config["adapter_files"] + SCRIPT_EDITOR_FILES + [
+      files = KOTOBA_RUNTIME_FILES + config["adapter_files"] + SCRIPT_EDITOR_FILES + [
         config["example_catalog"],
-        "examples/boot_kotoba.rb",
+        "kotoba/boot.rb",
         "INSTALL.md",
         "MANIFEST.json"
       ]
@@ -112,9 +114,9 @@ module KotobaTools
       adapter_file = config["adapter_files"].find { |path| path =~ /#{adapter_name}\.rb\z/ }
       adapter_basename = File.basename(adapter_file)
       smoke_test = if adapter_name == "bare_rgss"
-        "examples/script_editor/bare_rgss_smoke_test.rb"
+        "kotoba/samples/script_editor/bare_rgss_smoke_test.rb"
       else
-        "examples/script_editor/essentials_smoke_test.rb"
+        "kotoba/samples/script_editor/essentials_smoke_test.rb"
       end
 
       <<MARKDOWN
@@ -138,7 +140,7 @@ The website updates when documentation changes in git. You do not need a new Kot
 | Adapter file | `#{adapter_basename}` |
 | Sample catalog | `#{sample_catalog}` |
 | Script Editor smoke test | `load "#{smoke_test}"` |
-| Copy-paste examples | `examples/script_editor/` |
+| Copy-paste examples | `kotoba/samples/script_editor/` |
 | File list | `MANIFEST.json` |
 | Online install guide | `docs_install_url` in `MANIFEST.json` |
 MARKDOWN
@@ -155,17 +157,17 @@ MARKDOWN
       lines << "# Kotoba boot script — generated for #{adapter_name}"
       lines << "#"
       lines << "# HOW TO USE (read this):"
-      lines << "# 1. This file must sit at examples/boot_kotoba.rb next to Game.exe."
+      lines << "# 1. This file must sit at kotoba/boot.rb next to Game.exe."
       lines << "# 2. Do NOT double-click this file. RPG Maker does not run it that way."
       lines << "# 3. In RPG Maker: Tools -> Script Editor -> new section named Kotoba -> add:"
-      lines << "#      load \"examples/boot_kotoba.rb\""
+      lines << "#      load \"kotoba/boot.rb\""
       lines << "# 4. Click OK to save scripts, then playtest."
       lines << "#"
       lines << "# catalog_paths below loads the sample JSON at #{catalog_path}."
       lines << "# Docs: #{docs_install_url}"
       lines << ""
       lines << "require File.join(\".\", \"kotoba\", \"core\")"
-      lines << "require File.join(\".\", \"adapters\", \"" + File.basename(adapter_file) + "\")"
+      lines << "require File.join(\".\", \"kotoba\", \"adapters\", \"" + File.basename(adapter_file) + "\")"
       lines << ""
       lines << "Kotoba.configure do |config|"
       lines << "  config.default_locale = \"en\""
@@ -190,7 +192,7 @@ MARKDOWN
 
       package_relative_files(adapter_name).each do |relative|
         next if relative == "INSTALL.md" || relative == "MANIFEST.json"
-        next if relative == "examples/boot_kotoba.rb"
+        next if relative == "kotoba/boot.rb"
         source = File.join(PROJECT_ROOT, relative)
         destination = File.join(staging_root, relative)
         FileUtils.mkdir_p(File.dirname(destination))
@@ -201,7 +203,7 @@ MARKDOWN
         end
       end
 
-      destination = File.join(staging_root, "examples", "boot_kotoba.rb")
+      destination = File.join(staging_root, "kotoba", "boot.rb")
       FileUtils.mkdir_p(File.dirname(destination))
       File.open(destination, "wb") { |file| file.write(boot_ruby(adapter_name)) }
 

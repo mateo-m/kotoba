@@ -4,4 +4,4 @@
 # Loads Kotoba using the boot script that came with your release ZIP.
 # No extra JSON files required — the ZIP sample catalog is already wired.
 
-load "examples/boot_kotoba.rb"
+load "kotoba/boot.rb"

@@ -2,7 +2,7 @@
 
 For plain RPG Maker XP / RGSS projects — no Pokemon Essentials.
 
-**First time installing?** Follow every step in [Installing in a game](/essential/installation) before reading this page. It explains ZIP extraction, the Script Editor `load` line, and the sample JSON at `examples/bare_rgss/en.json`.
+**First time installing?** Follow every step in [Installing in a game](/essential/installation) before reading this page. It explains ZIP extraction, the Script Editor `load` line, and the sample JSON at `kotoba/samples/bare_rgss/en.json`.
 
 This page covers bare-RGSS-specific layout, boot options, and `kotoba:` inline markers after Kotoba is loading without errors.
 
@@ -15,17 +15,16 @@ Game/
   Locales/
     en.json
     fr.json
-  Scripts/
-    kotoba_boot.rb
-  adapters/
-    bare_rgss.rb
-    registry.rb
   kotoba/
+    boot.rb
     config.rb
     core.rb
     json.rb
     message_eval.rb
     plural_rules.rb
+    adapters/
+      bare_rgss.rb
+      registry.rb
 ```
 
 The exact folder names can change, but keep paths simple. Old RGSS Ruby is not a good place for clever load logic.
@@ -156,9 +155,10 @@ end
 If you want database or event text to carry translation keys inline (`"kotoba:menu.save"`) instead of calling `_T` in script, copy the optional bare adapter too:
 
 ```text
-  adapters/
-    registry.rb
-    bare_rgss.rb
+  kotoba/
+    adapters/
+      registry.rb
+      bare_rgss.rb
 ```
 
 Boot with:
@@ -167,7 +167,7 @@ Boot with:
 KOTOBA_ROOT = "."
 
 require File.join(KOTOBA_ROOT, "kotoba", "core")
-require File.join(KOTOBA_ROOT, "adapters", "bare_rgss")
+require File.join(KOTOBA_ROOT, "kotoba", "adapters", "bare_rgss")
 
 Kotoba.configure do |config|
   config.default_locale = "en"

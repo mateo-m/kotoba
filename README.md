@@ -16,10 +16,10 @@ Use it in bare RGSS projects, Pokemon Essentials games, or custom starter kits t
 
 ### Add Kotoba to a game project
 
-Download the integration ZIP for your adapter target from [GitHub Releases](https://github.com/mateo-m/kotoba/releases), unzip it into your game root, edit `examples/boot_kotoba.rb`, and load it from your RGSS boot path:
+Download the integration ZIP for your adapter target from [GitHub Releases](https://github.com/mateo-m/kotoba/releases), unzip it into your game root, edit `kotoba/boot.rb`, and load it from your RGSS boot path:
 
 ```ruby
-load "examples/boot_kotoba.rb"
+load "kotoba/boot.rb"
 ```
 
 See [Installing in a game](docs/essential/installation.md) for the full ZIP matrix and boot steps.

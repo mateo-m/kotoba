@@ -4,7 +4,7 @@
 # On playtest you should see: "A wild Pikachu appeared!"
 # Remove the pbMessage block after Kotoba is confirmed working.
 
-load "examples/boot_kotoba.rb"
+load "kotoba/boot.rb"
 
 if defined?(pbMessage) && defined?(Kotoba)
   pbMessage(Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"}))

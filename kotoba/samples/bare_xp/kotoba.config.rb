@@ -1,5 +1,5 @@
 require_relative "../../kotoba/core"
-require_relative "../../adapters/bare_rgss"
+require_relative "../adapters/bare_rgss"
 
 Kotoba.configure do |config|
   config.default_locale = "en"

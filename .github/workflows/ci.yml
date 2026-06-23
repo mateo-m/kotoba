@@ -4,10 +4,8 @@ on:
   pull_request:
     paths:
       - "kotoba/**"
-      - "adapters/**"
       - "tools/**"
       - "test/**"
-      - "examples/**"
       - "bin/**"
       - "schemas/**"
       - "docker/**"
@@ -22,10 +20,8 @@ on:
       - main
     paths:
       - "kotoba/**"
-      - "adapters/**"
       - "tools/**"
       - "test/**"
-      - "examples/**"
       - "bin/**"
       - "schemas/**"
       - "docker/**"
@@ -51,10 +47,8 @@ jobs:
           filters: |
             lint:
               - 'kotoba/**'
-              - 'adapters/**'
               - 'tools/**'
               - 'test/**'
-              - 'examples/**'
               - 'bin/**'
               - 'schemas/**'
               - 'docker/**'

@@ -4,7 +4,7 @@
 # On playtest you should see a message containing "Save".
 # Remove the message block after Kotoba is confirmed working.
 
-load "examples/boot_kotoba.rb"
+load "kotoba/boot.rb"
 
 if defined?(Kotoba)
   msg = Kotoba.t("menu.save")

@@ -6,7 +6,7 @@ For shipped games, install an adapter through a [release integration ZIP](/essen
 
 ## Registry API
 
-The public registry lives in `adapters/registry.rb`:
+The public registry lives in `kotoba/adapters/registry.rb`:
 
 - `Kotoba.register_adapter(name, adapter)` — register an object that responds to `install(options)`
 - `Kotoba.adapter(name)` — look up a registered adapter, or `nil`

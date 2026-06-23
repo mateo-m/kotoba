@@ -27,18 +27,20 @@ class IntegrationReleaseTest < KotobaTestCase
     assert(!names.include?("blocked_adapter"))
   end
 
-  def test_package_lists_runtime_adapter_examples_and_manifest_files
+  def test_package_lists_runtime_adapter_samples_and_manifest_files
     files = KotobaTools::IntegrationRelease.package_relative_files("essentials_v18")
 
     assert(files.include?("kotoba/core.rb"))
     assert(files.include?("kotoba/VERSION"))
-    assert(files.include?("adapters/essentials_v18.rb"))
-    assert(files.include?("adapters/essentials_base.rb"))
-    assert(files.include?("examples/pokemon_essentials/en.json"))
-    assert(files.include?("examples/boot_kotoba.rb"))
-    assert(files.include?("examples/script_editor/essentials_smoke_test.rb"))
+    assert(files.include?("kotoba/adapters/essentials_v18.rb"))
+    assert(files.include?("kotoba/adapters/essentials_base.rb"))
+    assert(files.include?("kotoba/samples/pokemon_essentials/en.json"))
+    assert(files.include?("kotoba/boot.rb"))
+    assert(files.include?("kotoba/samples/script_editor/essentials_smoke_test.rb"))
     assert(files.include?("INSTALL.md"))
     assert(files.include?("MANIFEST.json"))
+    assert(!files.include?("adapters/essentials_v18.rb"))
+    assert(!files.include?("examples/boot_kotoba.rb"))
   end
 
   def test_manifest_includes_version_adapter_and_files
@@ -47,7 +49,7 @@ class IntegrationReleaseTest < KotobaTestCase
     assert_equal(kotoba_version, manifest["kotoba_version"])
     assert_equal("bare_rgss", manifest["adapter"])
     assert(manifest["docs_install_url"].index("/essential/installation"))
-    assert(manifest["files"].include?("adapters/bare_rgss.rb"))
+    assert(manifest["files"].include?("kotoba/adapters/bare_rgss.rb"))
   end
 
   def test_install_markdown_links_to_online_guide
@@ -72,10 +74,11 @@ class IntegrationReleaseTest < KotobaTestCase
 
     assert(File.exist?(File.join(staging, "INSTALL.md")))
     assert(File.exist?(File.join(staging, "MANIFEST.json")))
-    assert(File.exist?(File.join(staging, "examples", "boot_kotoba.rb")))
-    assert(File.exist?(File.join(staging, "examples", "script_editor", "load_only.rb")))
+    assert(File.exist?(File.join(staging, "kotoba", "boot.rb")))
+    assert(File.exist?(File.join(staging, "kotoba", "samples", "script_editor", "load_only.rb")))
     assert(File.exist?(File.join(staging, "kotoba", "core.rb")))
-    assert(files.include?("examples/boot_kotoba.rb"))
+    assert(files.include?("kotoba/boot.rb"))
+    assert(!File.exist?(File.join(staging, "adapters")))
   ensure
     FileUtils.rm_rf(output) if output
   end

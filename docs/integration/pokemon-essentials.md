@@ -2,7 +2,7 @@
 
 Essentials adapters are compatibility bridges. They let an existing project call `Kotoba` without moving every string in one pass.
 
-**First time installing?** Follow every step in [Installing in a game](/essential/installation) before reading this page. It explains ZIP extraction, the Script Editor `load` line, and the sample JSON at `examples/pokemon_essentials/en.json`.
+**First time installing?** Follow every step in [Installing in a game](/essential/installation) before reading this page. It explains ZIP extraction, the Script Editor `load` line, and the sample JSON at `kotoba/samples/pokemon_essentials/en.json`.
 
 Download the matching ZIP (`kotoba-essentials-v16.zip` through `v21`, or `kotoba-essentials-bes.zip` for BES forks) from [GitHub Releases](https://github.com/mateo-m/kotoba/releases).
 
@@ -22,7 +22,7 @@ Supported targets:
 
 ```ruby
 require File.join(".", "kotoba", "core")
-require File.join(".", "adapters", "essentials_v18")
+require File.join(".", "kotoba", "adapters", "essentials_v18")
 
 Kotoba.use_adapter("essentials_v18", {
   "catalog_paths" => {

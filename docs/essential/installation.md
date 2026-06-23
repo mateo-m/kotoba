@@ -25,15 +25,18 @@ Pokemon Titanium/
   Game.exe
   Data/
   kotoba/
-  adapters/
-  examples/
-    boot_kotoba.rb
-    pokemon_essentials/
-      en.json
-    script_editor/
-      essentials_smoke_test.rb
-      load_only.rb
-      README.md
+    boot.rb
+    core.rb
+    adapters/
+      essentials_v20.rb
+      ...
+    samples/
+      pokemon_essentials/
+        en.json
+      script_editor/
+        essentials_smoke_test.rb
+        load_only.rb
+        README.md
   INSTALL.md                     ← links to online guide (not a full copy)
 ```
 
@@ -53,7 +56,7 @@ Open **Tools → Script Editor**. Script list **before**:
 Insert **`[Kotoba]`** between plugins and `Main`. Put this in it:
 
 ```ruby
-load "examples/script_editor/essentials_smoke_test.rb"
+load "kotoba/samples/script_editor/essentials_smoke_test.rb"
 ```
 
 Script list **after**:
@@ -75,13 +78,13 @@ That string comes from the sample JSON — not from your game's PBS files yet.
 
 | Step | What ran | Example value |
 | --- | --- | --- |
-| Script Editor | `load "examples/script_editor/essentials_smoke_test.rb"` | Loads the example script from disk |
-| Example script | `load "examples/boot_kotoba.rb"` | Boots Kotoba + `essentials_v20` adapter |
-| Boot script | `catalog_paths` → `examples/pokemon_essentials/en.json` | Reads sample catalog |
+| Script Editor | `load "kotoba/samples/script_editor/essentials_smoke_test.rb"` | Loads the example script from disk |
+| Example script | `load "kotoba/boot.rb"` | Boots Kotoba + `essentials_v20` adapter |
+| Boot script | `catalog_paths` → `kotoba/samples/pokemon_essentials/en.json` | Reads sample catalog |
 | Sample JSON | key `battle.wild_appeared` | `"A wild {pokemon} appeared!"` |
 | Example script | `Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})` | **"A wild Pikachu appeared!"** |
 
-After this works, replace the smoke test with `load "examples/script_editor/load_only.rb"` (boot only, no popup).
+After this works, replace the smoke test with `load "kotoba/samples/script_editor/load_only.rb"` (boot only, no popup).
 
 ---
 
@@ -93,18 +96,18 @@ After this works, replace the smoke test with `load "examples/script_editor/load
 Script Editor section `Kotoba`:
 
 ```ruby
-load "examples/script_editor/bare_rgss_smoke_test.rb"
+load "kotoba/samples/script_editor/bare_rgss_smoke_test.rb"
 ```
 
 **Expected result:** **"Kotoba says: Save"**
 
-Sample JSON path: `examples/bare_rgss/en.json`
+Sample JSON path: `kotoba/samples/bare_rgss/en.json`
 
 ---
 
 ## Copy-paste examples (in every release ZIP)
 
-Open `examples/script_editor/` in your game folder.
+Open `kotoba/samples/script_editor/` in your game folder.
 
 | File | Paste or `load` when… |
 | --- | --- |
@@ -116,7 +119,7 @@ Open `examples/script_editor/` in your game folder.
 **One-line style** (paste into Script Editor):
 
 ```ruby
-load "examples/script_editor/essentials_smoke_test.rb"
+load "kotoba/samples/script_editor/essentials_smoke_test.rb"
 ```
 
 **Copy-paste style:** open the `.rb` file in Notepad, select all, paste into the `Kotoba` script section.
@@ -162,14 +165,17 @@ Your **game folder** contains `Game.exe`. Extract the ZIP **into** that folder.
 MyFangame/
   Game.exe
   kotoba/
-  adapters/
-  examples/
-    boot_kotoba.rb
-    script_editor/
-    pokemon_essentials/en.json   ← Essentials ZIPs
-    bare_rgss/en.json            ← bare ZIP only
+    boot.rb
+    core.rb
+    adapters/
+    samples/
+      script_editor/
+      pokemon_essentials/en.json   ← Essentials ZIPs
+      bare_rgss/en.json            ← bare ZIP only
   INSTALL.md                     ← links to online guide
 ```
+
+Kotoba ships as **one folder**. Your real translation files live elsewhere (for example `Locales/en.json`).
 
 ### Wrong layout
 
@@ -178,7 +184,7 @@ MyFangame/
   Game.exe
   kotoba-essentials-v20/    ← extra folder — move contents up
     kotoba/
-    examples/
+    INSTALL.md
 ```
 
 ---
@@ -187,10 +193,11 @@ MyFangame/
 
 | Path | Example (Essentials v20) |
 | --- | --- |
-| `examples/script_editor/essentials_smoke_test.rb` | Your first-test script |
-| `examples/pokemon_essentials/en.json` | Sample catalog |
-| `adapters/essentials_v20.rb` | Adapter (name matches ZIP) |
+| `kotoba/samples/script_editor/essentials_smoke_test.rb` | Your first-test script |
+| `kotoba/samples/pokemon_essentials/en.json` | Sample catalog |
+| `kotoba/adapters/essentials_v20.rb` | Adapter (name matches ZIP) |
 | `kotoba/core.rb` | Runtime |
+| `kotoba/boot.rb` | Boot script |
 
 ---
 
@@ -199,15 +206,15 @@ MyFangame/
 RPG Maker does **not** run `.rb` files from double-click or terminal. Add Kotoba to `Data/Scripts.rxdata` via **Tools → Script Editor**.
 
 1. Insert section **`Kotoba`** above **`Main`**.
-2. Add one of the [example loads](#copy-paste-examples-in-every-release-zip).
+2. Add one of the [example loads](#copy-paste-examples-in-every-release-zip), or `load "kotoba/boot.rb"` for boot only.
 3. Click **OK**.
 
 ### Example: full `Kotoba` section (Essentials smoke test)
 
-This is the full contents of `examples/script_editor/essentials_smoke_test.rb`:
+This is the full contents of `kotoba/samples/script_editor/essentials_smoke_test.rb`:
 
 ```ruby
-load "examples/boot_kotoba.rb"
+load "kotoba/boot.rb"
 
 if defined?(pbMessage) && defined?(Kotoba)
   pbMessage(Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"}))
@@ -216,10 +223,10 @@ end
 
 ### Example: full `Kotoba` section (boot only)
 
-From `examples/script_editor/load_only.rb`:
+From `kotoba/samples/script_editor/load_only.rb`:
 
 ```ruby
-load "examples/boot_kotoba.rb"
+load "kotoba/boot.rb"
 ```
 
 ---
@@ -237,7 +244,7 @@ load "examples/boot_kotoba.rb"
 
 ## Example: what is in the sample JSON?
 
-**Essentials** (`examples/pokemon_essentials/en.json`):
+**Essentials** (`kotoba/samples/pokemon_essentials/en.json`):
 
 ```json
 {
@@ -259,7 +266,7 @@ load "examples/boot_kotoba.rb"
 | `battle.wild_appeared` | `Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})` | `A wild Pikachu appeared!` |
 | `menu.save` | *(not in Essentials sample)* | — |
 
-**Bare RGSS** (`examples/bare_rgss/en.json`):
+**Bare RGSS** (`kotoba/samples/bare_rgss/en.json`):
 
 ```json
 {
@@ -284,15 +291,15 @@ Nested JSON keys become dot paths: `menu` → `save` → `"menu.save"`.
 
 ## Example: `catalog_paths` connects locale → JSON file
 
-From `examples/boot_kotoba.rb` (Essentials v20 ZIP):
+From `kotoba/boot.rb` (Essentials v20 ZIP):
 
 ```ruby
 config.catalog_paths = {
-  "en" => ["examples/pokemon_essentials/en.json"]
+  "en" => ["kotoba/samples/pokemon_essentials/en.json"]
 }
 ```
 
-Read as: *for locale `en`, load `examples/pokemon_essentials/en.json` from the game folder.*
+Read as: *for locale `en`, load `kotoba/samples/pokemon_essentials/en.json` from the game folder.*
 
 ### Example: your own `Locales/` later
 
@@ -313,8 +320,8 @@ config.available_locales = ["en", "fr"]
 
 **Example:** copy the sample file to start your real catalog:
 
-1. Copy `examples/pokemon_essentials/en.json` → `Locales/en.json`
-2. Edit `boot_kotoba.rb` paths to `Locales/en.json`
+1. Copy `kotoba/samples/pokemon_essentials/en.json` → `Locales/en.json`
+2. Edit `kotoba/boot.rb` paths to `Locales/en.json`
 3. Add strings as you translate each part of the game
 
 See [Catalog format](/essential/catalog-format) and [Essentials migration](/integration/pokemon-essentials-migration).
@@ -325,13 +332,13 @@ See [Catalog format](/essential/catalog-format) and [Essentials migration](/inte
 
 ```ruby
 require File.join(".", "kotoba", "core")
-require File.join(".", "adapters", "essentials_v20.rb")
+require File.join(".", "kotoba", "adapters", "essentials_v20")
 
 Kotoba.configure do |config|
   config.default_locale = "en"
   config.available_locales = ["en"]
   config.catalog_paths = {
-    "en" => ["examples/pokemon_essentials/en.json"]
+    "en" => ["kotoba/samples/pokemon_essentials/en.json"]
   }
 end
 
@@ -344,9 +351,9 @@ Kotoba.use_adapter("essentials_v20", {"load" => true})
 
 | What you see | Example fix |
 | --- | --- |
-| `LoadError (No such file or directory - examples/boot_kotoba.rb)` | ZIP contents are inside `kotoba-essentials-v20/` subfolder — move them next to `Game.exe` |
-| Double-clicked `boot_kotoba.rb`, nothing happened | Use Script Editor + `load "examples/script_editor/..."` |
-| `load "examples/script_editor/essentials_smoke_test.rb"` fails on bare RGSS ZIP | Use `bare_rgss_smoke_test.rb` instead |
+| `LoadError (No such file or directory - kotoba/boot.rb)` | ZIP contents are inside `kotoba-essentials-v20/` subfolder — move them next to `Game.exe` |
+| Double-clicked `boot.rb`, nothing happened | Use Script Editor + `load "kotoba/samples/script_editor/..."` |
+| `load "kotoba/samples/script_editor/essentials_smoke_test.rb"` fails on bare RGSS ZIP | Use `bare_rgss_smoke_test.rb` instead |
 | Playtest OK, no message box | You used `load_only.rb` — that is expected. Use smoke test or add your own `pbMessage` |
 | Smoke test works, game dialogs unchanged | Expected. Next: [Pokemon Essentials](/integration/pokemon-essentials) `_INTL` bridge |
 

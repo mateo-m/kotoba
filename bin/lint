@@ -6,11 +6,9 @@ unless RUBY_VERSION =~ /^1\.8\./
 end
 
 PROJECT_ROOT = File.expand_path("..", File.dirname(__FILE__))
-RUNTIME_FILES = Dir[File.join(PROJECT_ROOT, "kotoba/**/*.rb")].sort
-ADAPTER_FILES = Dir[File.join(PROJECT_ROOT, "adapters/**/*.rb")].sort
+KOTOBA_FILES = Dir[File.join(PROJECT_ROOT, "kotoba/**/*.rb")].sort
 TOOL_FILES = Dir[File.join(PROJECT_ROOT, "tools/**/*.rb")].sort
 TEST_FILES = Dir[File.join(PROJECT_ROOT, "test/**/*_test.rb")].sort
-EXAMPLE_FILES = Dir[File.join(PROJECT_ROOT, "examples/**/*.rb")].sort
 BIN_FILES = Dir[File.join(PROJECT_ROOT, "bin/*")].sort.select do |path|
   File.file?(path) && File.open(path, "rb") { |file| file.readline } =~ /ruby/
 end
@@ -23,7 +21,7 @@ end
 Dir.chdir(PROJECT_ROOT) do
   run!("ruby bin/format --check")
 
-  (RUNTIME_FILES + ADAPTER_FILES + TOOL_FILES + EXAMPLE_FILES + BIN_FILES + ["Rakefile"]).each do |path|
+  (KOTOBA_FILES + TOOL_FILES + BIN_FILES + ["Rakefile"]).each do |path|
     run!("ruby -c " + path.sub(PROJECT_ROOT + "/", ""))
   end
 

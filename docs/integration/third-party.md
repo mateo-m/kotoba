@@ -26,7 +26,7 @@ Kotoba.use_adapter("my_engine", {"load" => true})
 
 ## Complete Minimal Adapter
 
-Create `adapters/my_engine.rb`:
+Create `kotoba/adapters/my_engine.rb`:
 
 ```ruby
 require File.join(File.dirname(__FILE__), "registry")
@@ -74,7 +74,7 @@ Use string and symbol option keys because RPG Maker scripts and external Ruby co
 
 ```ruby
 require_relative "kotoba/core"
-require_relative "adapters/my_engine"
+require_relative "kotoba/adapters/my_engine"
 
 Kotoba.use_adapter("my_engine", {
   "catalog_paths" => {
@@ -127,7 +127,7 @@ Put tests under `test/compatibility/`:
 ```ruby
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "test_helper"))
 
-adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "adapters"))
+adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "kotoba", "adapters"))
 $LOAD_PATH.unshift(adapter_path) unless $LOAD_PATH.include?(adapter_path)
 require "my_engine"
 

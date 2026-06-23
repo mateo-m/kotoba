@@ -4,7 +4,7 @@ tool_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "tools"))
 $LOAD_PATH.unshift(tool_path) unless $LOAD_PATH.include?(tool_path)
 require "catalog_tools"
 
-adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "adapters"))
+adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "kotoba", "adapters"))
 $LOAD_PATH.unshift(adapter_path) unless $LOAD_PATH.include?(adapter_path)
 require "essentials_bes"
 

@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "test_helper"))
 
-adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "adapters"))
+adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "kotoba", "adapters"))
 $LOAD_PATH.unshift(adapter_path) unless $LOAD_PATH.include?(adapter_path)
 require "bare_rgss"
 
