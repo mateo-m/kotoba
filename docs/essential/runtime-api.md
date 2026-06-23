@@ -1,17 +1,11 @@
 # Runtime API
 
-Reference: `Kotoba` configuration, loading, and translation.
-
 Ruby 1.8. Examples avoid keyword arguments, safe navigation, and post-RGSS1 stdlib.
 
-## Where does this code go?
+- **Fangame with `Game.exe`:** [Installing in a game](/essential/installation) — `load "kotoba/boot.rb"` in Script Editor; edit `kotoba/boot.rb` on disk for `catalog_paths`, `available_locales`, and the adapter.
+- **Git clone:** [Quick Start](/essential/quick-start) — same API; paths relative to the repo root.
 
-| You | Boot and config |
-| --- | --- |
-| Fangame with `Game.exe` | [Installing in a game](/essential/installation): `load "kotoba/boot.rb"` in **Tools → Script Editor**; edit **`kotoba/boot.rb`** on disk (`catalog_paths`, `available_locales`, adapter). |
-| Git clone | [Quick Start](/essential/quick-start): paste boot into a script you run from the repo, or mirror what `kotoba/boot.rb` does in a release ZIP. |
-
-The **Setup** block below is the API inside `kotoba/boot.rb` (or an equivalent boot script). Do not paste the whole block into Script Editor unless you are following [Bare RGSS](/integration/bare-rgss) inline boot as an alternative to `boot.rb`.
+The **Setup** block below belongs in `kotoba/boot.rb` (or an equivalent boot script). Do not paste the whole block into Script Editor unless you are following [Bare RGSS](/integration/bare-rgss) inline boot as an alternative to `boot.rb`.
 
 ## Setup
 

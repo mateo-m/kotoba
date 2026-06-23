@@ -1,19 +1,12 @@
 # Message syntax
 
-Reference: placeholders, select, plural, apostrophes, RPG Maker control codes.
+Plain text with optional placeholders: slots the game fills at runtime (names, counts, etc.). Spreadsheet translators: [Placeholders](/translators/placeholders).
 
-Plain text with optional placeholders: slots the game fills at runtime (names, counts, etc.).
-
-| You | Page |
-| --- | --- |
-| Volunteer (spreadsheet) | [Placeholders](/translators/placeholders) |
-| Developer (JSON in `Locales/`) | [Developer reference](#developer-reference) below |
-
-Authors edit message strings in `Locales/<locale>.json` beside `Game.exe` ([Installing in a game §5](/essential/installation#_5-your-own-translations)). Subset of ICU MessageFormat: variables, `select`, cardinal `plural`, apostrophes, RPG Maker color codes.
+Authors edit strings in `Locales/<locale>.json` beside `Game.exe` ([Installing in a game §5](/essential/installation#_5-your-own-translations)). Supports variables, `select`, cardinal `plural`, apostrophes, and RPG Maker color codes.
 
 ---
 
-## Developer reference
+## Catalog syntax
 
 ### Static text
 

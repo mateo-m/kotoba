@@ -1,7 +1,5 @@
 # Catalog format
 
-Reference: JSON catalog shape, keys, and file layout.
-
 Catalogs are strict JSON objects. Kotoba reads them at runtime. No Marshal, `.dat`, or RPG Maker compile step in the core.
 
 In a fangame, create `Locales/<locale>.json` beside `Game.exe` ([Installing in a game §5](/essential/installation#_5-your-own-translations)). In a git clone, the same paths are relative to the repo root ([Quick Start](/essential/quick-start)).

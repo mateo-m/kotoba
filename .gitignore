@@ -5,6 +5,8 @@ docs/.vitepress/.temp
 test/fixtures.local.yml
 dist/
 
+.docs-site-staging/
+
 # OS / system-generated files
 .DS_Store
 .DS_Store?

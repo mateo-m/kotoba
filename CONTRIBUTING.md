@@ -54,12 +54,8 @@ Manual: `bun run precommit`
 
 ## Documentation
 
-Public behavior changes → update `docs/`. Index: [docs/table-of-contents.md](docs/table-of-contents.md).
+Public behavior changes → update the matching page under `docs/`. Preview with `bun run docs:dev`.
 
 ## Support
 
-Open an issue with: what you tried, what you expected, what happened, and command output if any.
-
-## Roadmap
-
-[docs/contributors/roadmap.md](docs/contributors/roadmap.md). Mention planned items in an issue before starting.
+Open an issue with: what you tried, what you expected, what happened, and command output if any. For larger planned work, discuss in an issue before starting.

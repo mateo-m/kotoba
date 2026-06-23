@@ -1,7 +1,5 @@
 # For translators
 
-How-to: fill in a handoff spreadsheet.
-
 You do not need JSON or RPG Maker. The developer sends a spreadsheet (CSV) or a handoff zip.
 
 ## Incoming files

@@ -1,14 +1,12 @@
 # Validation CLI
 
-Reference: `bin/kotoba` commands for load tests, validation, import, and export.
-
 Run every command through Ruby 1.8:
 
 ```sh
 bin/ruby18 bin/kotoba <command> ...
 ```
 
-Use it on a dev machine with this repository cloned. Shipped games only need the runtime from a release ZIP.
+Clone this repo on a PC. Shipped games only need the runtime from a release ZIP.
 
 ### Working with game files
 
@@ -216,8 +214,6 @@ bin/ruby18 bin/kotoba tms-export po fr Locales/en.json build/fr.po
 bin/ruby18 bin/kotoba tms-import po fr build/fr.po Locales/fr.json
 ```
 
-The runtime still loads nested JSON. TMS files are interchange files only.
-
 ## Failure behavior
 
-The CLI exits non-zero when validation fails. Use it in pre-commit hooks and CI.
+The CLI exits non-zero when validation fails.

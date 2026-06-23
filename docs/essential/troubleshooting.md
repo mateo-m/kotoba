@@ -1,7 +1,5 @@
 # Troubleshooting
 
-How-to: fix install, playtest, and catalog problems.
-
 Install walkthrough: [Installing in a game](/essential/installation).
 
 ---

@@ -1,6 +1,7 @@
 {
   "name": "kotoba",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "packageManager": "bun@1.3.14",
   "scripts": {
@@ -12,6 +13,7 @@
     "precommit": "lefthook run pre-commit",
     "docs:dev": "VITEPRESS_BASE=/ vitepress dev docs",
     "docs:build": "vitepress build docs",
+    "docs:build:site": "bash scripts/build-docs-site.sh",
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {},

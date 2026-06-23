@@ -1,6 +1,6 @@
 # Quick Start
 
-Tutorial: load Kotoba from a git clone.
+Clone this repo, add a catalog, load Kotoba in Ruby 1.8, and call `Kotoba.t`. You should see translated strings in the console or a test script.
 
 Fangame with `Game.exe`? Use [Installing in a game](/essential/installation) instead.
 

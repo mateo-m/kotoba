@@ -93,7 +93,7 @@ module KotobaTools
     end
 
     def self.docs_install_url
-      docs_site_url + "/essential/installation"
+      docs_site_url + "/v" + version + "/essential/installation"
     end
 
     def self.manifest(adapter_name, files = nil)
@@ -128,7 +128,7 @@ Extract this archive into the folder that contains `Game.exe`.
 
 #{docs_install_url}
 
-That page is maintained in git and updates without a new Kotoba release.
+This install guide matches Kotoba #{version} in this ZIP.
 
 ## This package
 

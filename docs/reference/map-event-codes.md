@@ -27,8 +27,3 @@ RPG Maker XP event commands that can carry player-facing text. Kotoba map import
 | 209 | Set Move Route | Text lives in move-route sub-commands (future work) |
 | 231 | Show Picture | Asset filenames, not dialogue |
 | 509 | Move Command | Move-route payload |
-
-## Verification
-
-- Public fixture: `test/fixtures/realworld/essentials-bes-sample/maps/Map9001.rxdata`
-- Optional local audit: `test/local_integration_test.rb` against `test/fixtures.local.yml`

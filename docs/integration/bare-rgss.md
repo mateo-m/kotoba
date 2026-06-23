@@ -1,7 +1,5 @@
 # Bare RGSS integration
 
-How-to: wire Kotoba into plain RPG Maker XP / RGSS.
-
 Install: [Installing in a game](/essential/installation). Sample catalog: `kotoba/samples/bare_rgss/en.json`. Covers layout, boot, and `kotoba:` inline markers after Kotoba loads.
 
 ## Project layout
@@ -194,7 +192,7 @@ Most bare RGSS projects do not need this. Prefer `_T("menu.save")` in script unl
 
 ## Validate before copying into the game
 
-Run outside RPG Maker on a PC with this repository cloned:
+See [Validation CLI](/tooling/validation-cli):
 
 ```sh
 bin/ruby18 bin/kotoba load-test Locales/en.json

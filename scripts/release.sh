@@ -102,8 +102,14 @@ if [[ "$ZIP_COUNT" == "0" ]]; then
 fi
 echo "    built $ZIP_COUNT archives"
 
+echo "==> snapshotting docs"
+bash "$REPO_ROOT/bin/snapshot-docs" "$VERSION"
+
+echo "==> verifying docs site build"
+bun run docs:build:site
+
 echo "==> committing release metadata"
-git -C "$REPO_ROOT" add "$VERSION_FILE" "$(changelog_path)"
+git -C "$REPO_ROOT" add "$VERSION_FILE" "$(changelog_path)" "docs-versions/v$VERSION"
 git -C "$REPO_ROOT" commit -S -m "chore(release): bump version to $VERSION"
 git -C "$REPO_ROOT" tag -s "$TAG" -m "$TAG"
 

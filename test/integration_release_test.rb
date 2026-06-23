@@ -48,14 +48,14 @@ class IntegrationReleaseTest < KotobaTestCase
 
     assert_equal(kotoba_version, manifest["kotoba_version"])
     assert_equal("bare_rgss", manifest["adapter"])
-    assert(manifest["docs_install_url"].index("/essential/installation"))
+    assert(manifest["docs_install_url"].index("/v#{kotoba_version}/essential/installation"))
     assert(manifest["files"].include?("kotoba/adapters/bare_rgss.rb"))
   end
 
   def test_install_markdown_links_to_online_guide
     text = KotobaTools::IntegrationRelease.install_markdown("essentials_v20")
 
-    assert(text.index("https://mateo-m.github.io/kotoba/essential/installation"))
+    assert(text.index("https://mateo-m.github.io/kotoba/v#{kotoba_version}/essential/installation"))
     assert(text.index("essentials_v20"))
     assert(!text.index("## Troubleshooting"))
   end

@@ -1,7 +1,5 @@
 # Placeholders and special text
 
-Reference: `{placeholders}`, Essentials `{1}`/`{2}`, color codes, plural and select lines.
-
 Edit the translation column in a spreadsheet.
 
 Spreadsheet rules: [For translators](/translators/). Developer syntax: [Message syntax](/essential/message-syntax).

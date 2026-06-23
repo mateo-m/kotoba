@@ -1,14 +1,10 @@
 # Pokemon Essentials integration
 
-How-to: bridge `_INTL`, shape catalogs, and wire Essentials scripts.
-
 Essentials adapters bridge existing `_INTL` calls so you can adopt Kotoba without moving every string at once.
 
 Install: [Installing in a game](/essential/installation). Sample: `kotoba/samples/pokemon_essentials/en.json`.
 
 ZIP (`kotoba-essentials-v16.zip` through `v21`, or `kotoba-essentials-bes.zip`) from [GitHub Releases](https://github.com/mateo-m/kotoba/releases).
-
-`_INTL` bridges, catalog shape, wiring after Kotoba loads.
 
 Supported targets:
 
@@ -216,15 +212,9 @@ Kotoba::Adapters::EssentialsBES.move_name("thunderbolt")
 
 ## Validation
 
-On a developer PC with this repo cloned:
-
 ```sh
 bin/ruby18 bin/kotoba load-test Locales/en.json
 bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
-Validation catches missing keys, placeholder mismatches, and RPG Maker control-code mismatches before playtest. Copy validated `Locales/*.json` into the game folder.
-
-## Fixture provenance
-
-Adapter support is tied to compatibility tests and fixture provenance under `test/fixtures/essentials/`. Do not claim support for a new Essentials version until it has a fixture and an acceptance test.
+Validation catches missing keys, placeholder mismatches, and RPG Maker control-code mismatches before playtest. Copy validated `Locales/*.json` into the game folder. Commands: [Validation CLI](/tooling/validation-cli).

@@ -1,10 +1,8 @@
 # Installing in a game
 
-Tutorial: add Kotoba to an RPG Maker XP or Pokemon Essentials project with `Game.exe`.
+Download a release ZIP, extract it beside `Game.exe`, paste one line in Script Editor, and playtest. You should see a test translation on screen in about 15 minutes.
 
-Browsing the git repo instead? [Quick Start](/essential/quick-start). Translators: [For translators](/translators/). Contributors: [CI](/contributors/ci).
-
-Release ZIPs include `INSTALL.md` linking here. This site updates from `main`; you do not need a new library release for doc fixes.
+Git clone instead of a ZIP? [Quick Start](/essential/quick-start). Translators: [For translators](/translators/).
 
 ---
 
@@ -112,7 +110,7 @@ Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
 
 On screen: `A wild Pikachu appeared!`
 
-`{pokemon}` is filled at runtime. Translators keep that placeholder in every language. See [Placeholders](/translators/placeholders).
+`{pokemon}` is filled at runtime. Translators keep that placeholder in every locale. See [Placeholders](/translators/placeholders).
 
 ### Bare RGSS
 

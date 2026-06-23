@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "docs/**"
+      - "docs-versions/**"
+      - "kotoba/VERSION"
       - "package.json"
       - "bun.lock"
       - ".github/workflows/docs.yml"
@@ -30,7 +32,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - uses: actions/configure-pages@v4
       - run: bun install
-      - run: bun run docs:build
+      - run: bun run docs:build:site
         env:
           VITEPRESS_BASE: /${{ github.event.repository.name }}/
           VITEPRESS_REPOSITORY_NAME: ${{ github.event.repository.name }}

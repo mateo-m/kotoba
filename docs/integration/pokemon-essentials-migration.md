@@ -1,7 +1,5 @@
 # Essentials migration
 
-How-to: move from source-English `_INTL` to stable JSON catalogs.
-
 Essentials adapters bridge legacy `_INTL` calls. Adopt stable JSON catalogs one area at a time.
 
 ## `source_text` vs stable keys
@@ -63,9 +61,9 @@ Avoid migrating every string at once. Start with menus, battle text, or one plug
 
 ## Import helpers
 
-Run these on a **developer PC** with this repository cloned (`bin/ruby18 bin/kotoba …`). They do not run inside RPG Maker.
+Import commands use `bin/ruby18 bin/kotoba` from a cloned repo ([Validation CLI](/tooling/validation-cli)), not inside RPG Maker.
 
-Copy files from your game folder into the repo first (for example `build/perseida/PBS/moves.txt`, `build/perseida/Data/messages.dat`). Paths in the commands below are relative to the repo root. When using Docker via `bin/ruby18`, inputs must live under the repository directory.
+Copy files from your game folder into the repo first (for example `build/mygame/PBS/moves.txt`, `build/mygame/Data/messages.dat`). Paths in the commands below are relative to the repo root. When using Docker via `bin/ruby18`, inputs must live under the repository directory.
 
 If the game ships compiled translations in `Data/messages.dat`, inspect it first:
 

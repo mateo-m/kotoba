@@ -1,22 +1,10 @@
 # TMS workflows
 
-Kotoba keeps nested per-locale JSON at runtime. Translation tools want flat JSON, multi-language JSON, XLIFF, or PO. The CLI converts between those formats and your catalogs.
+Translation tools want flat JSON, multi-language JSON, XLIFF, or PO. The CLI converts between those formats and your nested `Locales/*.json` catalogs.
 
-Commands use `bin/ruby18 bin/kotoba` on a **developer PC** with this repo cloned. See per-tool pages ([Crowdin](/tooling/crowdin), [SimpleLocalize](/tooling/simplelocalize), [Tolgee](/tooling/tolgee), [XLIFF and PO](/tooling/xliff-po)).
+Per-tool commands: [Crowdin](/tooling/crowdin), [SimpleLocalize](/tooling/simplelocalize), [Tolgee](/tooling/tolgee), [XLIFF and PO](/tooling/xliff-po).
 
-## Source of truth
-
-Keep runtime catalogs as source of truth:
-
-```text
-Locales/en.json
-Locales/fr.json
-Locales/pt-BR.json
-```
-
-Export interchange files only when sending work to translators.
-
-## Recommended workflow
+## Workflow
 
 1. Validate the source catalog.
 2. Export the format your TMS expects.
