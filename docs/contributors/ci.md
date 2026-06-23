@@ -74,7 +74,7 @@ scripts/release.sh 0.1.0    # first release; later: patch | minor | major
 
 The script:
 
-1. Prepends git-cliff notes to `CHANGELOG.md` and bumps `kotoba/VERSION`.
+1. Prepends git-cliff notes to `CHANGELOG.md` and bumps `kotoba/VERSION`. Only commits that touch the library (`kotoba/`, catalog CLI under `tools/` and `bin/kotoba`) are included; docs, CI, and release-metadata commits are omitted.
 2. Runs `bun run lint` (skip with `RELEASE_SKIP_LINT=1`).
 3. Builds integration ZIPs into `dist/`.
 4. Creates a signed commit and tag, pushes `main` + the tag.

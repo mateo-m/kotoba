@@ -18,7 +18,28 @@ footer = ""
 [git]
 conventional_commits = true
 filter_unconventional = true
+# Library-scoped releases: runtime (kotoba/), catalog CLI (tools/, bin/kotoba).
+# Docs, CI, release metadata, and repo-only tooling are excluded.
+include_paths = [
+  "kotoba/**",
+  "tools/catalog_tools.rb",
+  "tools/rgss_rxdata_stubs.rb",
+  "tools/validators/**",
+  "bin/kotoba",
+]
+exclude_paths = [
+  "kotoba/VERSION",
+  "tools/integration_release.rb",
+  "tools/local_fixture_config.rb",
+]
 commit_parsers = [
+  { message = "^docs", skip = true },
+  { message = "^ci", skip = true },
+  { message = "^test", skip = true },
+  { message = "^chore\\(release\\)", skip = true },
+  { message = "^fix\\(docs\\)", skip = true },
+  { message = "^feat\\(docs\\)", skip = true },
+  { message = "(?i)^chore.*docs", skip = true },
   { message = "^feat\\(release\\):", group = "Release" },
   { message = "^feat", group = "Features" },
   { message = "^fix\\(release\\):", group = "Release" },
@@ -26,9 +47,6 @@ commit_parsers = [
   { message = "^perf", group = "Performance" },
   { message = "^refactor", group = "Refactor" },
   { message = "^ui|^style", group = "UI" },
-  { message = "^docs", group = "Documentation" },
-  { message = "^ci", group = "CI" },
-  { message = "^test", group = "Tests" },
   { message = "^chore", group = "Chores" },
   { message = ".*", group = "Other" },
 ]
