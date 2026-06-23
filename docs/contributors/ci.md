@@ -47,8 +47,8 @@ bun run docs:preview
 
 | Piece | Behavior |
 | --- | --- |
-| **Doc snapshot** | `bin/snapshot-docs <semver>` during `scripts/release.sh` |
-| **Site build** | `bun run docs:build:site` builds latest + every `docs-versions/v*/` tree |
+| **Doc snapshot** | `bin/snapshot-docs <semver>` copies markdown from `docs/` into `docs-versions/v<semver>/` (shared `docs/.vitepress/` at build time) |
+| **Site build** | `bun run docs:build:site` builds latest + every `docs-versions/v*/` tree using shared VitePress config |
 | **ZIP `MANIFEST.json`** | `docs_install_url` → `…/v<version>/essential/installation` |
 | **Version switcher** | Docs nav when more than one version exists |
 | **Footer** | Shows `kotoba/VERSION` from the repository |
@@ -74,7 +74,7 @@ scripts/release.sh 0.1.0    # first release; later: patch | minor | major
 
 The script:
 
-1. Prepends git-cliff notes to `CHANGELOG.md` and bumps `kotoba/VERSION`. Only commits that touch the library (`kotoba/`, catalog CLI under `tools/` and `bin/kotoba`) are included; docs, CI, and release-metadata commits are omitted.
+1. Prepends git-cliff notes to `CHANGELOG.md` and bumps `kotoba/VERSION`. Only commits that touch library paths listed in `cliff.toml` are included.
 2. Runs `bun run lint` (skip with `RELEASE_SKIP_LINT=1`).
 3. Builds integration ZIPs into `dist/`.
 4. Creates a signed commit and tag, pushes `main` + the tag.

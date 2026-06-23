@@ -33,13 +33,6 @@ exclude_paths = [
   "tools/local_fixture_config.rb",
 ]
 commit_parsers = [
-  { message = "^docs", skip = true },
-  { message = "^ci", skip = true },
-  { message = "^test", skip = true },
-  { message = "^chore\\(release\\)", skip = true },
-  { message = "^fix\\(docs\\)", skip = true },
-  { message = "^feat\\(docs\\)", skip = true },
-  { message = "(?i)^chore.*docs", skip = true },
   { message = "^feat\\(release\\):", group = "Release" },
   { message = "^feat", group = "Features" },
   { message = "^fix\\(release\\):", group = "Release" },

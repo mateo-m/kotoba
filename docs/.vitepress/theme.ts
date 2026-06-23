@@ -1,7 +1,6 @@
 import type { DefaultTheme } from "vitepress";
 import { readFileSync, existsSync, readdirSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import {
   isVersionedDocsBase,
   resolveBase,
@@ -9,8 +8,6 @@ import {
   resolveGithubRepository,
   resolveRepositoryName,
 } from "./repo";
-
-const moduleDir = dirname(fileURLToPath(import.meta.url));
 
 function repoRootFromDocs(docsDir: string): string {
   const parent = resolve(docsDir, "..");

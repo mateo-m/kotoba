@@ -1,0 +1,29 @@
+#!/bin/sh
+set -eu
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+if [ -n "${KOTOBA_DOCS_URL:-}" ]; then
+  printf '%s\n' "$KOTOBA_DOCS_URL" | sed 's:/*$::'
+  exit 0
+fi
+
+remote=""
+if command -v git >/dev/null 2>&1; then
+  remote="$(git -C "$ROOT" remote get-url origin 2>/dev/null || true)"
+fi
+
+if [ -z "$remote" ] && [ -f "$ROOT/.git/config" ]; then
+  remote="$(grep -A1 '^\[remote "origin"\]' "$ROOT/.git/config" 2>/dev/null | grep 'url = ' | sed 's/^[[:space:]]*url = //' | head -1)"
+fi
+
+owner="$(printf '%s\n' "$remote" | sed -n 's/.*github\.com[:/]\([^/][^/]*\)\/\([^/.][^/.]*\)\(\.git\)\{0,1\}$/\1/p')"
+repo="$(printf '%s\n' "$remote" | sed -n 's/.*github\.com[:/]\([^/][^/]*\)\/\([^/.][^/.]*\)\(\.git\)\{0,1\}$/\2/p')"
+
+if [ -n "$owner" ] && [ -n "$repo" ]; then
+  printf 'https://%s.github.io/%s\n' "$owner" "$repo"
+  exit 0
+fi
+
+echo "error: Set KOTOBA_DOCS_URL or configure a GitHub origin remote for docs URLs" >&2
+exit 1

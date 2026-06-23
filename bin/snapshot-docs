@@ -16,10 +16,10 @@ SRC="$REPO_ROOT/docs"
 rm -rf "$DEST"
 mkdir -p "$DEST"
 
-rsync -a \
-  --exclude '.vitepress/dist' \
-  --exclude '.vitepress/cache' \
-  --exclude '.vitepress/.temp' \
+rsync -a --prune-empty-dirs \
+  --include '*/' \
+  --include '*.md' \
+  --exclude '*' \
   "$SRC/" "$DEST/"
 
-echo "snapshotted docs/ -> docs-versions/v$VERSION"
+echo "snapshotted docs markdown -> docs-versions/v$VERSION"

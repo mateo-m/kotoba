@@ -55,11 +55,11 @@ export function resolveDocsSiteUrl(): string | undefined {
     return explicit.replace(/\/$/, "");
   }
 
-  const github = resolveGithubRepository();
-  if (!github) {
+  const { githubRepo } = readGitOrigin();
+  if (!githubRepo) {
     return undefined;
   }
 
-  const [owner, repo] = github.split("/");
+  const [owner, repo] = githubRepo.split("/");
   return `https://${owner}.github.io/${repo}`;
 }

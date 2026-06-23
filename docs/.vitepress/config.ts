@@ -4,7 +4,9 @@ import { fileURLToPath } from "node:url";
 import { resolveBase } from "./repo";
 import { buildSharedThemeConfig } from "./theme";
 
-const docsDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const docsDir = process.env.VITEPRESS_DOCS_DIR
+  ? resolve(process.env.VITEPRESS_DOCS_DIR)
+  : resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 export default defineConfig({
   title: "Kotoba",

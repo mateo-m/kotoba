@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIST="${1:-$(cd "$(dirname "$0")/.." && pwd)/docs/.vitepress/dist}"
+
+if [[ ! -d "$DIST" ]]; then
+  echo "error: docs site dist not found at $DIST" >&2
+  exit 1
+fi
+
+errors=0
+
+fail() {
+  echo "error: $1" >&2
+  errors=$((errors + 1))
+}
+
+while IFS= read -r match; do
+  [[ -z "$match" ]] && continue
+  fail "doubled site base in $match"
+done < <(rg -l '/kotoba/kotoba/' "$DIST" -g '*.html' 2>/dev/null || true)
+
+while IFS= read -r match; do
+  [[ -z "$match" ]] && continue
+  fail "doubled version path in $match"
+done < <(rg -l '/v[0-9]+\.[0-9]+\.[0-9]+/v[0-9]+\.[0-9]+\.[0-9]+/' "$DIST" -g '*.html' 2>/dev/null || true)
+
+if [[ -f "$DIST/index.html" ]]; then
+  if ! rg -q 'href="/kotoba/v[0-9]+\.[0-9]+\.[0-9]+/"' "$DIST/index.html" 2>/dev/null; then
+    fail "latest build is missing a version picker link to /kotoba/vX.Y.Z/"
+  fi
+fi
+
+for version_dir in "$DIST"/v[0-9]*.[0-9]*.[0-9]*/; do
+  [[ -d "$version_dir" ]] || continue
+  index="$version_dir/index.html"
+  [[ -f "$index" ]] || continue
+  if ! rg -q 'target="_self"' "$index" 2>/dev/null; then
+    fail "versioned build $(basename "$version_dir") is missing target=\"_self\" on version links"
+  fi
+done
+
+if [[ "$errors" -gt 0 ]]; then
+  exit 1
+fi
+
+echo "docs site checks passed ($DIST)"

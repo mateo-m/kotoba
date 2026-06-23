@@ -6,6 +6,7 @@ test/fixtures.local.yml
 dist/
 
 .docs-site-staging/
+docs-versions/**/.vitepress/
 
 # OS / system-generated files
 .DS_Store

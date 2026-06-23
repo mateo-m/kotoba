@@ -87,43 +87,13 @@ module KotobaTools
       files.sort
     end
 
-    def self.read_origin_remote
-      remote = `git remote get-url origin 2>/dev/null`.strip
-      return remote unless remote.empty?
-
-      config_path = File.join(PROJECT_ROOT, ".git", "config")
-      return nil unless File.file?(config_path)
-
-      in_origin = false
-      File.readlines(config_path).each do |line|
-        line = line.chomp
-        if line =~ /^\[remote "origin"\]$/
-          in_origin = true
-        elsif line =~ /^\[/
-          in_origin = false
-        elsif in_origin && line =~ /^\s+url = (.+)$/
-          return $1
-        end
-      end
-
-      nil
-    end
-
-    def self.github_pages_url_from_remote(remote)
-      return nil if remote.nil? || remote.empty?
-      return nil unless remote =~ /github\.com[:\/]([^\/]+)\/([^\/]+)/
-
-      owner = $1
-      repo = $2.sub(/\.git\z/, "")
-      "https://#{owner}.github.io/#{repo}"
-    end
-
     def self.docs_site_url
       explicit = ENV["KOTOBA_DOCS_URL"]
       return explicit.sub(/\/\z/, "") unless explicit.nil? || explicit.empty?
 
-      url = github_pages_url_from_remote(read_origin_remote)
-      return url unless url.nil?
+      script = File.join(PROJECT_ROOT, "bin", "docs-site-url")
+      url = `sh #{script.shellescape} 2>/dev/null`.strip
+      return url unless url.empty?
 
       raise "Set KOTOBA_DOCS_URL or configure a GitHub origin remote for docs URLs"
     end
