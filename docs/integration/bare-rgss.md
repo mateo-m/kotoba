@@ -1,10 +1,8 @@
 # Bare RGSS integration
 
-For plain RPG Maker XP / RGSS projects — no Pokemon Essentials.
+How-to: wire Kotoba into plain RPG Maker XP / RGSS.
 
-**First time installing?** Follow [Installing in a game](/essential/installation). Sample catalog: `kotoba/samples/bare_rgss/en.json`.
-
-This page covers bare-RGSS-specific layout, boot options, and `kotoba:` inline markers after Kotoba is loading without errors.
+Install: [Installing in a game](/essential/installation). Sample catalog: `kotoba/samples/bare_rgss/en.json`. Covers layout, boot, and `kotoba:` inline markers after Kotoba loads.
 
 ## Project layout
 
@@ -55,7 +53,7 @@ Kotoba.t("npc.greeting", {"name" => "Ari"})
 # => "Hello, Ari!"
 ```
 
-## Boot Script
+## Boot script
 
 Create a script section near the top of your RPG Maker scripts:
 
@@ -99,7 +97,7 @@ message = _T("npc.greeting", {"name" => "Ari"})
 # => "Hello, Ari!"
 ```
 
-## Changing Locale
+## Changing locale
 
 ```ruby
 Kotoba.locale = "fr"
@@ -188,7 +186,7 @@ Kotoba::Adapters::BareRGSS.translate_message("Save", nil)
 
 Most bare RGSS projects do not need this. Prefer `_T("menu.save")` in script unless you already store `kotoba:` markers in data.
 
-## Validate Before Copying Into The Game
+## Validate before copying into the game
 
 Run outside RPG Maker:
 

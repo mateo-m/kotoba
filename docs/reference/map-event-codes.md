@@ -1,6 +1,6 @@
-# Map Event Command Reference
+# Map event command reference
 
-RPG Maker XP event commands that can carry player-facing text. This checklist tracks Kotoba map import coverage.
+RPG Maker XP event commands that can carry player-facing text. Kotoba map import coverage.
 
 ## Supported
 

@@ -1,12 +1,14 @@
 # Catalog format
 
-Catalogs are strict JSON objects. Kotoba reads them at runtime — no Marshal, `.dat`, or RPG Maker compile step in the core.
+Reference: JSON catalog shape, keys, and file layout.
+
+Catalogs are strict JSON objects. Kotoba reads them at runtime. No Marshal, `.dat`, or RPG Maker compile step in the core.
 
 ## Shape
 
-Nested objects, string leaves, dot-separated lookup keys:
+Nested objects, string leaves, dot-separated lookup keys.
 
-**Catalog** (`Locales/en.json`):
+`Locales/en.json`:
 
 ```json
 {
@@ -20,7 +22,7 @@ Nested objects, string leaves, dot-separated lookup keys:
 }
 ```
 
-**Lookups and results:**
+Lookups:
 
 ```ruby
 Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
@@ -33,11 +35,11 @@ Kotoba.t("menu.save")
 # => "Save"
 ```
 
-Avoid dots inside key names — dots separate lookup segments only (`battle` + `wild_appeared` → `"battle.wild_appeared"`).
+Avoid dots inside key names. Dots separate lookup segments only (`battle` + `wild_appeared` → `"battle.wild_appeared"`).
 
 ## Valid leaves
 
-Only **strings** are valid message leaves. Numbers, booleans, arrays, or nested objects at a leaf path are rejected at load time.
+Only strings are valid message leaves. Numbers, booleans, arrays, or nested objects at a leaf path are rejected at load time.
 
 ## JSON rules
 
@@ -46,12 +48,12 @@ The bundled parser accepts strict JSON:
 - UTF-8 BOM is stripped.
 - Objects, arrays, strings, numbers, booleans, and null parse normally.
 - `\uXXXX` escapes and surrogate pairs are decoded.
-- Comments and trailing commas are **not** allowed.
+- Comments and trailing commas are not allowed.
 - The catalog root must be an object.
 
 ## File layout
 
-**One file per locale** (typical for fan games):
+One file per locale (typical):
 
 ```text
 Locales/en.json
@@ -59,7 +61,7 @@ Locales/fr.json
 Locales/pt-BR.json
 ```
 
-**Split by namespace** (larger projects):
+Split by namespace (larger projects):
 
 ```text
 Locales/en/ui.json
@@ -68,7 +70,7 @@ Locales/fr/ui.json
 Locales/fr/battle.json
 ```
 
-**Config** (later files override earlier keys):
+Config (later files override earlier keys):
 
 ```ruby
 config.catalog_paths = {
@@ -83,9 +85,9 @@ Unless `duplicate_key_policy` is `"error"`, later paths win on conflict.
 
 ## Key naming
 
-Prefer **stable semantic keys** the game owns — not the English sentence:
+Prefer stable semantic keys the game owns, not the English sentence:
 
-**Good:**
+Good:
 
 ```json
 {
@@ -100,7 +102,7 @@ Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
 # => "A wild Pikachu appeared!"
 ```
 
-**Avoid for new code:**
+Avoid for new code:
 
 ```json
 {
@@ -114,7 +116,7 @@ Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
 
 Color codes are normal string content:
 
-**Catalog:**
+Example:
 
 ```json
 {
@@ -129,11 +131,5 @@ Kotoba.t("npc.warning")
 # => "\c[2]Careful!\c[0]"
 ```
 
-Translators must preserve these — see [Placeholders](/translators/placeholders).
+Translators must preserve these. See [Placeholders](/translators/placeholders).
 
-## See also
-
-- [Placeholders](/translators/placeholders) — volunteer guide
-- [Message syntax](/essential/message-syntax) — developer reference
-- [Installing in a game](/essential/installation) — where `Locales/` lives in your project
-- [Validation CLI](/tooling/validation-cli) — catch bad JSON before playtest

@@ -1,8 +1,8 @@
 # Quick Start
 
-Load Kotoba from a **git clone** and translate a few strings in minutes.
+Tutorial: load Kotoba from a git clone.
 
-**Adding Kotoba to an existing fangame with `Game.exe`?** Start with [Installing in a game](/essential/installation) instead. That page covers ZIP layout, the Script Editor, JSON catalogs, and what to expect on first playtest.
+Fangame with `Game.exe`? Use [Installing in a game](/essential/installation) instead.
 
 ## Create a catalog
 
@@ -21,7 +21,7 @@ Add `Locales/en.json`:
 }
 ```
 
-Catalogs are strict JSON. Leaves must be strings. Lookup keys join nested names with dots — see [Catalog format](/essential/catalog-format).
+Catalogs are strict JSON. Leaves must be strings. Lookup keys join nested names with dots. See [Catalog format](/essential/catalog-format).
 
 ## Load the runtime
 
@@ -105,8 +105,4 @@ bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 
 `load-test` checks JSON and message syntax. `validate` checks missing keys, placeholder mismatches, and RPG Maker control-code drift.
 
-## Next steps
-
-- Plain RPG Maker XP → [Bare RGSS](/integration/bare-rgss)
-- Pokemon Essentials → [Pokemon Essentials](/integration/pokemon-essentials)
-- Custom starter kit → [Third-party adapters](/integration/third-party)
+Plain RGSS: [Bare RGSS](/integration/bare-rgss). Essentials: [Pokemon Essentials](/integration/pokemon-essentials). Custom kit: [Third-party adapters](/integration/third-party).

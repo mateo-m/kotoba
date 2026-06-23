@@ -1,12 +1,8 @@
 # Runtime API
 
-The public namespace is `Kotoba`. Runtime code targets Ruby 1.8, so examples avoid keyword arguments, safe navigation, and stdlib features newer than RGSS1.
+Reference: `Kotoba` configuration, loading, and translation.
 
-| New to Kotoba? | Read first |
-| --- | --- |
-| Install in a fangame | [Installing in a game](/essential/installation) |
-| Catalogs and placeholders | [Catalog format](/essential/catalog-format), [Message syntax](/essential/message-syntax) |
-| Hands-on from git | [Quick Start](/essential/quick-start) |
+Ruby 1.8. Examples avoid keyword arguments, safe navigation, and post-RGSS1 stdlib.
 
 ## Setup
 
@@ -222,7 +218,7 @@ Kotoba.source_text_key("Hello. {1}")
 # => "legacy.line_0001"
 ```
 
-This is used by Essentials migration adapters because source strings often contain periods and cannot safely be treated as dot-separated lookup paths.
+Essentials migration adapters use this because source strings contain periods and cannot be dot-separated lookup paths.
 
 ## Errors
 

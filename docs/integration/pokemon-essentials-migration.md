@@ -1,16 +1,18 @@
 # Essentials migration
 
-Essentials adapters bridge legacy `_INTL` calls — they are not a one-click full migration. Adopt stable JSON catalogs area by area.
+How-to: move from source-English `_INTL` to stable JSON catalogs.
+
+Essentials adapters bridge legacy `_INTL` calls. Adopt stable JSON catalogs one area at a time.
 
 ## The problem with source-English keys
 
-Legacy Essentials text often passes the English sentence straight into `_INTL`:
+Legacy Essentials text passes the English sentence straight into `_INTL`:
 
 ```ruby
 _INTL("A wild {1} appeared!", name)
 ```
 
-This works until the English copy changes — then every translation keyed on that sentence breaks.
+When English copy changes, translations keyed on that sentence break.
 
 ## Bridge with `source_text`
 

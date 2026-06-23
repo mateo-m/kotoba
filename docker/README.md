@@ -53,7 +53,7 @@ docker run --rm --platform linux/amd64 ruby-legacy:1.9.3-p551 \
   ruby -e 'require "zlib"; require "openssl"; require "readline"; require "socket"; puts "ok"'
 ```
 
-## Related Docs
+## Related docs
 
 - [Docker Images](../docs/contributors/docker-images.md)
 - [Compatibility](../docs/reference/compatibility.md)

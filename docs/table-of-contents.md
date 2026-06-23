@@ -1,26 +1,26 @@
 # Table of Contents
 
-Kotoba is a small Ruby 1.8 i18n runtime for RPG Maker XP and Pokemon Essentials. It loads JSON catalogs at runtime, resolves locale fallbacks, and evaluates game-style message syntax.
+Docs follow [Diátaxis](https://diataxis.fr/): tutorials teach a first success, how-to guides solve a specific problem, reference lists machinery, explanations discuss why.
 
-Pick a path by role — you do not need to read everything.
+## By role
 
-## Fangame developer
+### Fangame developer
 
-1. [Installing in a game](/essential/installation) — ZIP, Script Editor, first playtest
-2. [Troubleshooting](/essential/troubleshooting) — when something breaks
-3. [Catalog format](/essential/catalog-format) — JSON shape and keys
-4. [Message syntax](/essential/message-syntax) — developer reference
-5. [Pokemon Essentials](/integration/pokemon-essentials) or [Bare RGSS](/integration/bare-rgss)
-6. [Spreadsheet handoff](/translators/handoff) — send work to volunteers
+1. [Installing in a game](/essential/installation) (tutorial)
+2. [Troubleshooting](/essential/troubleshooting) (how-to)
+3. [Catalog format](/essential/catalog-format) (reference)
+4. [Message syntax](/essential/message-syntax) (reference)
+5. [Pokemon Essentials](/integration/pokemon-essentials) or [Bare RGSS](/integration/bare-rgss) (how-to)
+6. [Spreadsheet handoff](/translators/handoff) (how-to)
 
-Git clone walkthrough: [Quick Start](/essential/quick-start)
+Git clone tutorial: [Quick Start](/essential/quick-start)
 
-## Volunteer translator
+### Translator
 
-1. [For translators](/translators/) — spreadsheet columns and rules
-2. [Placeholders and special text](/translators/placeholders) — `{name}`, `{1}`/`{2}`, plural, color codes
+1. [For translators](/translators/) (how-to)
+2. [Placeholders](/translators/placeholders) (reference)
 
-## Kotoba contributor
+### Contributor
 
 - [CI and releases](/contributors/ci)
 - [Docker images](/contributors/docker-images)
@@ -28,38 +28,54 @@ Git clone walkthrough: [Quick Start](/essential/quick-start)
 
 ---
 
-## All pages
+## By type
 
-### Getting started
+### Tutorials
+
+Learn by doing. One path from zero to a working result.
 
 - [Installing in a game](/essential/installation)
 - [Quick Start](/essential/quick-start)
-- [Troubleshooting](/essential/troubleshooting)
 
-### Core guides
+### How-to guides
+
+Steps for a specific task or problem.
+
+- [Troubleshooting](/essential/troubleshooting)
+- [Spreadsheet handoff](/translators/handoff)
+- [For translators](/translators/)
+- [Bare RGSS](/integration/bare-rgss)
+- [Pokemon Essentials](/integration/pokemon-essentials)
+- [Essentials migration](/integration/pokemon-essentials-migration)
+- [Third-party adapters](/integration/third-party)
+- [Validation CLI](/tooling/validation-cli)
+- [TMS workflows](/tooling/tms) · [Crowdin](/tooling/crowdin) · [SimpleLocalize](/tooling/simplelocalize) · [Tolgee](/tooling/tolgee) · [XLIFF and PO](/tooling/xliff-po)
+
+### Reference
+
+Facts about the system. Lookup, not narrative.
 
 - [Catalog format](/essential/catalog-format)
 - [Message syntax](/essential/message-syntax)
 - [Runtime API](/essential/runtime-api)
+- [Placeholders](/translators/placeholders)
+- [Map event codes](/reference/map-event-codes)
+- [Compatibility](/reference/compatibility)
+- [Integration overview](/integration/) (registry API)
 
-### Integration
+### Explanation
 
-- [Overview](/integration/) · [Bare RGSS](/integration/bare-rgss) · [Pokemon Essentials](/integration/pokemon-essentials)
-- [Third-party adapters](/integration/third-party) · [Essentials migration](/integration/pokemon-essentials-migration)
+- [Integration overview](/integration/) (what adapters are and how they relate to the core)
+- [TMS workflows](/tooling/tms) (runtime JSON vs interchange formats)
 
-### For translators
+---
 
-- [For translators](/translators/) · [Placeholders](/translators/placeholders) · [Spreadsheet handoff](/translators/handoff)
+## All pages
 
-### Tooling
-
-- [Overview](/tooling/) · [Validation CLI](/tooling/validation-cli) · [TMS workflows](/tooling/tms)
-- [Crowdin](/tooling/crowdin) · [SimpleLocalize](/tooling/simplelocalize) · [Tolgee](/tooling/tolgee) · [XLIFF and PO](/tooling/xliff-po)
-
-### Reference
-
+- [Installing in a game](/essential/installation) · [Quick Start](/essential/quick-start) · [Troubleshooting](/essential/troubleshooting)
+- [Catalog format](/essential/catalog-format) · [Message syntax](/essential/message-syntax) · [Runtime API](/essential/runtime-api)
+- [Integration](/integration/) · [Bare RGSS](/integration/bare-rgss) · [Pokemon Essentials](/integration/pokemon-essentials) · [Third-party](/integration/third-party) · [Essentials migration](/integration/pokemon-essentials-migration)
+- [Translators](/translators/) · [Placeholders](/translators/placeholders) · [Handoff](/translators/handoff)
+- [Tooling](/tooling/) · [Validation CLI](/tooling/validation-cli) · [TMS](/tooling/tms)
 - [Map event codes](/reference/map-event-codes) · [Compatibility](/reference/compatibility)
-
-### Contributors
-
-- [CI](/contributors/ci) · [Docker images](/contributors/docker-images) · [Roadmap](/contributors/roadmap)
+- [CI](/contributors/ci) · [Docker](/contributors/docker-images) · [Roadmap](/contributors/roadmap)

@@ -1,23 +1,18 @@
 # Message syntax
 
-Kotoba messages are plain text with optional **placeholders** — slots the game fills at runtime (Pokemon names, counts, player names, etc.).
+Reference: placeholders, select, plural, apostrophes, RPG Maker control codes.
 
-| Audience | Start here |
-| --- | --- |
-| **Volunteer translators** (spreadsheet) | [Placeholders and special text](/translators/placeholders) |
-| **Fangame developers** (JSON catalogs) | [Developer reference](#developer-reference) below |
+Plain text with optional placeholders: slots the game fills at runtime (names, counts, etc.).
 
-Kotoba supports a small game-friendly subset: variables, `select`, cardinal `plural`, apostrophes, and RPG Maker color codes. It is **not** full ICU MessageFormat.
+Volunteer guide: [Placeholders](/translators/placeholders). Subset of ICU MessageFormat: variables, `select`, cardinal `plural`, apostrophes, RPG Maker color codes.
 
 ---
 
 ## Developer reference
 
-Every example shows **catalog → call → result**.
-
 ### Static text
 
-**Catalog** (`Locales/en.json`):
+Catalog (`Locales/en.json`):
 
 ```json
 {
@@ -34,7 +29,7 @@ Kotoba.t("menu.save")
 
 ### Variables
 
-**Catalog:**
+Catalog:
 
 ```json
 {
@@ -63,11 +58,11 @@ String and symbol keys both work. Missing variables follow `config.missing_varia
 | `"empty"` | `Hello, !` |
 | `"error"` | raises `Kotoba::MessageEvaluationError` |
 
-Translators must preserve `{name}` in every locale — see [Placeholders](/translators/placeholders).
+Keep `{name}` in every locale. See [Placeholders](/translators/placeholders).
 
 ### Select
 
-**Catalog:**
+Catalog:
 
 ```json
 {
@@ -89,7 +84,7 @@ Kotoba.t("battle.pronoun_line", {"gender" => "unknown", "move" => "Tackle"})
 
 ### Plural
 
-**Catalog:**
+Catalog:
 
 ```json
 {
@@ -110,11 +105,11 @@ Kotoba.t("bag.item_count", {"count" => 5})
 # => "5 items"
 ```
 
-Branch order: exact (`=0`) → locale category (`one`, `few`, `many`) → `other`. `#` expands to the count inside plural branches. Count must be present and integer-like or evaluation raises.
+Branch order: exact (`=0`) → locale category (`one`, `few`, `many`) → `other`. `#` is the count inside plural branches. Count must be integer-like or evaluation raises.
 
 ### Nesting
 
-Select and plural branches can contain other syntax. Keep nesting shallow — `config.max_message_depth` limits parsing depth.
+Select and plural branches can nest other syntax. `config.max_message_depth` caps depth.
 
 ### Apostrophes
 
@@ -126,7 +121,7 @@ Select and plural branches can contain other syntax. Keep nesting shallow — `c
 
 ### RPG Maker control codes
 
-**Catalog:**
+Catalog:
 
 ```json
 {
@@ -145,12 +140,4 @@ Validation can flag translations that drop control codes. See [Validation CLI](/
 
 ### Plural locales supported today
 
-Compact cardinal rules exist for English-style one/other, French `0`/`1` as `one`, Japanese/Korean/Chinese as `other`, Russian, Polish, Portuguese, Arabic, Czech, Slovak, Slovenian, Lithuanian, and Latvian. Not a full CLDR implementation.
-
----
-
-## See also
-
-- [Placeholders](/translators/placeholders) — volunteer-facing guide
-- [Catalog format](/essential/catalog-format) — JSON structure
-- [Troubleshooting](/essential/troubleshooting) — visible `{name}` and missing keys
+English one/other, French `0`/`1` as `one`, Japanese/Korean/Chinese as `other`, Russian, Polish, Portuguese, Arabic, Czech, Slovak, Slovenian, Lithuanian, Latvian. Not full CLDR.

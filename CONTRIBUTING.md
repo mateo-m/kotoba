@@ -1,107 +1,65 @@
 # Contributing
 
-Thanks for helping improve Kotoba.
-
-## Getting Started
-
-Clone the repository:
+## Getting started
 
 ```sh
 git clone <repository-url>
 cd kotoba
-```
-
-Install tooling and git hooks:
-
-```sh
 bun install
 bun run hooks:install
-```
-
-Run the project checks:
-
-```sh
 bin/ruby18 bin/format
 bin/ruby18 bin/lint
 bin/lint-docker
 ```
 
-Formatting, Ruby syntax checks, and the unit suite run under Ruby 1.8 to protect runtime compatibility. Dockerfile checks run separately with Docker on the host.
+Formatting, syntax checks, and the unit suite run under Ruby 1.8. Dockerfile checks need Docker on the host.
 
-### Optional Local Integration Tests
+### Optional local integration tests
 
-CI runs the tracked fixture suite only. To smoke-test import commands against a full game on your machine, copy `test/fixtures.local.example.yml` to `test/fixtures.local.yml` and point `essentials_bes_sample` at your local game path. The file stays gitignored.
+CI runs the tracked fixture suite only. For import smoke tests against a full game, copy `test/fixtures.local.example.yml` to `test/fixtures.local.yml` and set `essentials_bes_sample`. Gitignored.
 
 ```sh
 cp test/fixtures.local.example.yml test/fixtures.local.yml
 ```
 
-Tests in `test/local_integration_test.rb` skip automatically when the configured path is missing or unavailable inside Docker.
+`test/local_integration_test.rb` skips when the path is missing or unavailable in Docker.
 
-## Making Changes
+## Making changes
 
-1. Create a branch for your change.
-2. Keep changes focused and match the existing Ruby 1.8 style.
-3. Update or add tests when behavior changes.
-4. Run the checks above before opening a pull request.
+1. Branch for your change.
+2. Match existing Ruby 1.8 style.
+3. Add or update tests when behavior changes.
+4. Run the checks above before opening a PR.
 
-For larger changes, open an issue first so the approach can be discussed before you invest time in a big diff.
+For larger changes, open an issue first.
 
-## Git Hooks
+## Git hooks
 
-This repository uses [Lefthook](https://github.com/evilmartians/lefthook) for git hooks.
+[Lefthook](https://github.com/evilmartians/lefthook). Install once with `bun run hooks:install` or `bin/install-hooks`.
 
-Install once:
+On every commit (`lefthook.yml`):
 
-```sh
-bun install
-bun run hooks:install
-```
+- `bin/ruby18 bin/format`
+- `bin/ruby18 bin/lint`
+- `bin/lint-docker`
 
-You can also run:
+Manual: `bun run precommit`
 
-```sh
-bin/install-hooks
-```
-
-On every commit, the tracked `lefthook.yml` runs:
-
-- formatting (`bin/ruby18 bin/format`)
-- Ruby 1.8 lint and unit tests (`bin/ruby18 bin/lint`)
-- Dockerfile lint (`bin/lint-docker`)
-
-Run the same checks manually with:
-
-```sh
-bun run precommit
-```
-
-## Pull Requests
-
-Pull requests are welcome.
-
-Please make sure:
+## Pull requests
 
 - tests pass
-- formatting and lint checks pass
-- documentation is updated when public behavior changes
-- commit messages are clear and scoped to the change
+- format and lint pass
+- docs updated when public behavior changes
+- clear, scoped commit messages
 
 ## Documentation
 
-If your change affects public behavior, update the relevant file under `docs/`.
-
-Start from [docs/table-of-contents.md](docs/table-of-contents.md) to find the right page.
+Public behavior changes → update `docs/`. Index: [docs/table-of-contents.md](docs/table-of-contents.md).
 
 ## Support
 
-If something is unclear, open an issue with:
-
-- what you were trying to do
-- what you expected
-- what actually happened
-- the command output or error message, if any
+Open an issue with: what you tried, what you expected, what happened, and command output if any.
 
 ## Roadmap
 
-Future work is tracked in [docs/contributors/roadmap.md](docs/contributors/roadmap.md). If you want to pick up a planned item, mention it in an issue first.
+[docs/contributors/roadmap.md](docs/contributors/roadmap.md). Mention planned items in an issue before starting.

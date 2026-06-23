@@ -2,7 +2,7 @@
 
 CI should treat Ruby 1.8 as the compatibility gate.
 
-## Local Equivalent
+## Local equivalent
 
 ```sh
 bun run lint
@@ -15,7 +15,7 @@ This runs:
 - unit and compatibility tests
 - Dockerfile checks
 
-## Documentation Site
+## Documentation site
 
 The docs are published with [VitePress](https://vitepress.dev/).
 
@@ -45,7 +45,7 @@ bun run docs:preview
 
 **Today (pre–`v0.1.0`):** docs are **not versioned**. Every push to `main` updates a single rolling site at `https://mateo-m.github.io/kotoba/`. Integration ZIPs link to the unversioned install page via `docs_install_url` in `MANIFEST.json`.
 
-**First public release:** `v0.1.0` — library, integration ZIPs, and docs share one version number (`kotoba/VERSION` = git tag without `v`).
+**First public release:** `v0.1.0`. Library, integration ZIPs, and docs share one version number (`kotoba/VERSION` = git tag without `v`).
 
 **At `v0.1.0` (implement with the release, not before):**
 
@@ -59,7 +59,7 @@ bun run docs:preview
 
 **After `v0.1.0`:** each `scripts/release.sh` tag adds a new frozen doc tree. Improving docs on `main` updates `latest` only; shipped ZIPs keep their pinned URL.
 
-Doc version **always matches** `kotoba/VERSION` — no separate docs semver.
+Doc version matches `kotoba/VERSION`. No separate docs semver.
 
 Implementation checklist (for the `v0.1.0` release PR):
 
@@ -98,7 +98,7 @@ The script:
 4. Creates a signed commit and tag, pushes `main` + the tag.
 5. Runs `gh release create` with the ZIPs and a **What's changed** body.
 
-Integration ZIPs ship a minimal `INSTALL.md` (adapter facts + link to the online install guide). Full install documentation lives in `docs/essential/installation.md` and deploys via the Docs workflow — not through library releases.
+Integration ZIPs ship a minimal `INSTALL.md` (adapter facts + link to the online install guide). Full install documentation lives in `docs/essential/installation.md` and deploys via the Docs workflow, not through library releases.
 
 Preview notes before cutting:
 
@@ -108,7 +108,7 @@ git-cliff --config cliff.toml --unreleased --tag v0.1.0
 
 To rebuild assets or refresh notes for an existing tag, run the **Release** workflow manually in GitHub Actions and pass the tag name.
 
-## Cross-Version Matrix
+## Cross-version matrix
 
 For release verification, also run:
 

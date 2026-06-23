@@ -1,6 +1,8 @@
 # Validation CLI
 
-`bin/kotoba` is the CLI entrypoint. Run every command through Ruby 1.8:
+Reference: `bin/kotoba` commands for load tests, validation, import, and export.
+
+Run every command through Ruby 1.8:
 
 ```sh
 bin/ruby18 bin/kotoba <command> ...
@@ -35,7 +37,7 @@ Checks:
 
 Use the source locale as the first argument.
 
-Plain-language output for translators and hobby developers:
+`--human` for output aimed at translators:
 
 ```sh
 bin/ruby18 bin/kotoba validate --human Locales/en.json Locales/fr.json
@@ -52,7 +54,7 @@ The report includes `ok`, `error_count`, grouped error counts, and the raw error
 
 ## Spreadsheet export and import
 
-Export a translator-friendly CSV with `key`, `english`, `translation`, `context`, and `notes` columns:
+Export CSV with `key`, `english`, `translation`, `context`, `notes`:
 
 ```sh
 bin/ruby18 bin/kotoba spreadsheet-export Locales/en.json build/translate.csv i18n.metadata.json
@@ -64,7 +66,7 @@ Import a completed spreadsheet back to nested JSON:
 bin/ruby18 bin/kotoba spreadsheet-import Locales/en.json build/translate.csv Locales/fr.json
 ```
 
-See [Spreadsheet handoff](/translators/handoff) for the full volunteer workflow.
+See [Spreadsheet handoff](/translators/handoff).
 
 ## Schema validation
 
@@ -76,7 +78,7 @@ bin/ruby18 bin/kotoba schema validation validation.json
 
 Schemas live under `schemas/`.
 
-## Flat Key Export And Import
+## Flat key export and import
 
 Export nested JSON to dot keys:
 
@@ -135,7 +137,7 @@ The migration output creates stable generated keys under the namespace you provi
 
 If `bin/ruby18` is using Docker, the input `.dat` file must be under the repository directory or another path mounted into the container. Copy external game files into a local `tmp/` or `build/` directory before running the command.
 
-## Essentials Paired-Line Import
+## Essentials paired-line import
 
 Import Essentials paired original/translated text files:
 
@@ -161,7 +163,7 @@ bin/ruby18 bin/kotoba text-english-import Text_english_core core Locales/en.core
 
 Directory imports merge files under `<namespace>.<filename>.<section>.line_*` keys.
 
-## Map Event Text From `.rxdata`
+## Map event text from `.rxdata`
 
 Extract show-text and comment commands from compiled RPG Maker XP maps:
 
@@ -177,7 +179,7 @@ bin/ruby18 bin/kotoba map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.
 
 The importer reads event command codes `101` (show text), `401` (continuation), `102` (choices), `402` (choice branch), `108` (comment), `408` (comment continuation), and `_INTL` / `_ISPRINTF` strings inside script commands `355`, `356`, `655`, and `657` (double- or single-quoted). See [Map event codes](/reference/map-event-codes) for the full checklist. Copy external `.rxdata` files into the repository before running `bin/ruby18` through Docker.
 
-## Translator Handoff Package
+## Translator handoff package
 
 Create a small folder for translators:
 
@@ -187,7 +189,7 @@ bin/ruby18 bin/kotoba handoff build/handoff-en en Locales/en.json
 
 The folder contains source JSON, flat JSON, pseudolocalized JSON, and a README.
 
-## TMS Export And Import
+## TMS export and import
 
 SimpleLocalize multi-language JSON:
 
@@ -212,6 +214,6 @@ bin/ruby18 bin/kotoba tms-import po fr build/fr.po Locales/fr.json
 
 The runtime still loads nested JSON. TMS files are interchange files only.
 
-## Failure Behavior
+## Failure behavior
 
 The CLI exits non-zero when validation fails. Use it in pre-commit hooks and CI.

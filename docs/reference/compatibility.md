@@ -2,7 +2,7 @@
 
 Ruby 1.8 is the compatibility gate. Newer Ruby versions help development and CI, but only 1.8 behavior matches what RPG Maker XP runs in production.
 
-## Tested Rubies
+## Tested rubies
 
 Current test coverage has been run against:
 
@@ -13,7 +13,7 @@ Current test coverage has been run against:
 
 Ruby 1.8 and 1.9 use local Docker images.
 
-## Legacy Ruby Images
+## Legacy Ruby images
 
 Build Ruby 1.8:
 
@@ -35,7 +35,7 @@ docker build --platform linux/amd64 \
   -f docker/ruby-legacy/Dockerfile .
 ```
 
-## Running Checks
+## Running checks
 
 Ruby 1.8 checks:
 
@@ -55,7 +55,7 @@ Full Bun script:
 bun run lint
 ```
 
-## Runtime Rules
+## Runtime rules
 
 Avoid Ruby features newer than 1.8 in runtime and adapter files:
 

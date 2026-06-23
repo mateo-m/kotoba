@@ -1,12 +1,14 @@
 # Pokemon Essentials integration
 
-Essentials adapters are compatibility bridges. They let an existing project call `Kotoba` without moving every string in one pass.
+How-to: bridge `_INTL`, shape catalogs, and wire Essentials scripts.
 
-**First time installing?** Follow [Installing in a game](/essential/installation). Sample catalog: `kotoba/samples/pokemon_essentials/en.json`.
+Essentials adapters bridge existing `_INTL` calls so you can adopt Kotoba without moving every string at once.
 
-Download the matching ZIP (`kotoba-essentials-v16.zip` through `v21`, or `kotoba-essentials-bes.zip` for BES forks) from [GitHub Releases](https://github.com/mateo-m/kotoba/releases).
+Install: [Installing in a game](/essential/installation). Sample: `kotoba/samples/pokemon_essentials/en.json`.
 
-This page covers `_INTL` bridges, catalog shape, and wiring Essentials scripts after Kotoba loads without errors.
+ZIP (`kotoba-essentials-v16.zip` through `v21`, or `kotoba-essentials-bes.zip`) from [GitHub Releases](https://github.com/mateo-m/kotoba/releases).
+
+`_INTL` bridges, catalog shape, wiring after Kotoba loads.
 
 Supported targets:
 
@@ -18,7 +20,7 @@ Supported targets:
 - `essentials_v21`
 - `essentials_bes`
 
-## Choose The Adapter
+## Choose the adapter
 
 ```ruby
 require File.join(".", "kotoba", "core")
@@ -37,7 +39,7 @@ Use the adapter matching your Essentials version. `essentials_v19` and `essentia
 
 ## Catalog for legacy `_INTL`
 
-Essentials scripts often call:
+Essentials scripts call:
 
 ```ruby
 _INTL("A wild {1} appeared!", pokemon.name)
@@ -65,7 +67,9 @@ Kotoba::Adapters::EssentialsV18._INTL("A wild {1} appeared!", "Pikachu")
 # => "A wild Pikachu appeared!"
 ```
 
-**`_ISPRINTF` example** — catalog:
+### `_ISPRINTF` example
+
+Catalog:
 
 ```json
 {
@@ -83,9 +87,9 @@ Kotoba::Adapters::EssentialsV18._ISPRINTF("You have {1:d} coins.", 42)
 # => "You have 42 coins."
 ```
 
-Volunteers translating `battle.wild_appeared` keep `{pokemon}` — see [Placeholders](/translators/placeholders).
+Volunteers translating `battle.wild_appeared` keep `{pokemon}`. See [Placeholders](/translators/placeholders).
 
-## Optional Global Patch
+## Optional global patch
 
 The built-in Essentials adapters currently avoid replacing global `_INTL` at file load time. If you want to route a project through the adapter, add a small project-local script after installing the adapter:
 
@@ -128,7 +132,7 @@ pbMessage(Kotoba.t("menu.save"))
 # => shows "Save"
 ```
 
-## v21 Split Messages
+## v21 split messages
 
 The v21 adapter can load split message files through normal `catalog_paths`:
 
@@ -144,7 +148,7 @@ Kotoba.use_adapter("essentials_v21", {
 })
 ```
 
-## BES Bridge And Data Names
+## BES bridge and data names
 
 The BES adapter supports the same `_INTL` and `_ISPRINTF` bridge as the v16-v20 adapters:
 
@@ -187,7 +191,7 @@ Kotoba::Adapters::EssentialsBES.move_name("thunderbolt")
 # => "Thunderbolt"
 ```
 
-## Migration Workflow
+## Migration workflow
 
 1. Add the runtime and adapter.
 2. Add a source locale JSON catalog.
@@ -206,6 +210,6 @@ bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 
 Validation catches missing keys, placeholder mismatches, and RPG Maker control-code mismatches before the game boots.
 
-## Fixture Provenance
+## Fixture provenance
 
 Adapter support is tied to compatibility tests and fixture provenance under `test/fixtures/essentials/`. Do not claim support for a new Essentials version until it has a fixture and an acceptance test.

@@ -1,8 +1,8 @@
 # Troubleshooting
 
-Fix common problems when installing Kotoba or running a playtest. Each item says what you see, why it happens, and what to do.
+How-to: fix install, playtest, and catalog problems.
 
-**Still installing?** Start with [Installing in a game](/essential/installation).
+Install walkthrough: [Installing in a game](/essential/installation).
 
 ---
 
@@ -10,9 +10,7 @@ Fix common problems when installing Kotoba or running a playtest. Each item says
 
 ### `LoadError: No such file or directory - kotoba/boot.rb`
 
-**Cause:** Kotoba files are not next to `Game.exe`. Common mistake: the ZIP created an extra folder.
-
-**Fix:**
+Kotoba is not next to `Game.exe`. Common cause: an extra folder from the ZIP.
 
 ```text
 Wrong:
@@ -23,13 +21,13 @@ Right:
   MyGame/Game.exe
 ```
 
-Move `kotoba/` and `INSTALL.md` up so they sit beside `Game.exe`.
+Move `kotoba/` and `INSTALL.md` beside `Game.exe`.
 
 ### Double-clicked `boot.rb` and nothing happened
 
-**Cause:** RPG Maker does not run loose `.rb` files from the file explorer.
+RPG Maker only runs scripts from the Script Editor.
 
-**Fix:** Open **Tools → Script Editor**, add a `Kotoba` section above `Main`, and use:
+**Tools → Script Editor** → `Kotoba` section above `Main`:
 
 ```ruby
 load "kotoba/boot.rb"
@@ -37,7 +35,7 @@ load "kotoba/boot.rb"
 
 ### Wrong smoke test for your ZIP
 
-| ZIP | Use this load line |
+| ZIP | Load line |
 | --- | --- |
 | `kotoba-essentials-*.zip` | `load "kotoba/samples/script_editor/essentials_smoke_test.rb"` |
 | `kotoba-bare-rgss.zip` | `load "kotoba/samples/script_editor/bare_rgss_smoke_test.rb"` |
@@ -46,25 +44,25 @@ load "kotoba/boot.rb"
 
 ## Playtest results
 
-### Smoke test works but all game dialog is still English / unchanged
+### Smoke test works but dialog is still English
 
-**Cause:** Kotoba is loaded, but your game still calls legacy Essentials `_INTL` (or hard-coded strings). The smoke test only proves the **sample** catalog works.
+Kotoba is loaded; the game still calls `_INTL` or hard-coded strings. The smoke test only checks the sample catalog.
 
-**Fix:** [Pokemon Essentials integration](/integration/pokemon-essentials) or [Essentials migration](/integration/pokemon-essentials-migration).
+Fix: [Pokemon Essentials](/integration/pokemon-essentials) or [Essentials migration](/integration/pokemon-essentials-migration).
 
 ### Playtest OK, no message box
 
-**Cause:** You used `load "kotoba/samples/script_editor/load_only.rb"` or `load "kotoba/boot.rb"` — boot only, no test popup.
+You used `load_only.rb` or `load "kotoba/boot.rb"`. Boot only, no test popup.
 
-**Fix:** Use a smoke test script, or add your own `pbMessage(Kotoba.t(...))` line.
+Use a smoke test script, or add `pbMessage(Kotoba.t(...))`.
 
 ### `LoadError` or `NameError` on playtest
 
 | Error hint | Likely cause | Fix |
 | --- | --- | --- |
-| `kotoba/core` | `kotoba/` folder missing or wrong path | [Install layout](#loaderror-no-such-file-or-directory---kotobabootrb) |
-| `essentials_v20` (adapter) | Wrong Essentials ZIP for your kit | Download the matching ZIP from [Releases](https://github.com/mateo-m/kotoba/releases) |
-| `Kotoba` uninitialized | Boot script did not run | Check Script Editor order — `Kotoba` section should be above `Main` |
+| `kotoba/core` | Missing or wrong `kotoba/` path | [Install layout](#loaderror-no-such-file-or-directory---kotobabootrb) |
+| `essentials_v20` (adapter) | Wrong Essentials ZIP | Matching ZIP from [Releases](https://github.com/mateo-m/kotoba/releases) |
+| `Kotoba` uninitialized | Boot did not run | `Kotoba` section above `Main` |
 
 ---
 
@@ -72,64 +70,39 @@ load "kotoba/boot.rb"
 
 ### On screen: `translation missing: menu.save`
 
-**Cause:** The key is not in the loaded catalog for the active locale.
+Key missing from the loaded catalog for the active locale.
 
-**Fix:**
+1. Open the JSON in `kotoba/boot.rb` → `catalog_paths`.
+2. Confirm nested key exists (`"menu": { "save": "Save" }` for `menu.save`).
+3. Restart playtest after changing `catalog_paths`.
 
-1. Open the JSON file listed in `kotoba/boot.rb` → `catalog_paths`.
-2. Confirm the nested key exists (e.g. `"menu": { "save": "Save" }` for `menu.save`).
-3. Run `Kotoba.load!` after changing `catalog_paths` (restart playtest).
+### On screen: `Hello, {name}!`
 
-### On screen: `Hello, {name}!` (placeholder visible)
-
-**Cause:** The script did not pass `name`, or `missing_variable_policy` is `"keep"`.
-
-**Catalog:**
+Script did not pass `name`, or `missing_variable_policy` is `"keep"`.
 
 ```json
 { "npc": { "greeting": "Hello, {name}!" } }
 ```
 
-**Wrong:**
+Wrong: `Kotoba.t("npc.greeting")` → `Hello, {name}!`
 
-```ruby
-Kotoba.t("npc.greeting")
-# => "Hello, {name}!"
-```
-
-**Right:**
-
-```ruby
-Kotoba.t("npc.greeting", {"name" => "Ari"})
-# => "Hello, Ari!"
-```
+Right: `Kotoba.t("npc.greeting", {"name" => "Ari"})` → `Hello, Ari!`
 
 ### French line shows English
 
-**Cause:** Locale not switched, or `Locales/fr.json` not in `catalog_paths`.
+Locale not switched, or `Locales/fr.json` not in `catalog_paths`.
 
-**Fix:** Set `config.available_locales` and `catalog_paths`, then `Kotoba.locale = "fr"` before the line is shown.
+Set `available_locales` and `catalog_paths`, then `Kotoba.locale = "fr"` before the line runs.
 
 ---
 
-## Validation (before shipping)
+## Validation
 
-Run on a PC with the Kotoba repo:
+On a machine with this repo:
 
 ```sh
 bin/ruby18 bin/kotoba load-test Locales/en.json
 bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
 ```
 
-See [Validation CLI](/tooling/validation-cli). Volunteer translations often fail validation when placeholders or `\c[n]` codes were edited — share [Placeholders](/translators/placeholders) with translators.
-
----
-
-## See also
-
-| Topic | Page |
-| --- | --- |
-| Install walkthrough | [Installing in a game](/essential/installation) |
-| JSON shape | [Catalog format](/essential/catalog-format) |
-| Placeholders | [Placeholders](/translators/placeholders) · [Message syntax](/essential/message-syntax) |
-| Essentials bridge | [Pokemon Essentials](/integration/pokemon-essentials) |
+[Validation CLI](/tooling/validation-cli). Returned spreadsheets may drop placeholders or `\c[n]` codes. Send translators [Placeholders](/translators/placeholders).

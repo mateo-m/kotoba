@@ -124,15 +124,13 @@ module KotobaTools
 
 Extract this archive into the folder that contains `Game.exe`.
 
-## Documentation
-
-The full installation guide is **online**, not copied into this ZIP:
+## Install guide
 
 #{docs_install_url}
 
-The website updates when documentation changes in git. You do not need a new Kotoba release just to read newer install instructions.
+That page is maintained in git and updates without a new Kotoba release.
 
-## Quick facts for this package
+## This package
 
 | Item | Value |
 | --- | --- |
@@ -140,9 +138,9 @@ The website updates when documentation changes in git. You do not need a new Kot
 | Adapter file | `#{adapter_basename}` |
 | Sample catalog | `#{sample_catalog}` |
 | Script Editor smoke test | `load "#{smoke_test}"` |
-| Copy-paste examples | `kotoba/samples/script_editor/` |
+| Script examples | `kotoba/samples/script_editor/` |
 | File list | `MANIFEST.json` |
-| Online install guide | `docs_install_url` in `MANIFEST.json` |
+| Install URL | `docs_install_url` in `MANIFEST.json` |
 MARKDOWN
     end
 

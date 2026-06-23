@@ -1,16 +1,18 @@
 # Spreadsheet handoff
 
-Use spreadsheets when your translators are volunteers or hobbyists — not TMS professionals. Kotoba still keeps nested JSON as the runtime source of truth; the spreadsheet is the friendly handoff layer.
+How-to: export, send, and import translator spreadsheets.
 
-Share [For translators](/translators/) and [Placeholders and special text](/translators/placeholders) with volunteers so they know how to handle `{placeholders}` and color codes.
+Nested JSON is the runtime source of truth. The spreadsheet is the export/import layer for people who work in Sheets or Excel.
 
-## Quick workflow
+Send translators [For translators](/translators/) and [Placeholders](/translators/placeholders) with the CSV.
 
-1. Build or import your English catalog (`Locales/en.json`).
-2. Export a spreadsheet for translators.
-3. Send the CSV (or a `handoff/` zip).
+## Workflow
+
+1. Build or import English (`Locales/en.json`).
+2. Export a spreadsheet.
+3. Send the CSV or a `handoff/` zip.
 4. Import the returned CSV into `Locales/fr.json` (or another locale).
-5. Validate with plain-language errors before shipping.
+5. Validate before shipping.
 
 ```sh
 bin/ruby18 bin/kotoba spreadsheet-export Locales/en.json build/translate.csv i18n.metadata.json
@@ -20,34 +22,32 @@ bin/ruby18 bin/kotoba validate --human Locales/en.json Locales/fr.json
 
 ## One-command handoff folder
 
-Creates a translator-ready folder with CSV, pseudolocale, and README:
-
 ```sh
 bin/ruby18 bin/kotoba handoff build/handoff-fr fr Locales/en.json i18n.metadata.json
 ```
 
 Output:
 
-- `spreadsheet.en.csv` — send this to translators
-- `source.en.json` — developer copy of the runtime catalog
-- `pseudo.en.json` — layout QA with stretched text
-- `metadata.json` — optional context copied through when provided
+- `spreadsheet.en.csv`: for translators
+- `source.en.json`: developer copy of the catalog
+- `pseudo.en.json`: layout QA with stretched text
+- `metadata.json`: optional context when provided
 
-Zip `build/handoff-fr/` and share it on Discord, Google Drive, or email.
+Zip `build/handoff-fr/` and share it.
 
 ## Spreadsheet columns
 
 | Column | Filled by | Notes |
 | --- | --- | --- |
-| `key` | export | Stable dot path (`battle.wild_appeared`). Translators should not edit. |
+| `key` | export | Dot path (`battle.wild_appeared`). Do not edit. |
 | `english` | export | Source locale text. |
 | `translation` | translator | Imported back into the locale catalog. |
-| `context` | export | From metadata, or auto-generated from the key path. |
-| `notes` | export | Metadata `description`, `speaker`, and `max_length`. |
+| `context` | export | From metadata or auto-generated from the key path. |
+| `notes` | export | Metadata `description`, `speaker`, `max_length`. |
 
 ### Metadata file (optional)
 
-`i18n.metadata.json` adds human context per key:
+`i18n.metadata.json` adds context per key:
 
 ```json
 {
@@ -59,20 +59,20 @@ Zip `build/handoff-fr/` and share it on Discord, Google Drive, or email.
 }
 ```
 
-Validate metadata before export:
+Validate before export:
 
 ```sh
 bin/ruby18 bin/kotoba schema metadata i18n.metadata.json
 ```
 
-## Pokemon Essentials tips
+## Pokemon Essentials
 
-1. **Import first, translate second** — pull PBS, `Text_english_*`, or map dialogue into English JSON, then export the spreadsheet. Translators see game context instead of script IDs.
-2. **Start small** — export one namespace (`menu`, `maps.map_0001`, or `data.moves`) per volunteer.
-3. **Use `{1}` in English when migrating `_INTL`** — hobby translators already know Essentials-style placeholders. Named placeholders like `{pokemon}` are fine too; validation enforces whichever English uses.
-4. **Skip `source_text` rows** — export omits internal migration mappings under `source_text`.
+1. Import PBS, `Text_english_*`, or map dialogue into English JSON, then export. Translators see game context, not script IDs.
+2. Export one namespace (`menu`, `maps.map_0001`, `data.moves`) per person when starting out.
+3. Use `{1}` in English when migrating `_INTL` if your translators already know Essentials placeholders. `{pokemon}` works too; validation matches English.
+4. Export omits internal `source_text` migration rows.
 
-Example Essentials import → spreadsheet path:
+Example:
 
 ```sh
 bin/ruby18 bin/kotoba text-english-import Text_english_core core Locales/en.core.json
@@ -81,8 +81,6 @@ bin/ruby18 bin/kotoba spreadsheet-export Locales/en.core.json build/core-transla
 
 ## Re-export with partial translations
 
-If a translator returns a half-finished sheet, import what you have, then re-export with the locale file filled in to show progress:
-
 ```sh
 bin/ruby18 bin/kotoba spreadsheet-import Locales/en.json build/translate.csv Locales/fr.json
 bin/ruby18 bin/kotoba spreadsheet-export Locales/en.json build/translate.csv i18n.metadata.json Locales/fr.json
@@ -90,26 +88,20 @@ bin/ruby18 bin/kotoba spreadsheet-export Locales/en.json build/translate.csv i18
 
 ## Validation for humans
 
-Default `validate` output is developer-oriented. Use `--human` when pasting results back to translators:
+Default `validate` output is for developers. `--human` for pasting back to translators:
 
 ```sh
 bin/ruby18 bin/kotoba validate --human Locales/en.json Locales/fr.json
 ```
 
-Example message:
+Example:
 
 ```text
 In fr.json: keep the same {placeholders} as English for "A wild {pokemon} appeared!" (key: battle.wild_appeared). Missing: {pokemon}.
 ```
 
-JSON reports also accept the flag:
+JSON reports:
 
 ```sh
 bin/ruby18 bin/kotoba validate-report --human Locales/en.json Locales/fr.json build/report.json
 ```
-
-## See also
-
-- [For translators](/translators/) — share this page with volunteers
-- [Validation CLI](/tooling/validation-cli) — full command reference
-- [Essentials migration](/integration/pokemon-essentials-migration) — importing source text before handoff

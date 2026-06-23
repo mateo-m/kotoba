@@ -1,8 +1,8 @@
-# Third-Party Adapters
+# Third-party adapters
 
-Adapters connect `Kotoba` to a game engine, starter kit, plugin, or project convention. They should stay thin: the runtime owns locale fallback, catalog loading, message parsing, and message evaluation; adapters own integration details.
+Adapters connect `Kotoba` to an engine, starter kit, or project convention. Keep them thin: the runtime owns locale fallback, catalog loading, and message evaluation; adapters own integration details.
 
-## Adapter Contract
+## Adapter contract
 
 An adapter is any object that responds to:
 
@@ -24,7 +24,7 @@ Kotoba.use_adapter("my_engine", {"load" => true})
 
 `use_adapter` looks up the registered adapter and calls `install(options || {})`.
 
-## Complete Minimal Adapter
+## Minimal adapter
 
 Create `kotoba/adapters/my_engine.rb`:
 
@@ -68,9 +68,9 @@ end
 Kotoba.register_adapter("my_engine", Kotoba::Adapters::MyEngine)
 ```
 
-Use string and symbol option keys because RPG Maker scripts and external Ruby code often mix both styles.
+Use string and symbol option keys. RPG Maker scripts and external Ruby code mix both styles.
 
-## Example Usage
+## Example usage
 
 ```ruby
 require_relative "kotoba/core"
@@ -87,9 +87,9 @@ Kotoba.use_adapter("my_engine", {
 _MY_KOTOBA("menu.save")
 ```
 
-## Source-Text Bridge Example
+## Source-text bridge example
 
-Legacy engines often translate source English:
+Legacy engines translate source English:
 
 ```ruby
 _INTL("A wild {1} appeared!", pokemon_name)
@@ -120,7 +120,7 @@ end
 
 Source-text bridges are migration tools. New code should call stable keys directly.
 
-## Test Pattern
+## Test pattern
 
 Put tests under `test/compatibility/`:
 
@@ -145,7 +145,7 @@ class MyEngineAdapterTest < KotobaTestCase
 end
 ```
 
-## Fixture Policy
+## Fixture policy
 
 Every supported adapter target needs fixtures:
 
@@ -156,9 +156,9 @@ Every supported adapter target needs fixtures:
 
 Do not claim support for an engine version without fixtures and acceptance tests.
 
-## What Belongs In An Adapter
+## What belongs in an adapter
 
-Good adapter responsibilities:
+Adapter should:
 
 - configure catalog paths
 - load catalogs on install
@@ -166,13 +166,13 @@ Good adapter responsibilities:
 - optionally install global helpers
 - expose small data-name helpers for known engine data
 
-Bad adapter responsibilities:
+Adapter should not:
 
-- adding parser features
-- changing runtime fallback behavior
-- putting Pokemon/PBS/map assumptions into `kotoba/`
-- loading large binary assets during unit tests
-- silently swallowing install failures
+- add parser features
+- change runtime fallback behavior
+- put Pokemon/PBS/map assumptions into `kotoba/`
+- load large binary assets during unit tests
+- swallow install failures silently
 
 ## Verification
 

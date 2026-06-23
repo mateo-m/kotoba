@@ -19,17 +19,23 @@ export default defineConfig({
     ],
     sidebar: [
       {
-        text: "Getting started",
+        text: "Tutorials",
         collapsed: false,
         items: [
           { text: "Table of Contents", link: "/table-of-contents" },
           { text: "Installing in a game", link: "/essential/installation" },
           { text: "Quick Start (git clone)", link: "/essential/quick-start" },
+        ],
+      },
+      {
+        text: "How-to",
+        collapsed: false,
+        items: [
           { text: "Troubleshooting", link: "/essential/troubleshooting" },
         ],
       },
       {
-        text: "Core guides",
+        text: "Reference",
         collapsed: false,
         items: [
           { text: "Catalog format", link: "/essential/catalog-format" },

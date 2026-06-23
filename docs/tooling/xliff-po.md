@@ -1,4 +1,4 @@
-# XLIFF And PO
+# XLIFF and PO
 
 XLIFF and PO are interchange formats. The runtime still loads nested JSON.
 
