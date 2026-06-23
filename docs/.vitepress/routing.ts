@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -9,13 +9,28 @@ export type DocsRouting = {
 
 let cachedRouting: DocsRouting | undefined;
 
+function resolveRoutingManifestPath(): string {
+  const vitepressDir = dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    join(vitepressDir, "..", "routing.json"),
+    join(vitepressDir, "..", "..", "..", "docs", "routing.json"),
+  ];
+
+  for (const path of candidates) {
+    if (existsSync(path)) {
+      return path;
+    }
+  }
+
+  throw new Error("docs routing manifest (routing.json) not found");
+}
+
 export function readDocsRouting(): DocsRouting {
   if (cachedRouting) {
     return cachedRouting;
   }
 
-  const routingPath = join(dirname(fileURLToPath(import.meta.url)), "..", "routing.json");
-  cachedRouting = JSON.parse(readFileSync(routingPath, "utf8")) as DocsRouting;
+  cachedRouting = JSON.parse(readFileSync(resolveRoutingManifestPath(), "utf8")) as DocsRouting;
   return cachedRouting;
 }
 
