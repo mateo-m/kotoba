@@ -49,15 +49,11 @@
   gap: 0.65rem;
 }
 
-.primaryBtn,
-.secondaryBtn {
+.primaryBtn {
   border-radius: 0.375rem;
   font-size: 0.95rem;
   font-weight: 600;
   padding: 0.65rem 1.15rem;
-}
-
-.primaryBtn {
   background: var(--kotoba-ember);
   border: 2px solid var(--kotoba-ember);
   color: #fff;
@@ -71,22 +67,9 @@
 }
 
 .primaryBtn:focus-visible,
-.secondaryBtn:focus-visible,
 .pathLink:focus-visible {
   outline: 2px solid var(--kotoba-ember);
   outline-offset: 2px;
-}
-
-.secondaryBtn {
-  background: transparent;
-  border: 2px solid rgb(44 34 28 / 18%);
-  color: var(--kotoba-ink);
-}
-
-.secondaryBtn:hover {
-  border-color: var(--kotoba-ember);
-  color: var(--kotoba-ember);
-  text-decoration: none;
 }
 
 .bootLine {
@@ -172,11 +155,6 @@
   color: rgb(245 239 232 / 72%);
 }
 
-[data-theme="dark"] .secondaryBtn {
-  border-color: rgb(255 235 210 / 18%);
-  color: #f5efe8;
-}
-
 [data-theme="dark"] .paths {
   background: var(--kotoba-surface);
 }
@@ -205,8 +183,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .primaryBtn,
-  .secondaryBtn {
+  .primaryBtn {
     transition: none;
   }
 }

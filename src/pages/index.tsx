@@ -23,15 +23,6 @@ export default function Home(): JSX.Element {
                   <Link className={styles.primaryBtn} to="/introduction">
                     Read the guide
                   </Link>
-                  <Link className={styles.secondaryBtn} to="/essential/installation">
-                    Install in a game
-                  </Link>
-                  <Link className={styles.secondaryBtn} to="/translators/">
-                    For translators
-                  </Link>
-                  <Link className={styles.secondaryBtn} to="/essential/troubleshooting">
-                    Troubleshooting
-                  </Link>
                 </div>
               </div>
               <figure className={styles.bootLine}>

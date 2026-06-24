@@ -108,7 +108,7 @@ const config: Config = {
       ],
     },
     footer: {
-      style: "dark",
+      style: "light",
       copyright: `Kotoba ${readKotobaVersion()} · MIT · ${resolveProjectName()}`,
     },
     prism: {
