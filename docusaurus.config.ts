@@ -16,7 +16,6 @@ const installPath = installDocPath();
 const config: Config = {
   title: "Kotoba",
   tagline: "i18n for RPG Maker XP and Pokemon Essentials",
-  favicon: "img/favicon.ico",
   url: resolveSiteUrl(),
   baseUrl: resolveBaseUrl(),
   organizationName: resolveOrganizationName(),
@@ -56,6 +55,10 @@ const config: Config = {
     ],
   ],
   themeConfig: {
+    colorMode: {
+      defaultMode: "light",
+      respectPrefersColorScheme: true,
+    },
     navbar: {
       title: "Kotoba",
       items: [
@@ -87,7 +90,8 @@ const config: Config = {
           ? [
               {
                 href: `https://github.com/${githubRepository}`,
-                label: "GitHub",
+                "aria-label": "GitHub repository",
+                className: "header-github-link",
                 position: "right" as const,
               },
             ]
@@ -99,8 +103,9 @@ const config: Config = {
       copyright: `Kotoba ${readKotobaVersion()} · MIT · ${resolveProjectName()}`,
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      theme: prismThemes.oneLight,
+      darkTheme: prismThemes.oneDark,
+      additionalLanguages: ["ruby", "bash", "json"],
     },
   },
 };

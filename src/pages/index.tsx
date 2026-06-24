@@ -31,7 +31,7 @@ export default function Home(): JSX.Element {
 
   return (
     <Layout title={siteConfig.title} description={siteConfig.tagline}>
-      <header className="hero hero--primary">
+      <header className="hero hero--kotoba">
         <div className="container">
           <Heading as="h1" className="hero__title">
             {siteConfig.title}
@@ -41,16 +41,13 @@ export default function Home(): JSX.Element {
             JSON catalogs beside Game.exe. One Script Editor line to boot.
           </p>
           <div className="heroButtons">
-            <Link className="button button--secondary button--lg" to="/essential/installation">
+            <Link className="button button--primary button--lg" to="/essential/installation">
               Install in a game
             </Link>
-            <Link className="button button--outline button--secondary button--lg" to="/translators/">
+            <Link className="button button--outline button--lg" to="/translators/">
               For translators
             </Link>
-            <Link
-              className="button button--outline button--secondary button--lg"
-              to="/essential/troubleshooting"
-            >
+            <Link className="button button--outline button--lg" to="/essential/troubleshooting">
               Troubleshooting
             </Link>
           </div>
@@ -59,12 +56,12 @@ export default function Home(): JSX.Element {
       <main>
         <section className="features">
           <div className="container">
-            <div className="row">
+            <div className="features__grid">
               {features.map(({ title, description }) => (
-                <div key={title} className="col col--6 feature">
+                <article key={title} className="feature-card">
                   <Heading as="h3">{title}</Heading>
                   <p>{description}</p>
-                </div>
+                </article>
               ))}
             </div>
           </div>
