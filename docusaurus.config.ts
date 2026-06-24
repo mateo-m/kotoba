@@ -59,12 +59,21 @@ const config: Config = {
       defaultMode: "light",
       respectPrefersColorScheme: true,
     },
+    tableOfContents: {
+      minHeadingLevel: 2,
+      maxHeadingLevel: 4,
+    },
     navbar: {
       title: "Kotoba",
       items: [
         {
           type: "docsVersionDropdown",
           position: "left",
+        },
+        {
+          to: "/introduction",
+          label: "Guide",
+          activeBaseRegex: "/introduction",
         },
         {
           to: `/${installPath}`,

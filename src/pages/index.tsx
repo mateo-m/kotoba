@@ -20,7 +20,10 @@ export default function Home(): JSX.Element {
                   Editor, and playtest.
                 </p>
                 <div className={styles.actions}>
-                  <Link className={styles.primaryBtn} to="/essential/installation">
+                  <Link className={styles.primaryBtn} to="/introduction">
+                    Read the guide
+                  </Link>
+                  <Link className={styles.secondaryBtn} to="/essential/installation">
                     Install in a game
                   </Link>
                   <Link className={styles.secondaryBtn} to="/translators/">
@@ -44,6 +47,15 @@ export default function Home(): JSX.Element {
         <section className={styles.paths}>
           <div className="container">
             <div className={styles.pathsGrid}>
+              <article className={styles.pathCard}>
+                <h2 className={styles.pathTitle}>Introduction</h2>
+                <p className={styles.pathDesc}>
+                  What Kotoba is, a minimal catalog example, and which doc to open next.
+                </p>
+                <Link className={styles.pathLink} to="/introduction">
+                  Guide
+                </Link>
+              </article>
               <article className={styles.pathCard}>
                 <h2 className={styles.pathTitle}>Installing in a game</h2>
                 <p className={styles.pathDesc}>

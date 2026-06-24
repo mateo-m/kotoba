@@ -7,6 +7,7 @@ const sidebars: SidebarsConfig = {
       label: "Getting started",
       collapsed: false,
       items: [
+        "introduction",
         "essential/installation",
         "essential/quick-start",
         "essential/troubleshooting",
