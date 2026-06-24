@@ -17,11 +17,11 @@ This runs:
 
 ## Documentation site
 
-The docs are published with [VitePress](https://vitepress.dev/).
+The docs are published with [Docusaurus](https://docusaurus.io/).
 
 GitHub Pages serves project sites at `https://<user>.github.io/<repository>/`. The docs base path comes from the repository name:
 
-- CI sets `VITEPRESS_BASE` and `VITEPRESS_REPOSITORY_NAME` from `github.event.repository.name`.
+- CI sets `DOCUSAURUS_BASE` and `DOCUSAURUS_REPOSITORY_NAME` from `github.event.repository.name`.
 - Local builds resolve the same value from `git remote get-url origin` when those variables are unset.
 - `bun run docs:dev` uses `/` so local navigation stays at the dev-server root.
 
@@ -43,17 +43,19 @@ bun run docs:preview
 
 ### Documentation versioning
 
-`https://mateo-m.github.io/kotoba/` serves **latest** (`main`). Each release freezes `docs/` into `docs-versions/v<semver>/` and publishes that tree at `…/v<semver>/…`.
+`https://mateo-m.github.io/kotoba/` serves **latest** (`main`). Each release freezes `docs/` into `versioned_docs/version-v<semver>/` and publishes that edition at `…/v<semver>/…`.
 
 | Piece | Behavior |
 | --- | --- |
-| **Doc snapshot** | `bin/snapshot-docs <semver>` copies markdown from `docs/` into `docs-versions/v<semver>/` (shared `docs/.vitepress/` at build time) |
-| **Site build** | `bun run docs:build:site` builds latest + every `docs-versions/v*/` tree using shared VitePress config |
+| **Doc edition** | `bunx docusaurus docs:version v<semver>` during `scripts/release.sh` |
+| **Site build** | `bun run docs:build` builds latest + every version in `versions.json` |
 | **ZIP `MANIFEST.json`** | `docs_install_url` → `…/v<version>/essential/installation` |
-| **Version switcher** | Docs nav when more than one version exists |
+| **Version switcher** | Docusaurus docs version dropdown in the navbar |
 | **Footer** | Shows `kotoba/VERSION` from the repository |
 
 Doc version matches `kotoba/VERSION`. No separate docs semver.
+
+To redeploy an old doc edition from a git tag, check out the tag and run `bun run docs:build`, then push the output to the `gh-pages` branch (or run the Docs workflow from that ref).
 
 ## GitHub Actions
 
@@ -61,7 +63,7 @@ The checked-in workflow at `.github/workflows/ci.yml` runs after changes to runt
 
 The lint job runs the same lint command after installing Bun. It expects the legacy Ruby Docker images to be buildable on the runner.
 
-Docs deploy through `.github/workflows/docs.yml` on pushes to `main` when docs-related files change. Use **Run workflow** in Actions for a manual redeploy. In the repository Pages settings, choose **GitHub Actions** as the build source.
+Docs deploy through `.github/workflows/docs.yml` on pushes to `main` when docs-related files change. The workflow pushes the built site to the `gh-pages` branch. In the repository Pages settings, choose **Deploy from a branch** and set the branch to `gh-pages` / root.
 
 ## Releases
 
@@ -77,7 +79,7 @@ The script:
 1. Prepends git-cliff notes to `CHANGELOG.md` and bumps `kotoba/VERSION`. Only commits that touch library paths listed in `cliff.toml` are included.
 2. Runs `bun run lint` (skip with `RELEASE_SKIP_LINT=1`).
 3. Builds integration ZIPs into `dist/`.
-4. Creates a signed commit and tag, pushes `main` + the tag.
+4. Runs `docusaurus docs:version` to freeze the doc edition, verifies the site build, then creates a signed commit and tag, pushes `main` + the tag.
 5. Runs `gh release create` with the ZIPs and a **What's changed** body.
 
 Integration ZIPs ship a minimal `INSTALL.md` (adapter facts + link to the online install guide). Full install documentation lives in `docs/essential/installation.md` and deploys via the Docs workflow, not through library releases.
