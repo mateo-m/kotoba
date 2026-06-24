@@ -1,5 +1,4 @@
 import type { Config } from "@docusaurus/types";
-import { themes as prismThemes } from "prism-react-renderer";
 import {
   installDocPath,
   readKotobaVersion,
@@ -9,6 +8,7 @@ import {
   resolveProjectName,
   resolveSiteUrl,
 } from "./docs-site-config";
+import { kotobaDark, kotobaLight } from "./src/prism-kotoba";
 
 const githubRepository = resolveGithubRepository();
 const installPath = installDocPath();
@@ -112,8 +112,8 @@ const config: Config = {
       copyright: `Kotoba ${readKotobaVersion()} · MIT · ${resolveProjectName()}`,
     },
     prism: {
-      theme: prismThemes.oneLight,
-      darkTheme: prismThemes.oneDark,
+      theme: kotobaLight,
+      darkTheme: kotobaDark,
       additionalLanguages: ["ruby", "bash", "json"],
     },
   },
