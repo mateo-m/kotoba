@@ -38,7 +38,7 @@ Full walkthrough: [Installing in a game](https://mateo-m.github.io/kotoba/essent
 
 ```text
 kotoba/           Runtime, adapters, boot script, samples (in release ZIPs)
-docs/             Published documentation source
+docs/             Published documentation source (Blume)
 tools/            Import, validation, release packaging
 test/             Ruby 1.8 tests
 bin/              CLI and developer scripts
@@ -58,6 +58,6 @@ bun run hooks:install
 bin/ruby18 bin/lint
 ```
 
-Docs locally: `bun run docs:dev` → http://localhost:5173/
+Docs locally: `bun run docs:dev` → http://localhost:4321/
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for hooks, commits, and optional full-game fixtures. CI and releases: [contributors/ci](https://mateo-m.github.io/kotoba/contributors/ci).

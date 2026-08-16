@@ -1,0 +1,20 @@
+/* Warm paper-and-ember palette. Accent, background, radius, and fonts come from
+   the `theme` block in blume.config.ts; these tokens cover the rest. */
+
+:root {
+  --blume-foreground: #2a231e;
+  --blume-muted: #f5ede6;
+  --blume-muted-foreground: #5c5048;
+  --blume-border: #e8ddd3;
+  --blume-accent-foreground: #fffcf8;
+  --blume-code-background: #faf3ec;
+}
+
+:root[data-theme="dark"] {
+  --blume-foreground: #f5efe8;
+  --blume-muted: #1a1512;
+  --blume-muted-foreground: #b8a896;
+  --blume-border: rgb(255 220 180 / 9%);
+  --blume-accent-foreground: #100c0a;
+  --blume-code-background: #1a1512;
+}

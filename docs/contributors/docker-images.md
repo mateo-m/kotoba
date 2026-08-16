@@ -1,4 +1,7 @@
-# Legacy Ruby Docker Images
+---
+title: Legacy Ruby Docker Images
+description: The reusable Linux Ruby images for 1.8 and 1.9 compatibility tests.
+---
 
 > Reusable Linux Ruby images for compatibility testing against Ruby 1.8 and 1.9.
 

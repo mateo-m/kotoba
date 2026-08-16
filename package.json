@@ -10,25 +10,16 @@
     "lint:docker": "bin/lint-docker",
     "hooks:install": "lefthook install",
     "precommit": "lefthook run pre-commit",
-    "docs:dev": "docusaurus start",
-    "docs:build": "docusaurus build",
-    "docs:preview": "docusaurus serve",
-    "docs:clear": "docusaurus clear",
-    "docs:version": "docusaurus docs:version"
+    "docs:dev": "blume dev",
+    "docs:build": "blume build --strict",
+    "docs:preview": "blume preview",
+    "docs:check": "blume validate --strict",
+    "docs:version": "blume version"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.7.0",
-    "@docusaurus/preset-classic": "^3.7.0",
-    "@mdx-js/react": "^3.0.0",
-    "clsx": "^2.1.1",
-    "prism-react-renderer": "^2.4.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "blume": "^1.5.1"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.7.0",
-    "@docusaurus/tsconfig": "^3.7.0",
-    "@docusaurus/types": "^3.7.0",
     "lefthook": "^2.1.9",
     "typescript": "^5.7.3"
   }

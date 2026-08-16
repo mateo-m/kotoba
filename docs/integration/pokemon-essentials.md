@@ -1,4 +1,7 @@
-# Pokemon Essentials integration
+---
+title: Pokemon Essentials integration
+description: Bridge the existing _INTL calls in Pokemon Essentials with the adapter.
+---
 
 Essentials adapters bridge existing `_INTL` calls so you can adopt Kotoba without moving every string at once.
 
@@ -18,7 +21,7 @@ Supported targets:
 
 ## Choose the adapter
 
-Your release ZIP’s `kotoba/boot.rb` already `require`s the matching adapter file and calls `Kotoba.use_adapter`. Edit that file for `catalog_paths` and locale lists ([Installing in a game §5](/essential/installation#_5-your-own-translations)).
+Your release ZIP’s `kotoba/boot.rb` already `require`s the matching adapter file and calls `Kotoba.use_adapter`. Edit that file for `catalog_paths` and locale lists ([Installing in a game §5](/essential/installation#5-your-own-translations)).
 
 Use the snippet below only for a custom boot layout, or when reading what the generated `boot.rb` contains:
 

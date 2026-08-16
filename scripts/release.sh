@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION_FILE="$REPO_ROOT/kotoba/VERSION"
-DIST_DIR="$REPO_ROOT/dist"
+PKG_DIR="$REPO_ROOT/pkg"
 # shellcheck source=scripts/changelog-release.sh
 source "$REPO_ROOT/scripts/changelog-release.sh"
 
@@ -91,26 +91,27 @@ else
 fi
 
 echo "==> building integration zips"
-rm -rf "$DIST_DIR"
-mkdir -p "$DIST_DIR"
-ruby "$REPO_ROOT/bin/build-integration-zips" "$DIST_DIR"
+rm -rf "$PKG_DIR"
+mkdir -p "$PKG_DIR"
+ruby "$REPO_ROOT/bin/build-integration-zips" "$PKG_DIR"
 
-ZIP_COUNT=$(find "$DIST_DIR" -maxdepth 1 -name 'kotoba-*.zip' | wc -l | tr -d ' ')
+ZIP_COUNT=$(find "$PKG_DIR" -maxdepth 1 -name 'kotoba-*.zip' | wc -l | tr -d ' ')
 if [[ "$ZIP_COUNT" == "0" ]]; then
-    echo "error: no integration zips were built in $DIST_DIR"
+    echo "error: no integration zips were built in $PKG_DIR"
     exit 1
 fi
 echo "    built $ZIP_COUNT archives"
 
 echo "==> cutting docs version v$VERSION"
-bunx docusaurus docs:version "v$VERSION"
+bunx blume version "v$VERSION"
 
 echo "==> verifying docs site build"
 bun run docs:build
-bin/check-docs-site "$REPO_ROOT/build"
+bun run docs:check
+bin/check-docs-site "$REPO_ROOT/dist"
 
 echo "==> committing release metadata"
-git -C "$REPO_ROOT" add "$VERSION_FILE" "$(changelog_path)" versioned_docs versioned_sidebars versions.json
+git -C "$REPO_ROOT" add "$VERSION_FILE" "$(changelog_path)" docs blume.config.ts
 git -C "$REPO_ROOT" commit -S -m "chore(release): bump version to $VERSION"
 git -C "$REPO_ROOT" tag -s "$TAG" -m "$TAG"
 
@@ -123,6 +124,6 @@ echo "==> creating github release"
 gh release create "$TAG" \
     --title "$TAG" \
     --notes "$RELEASE_NOTES" \
-    "$DIST_DIR"/kotoba-*.zip
+    "$PKG_DIR"/kotoba-*.zip
 
 echo "==> done - $TAG released"

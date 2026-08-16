@@ -1,4 +1,7 @@
-# Placeholders and special text
+---
+title: Placeholders and special text
+description: How to keep placeholders and special text correct in a spreadsheet.
+---
 
 Edit the translation column in a spreadsheet.
 

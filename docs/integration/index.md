@@ -1,4 +1,7 @@
-# Integration
+---
+title: Integration
+description: Pick the integration guide that matches your project kit.
+---
 
 Pick the guide for your project. Each ZIP from [GitHub Releases](https://github.com/mateo-m/kotoba/releases) already includes the matching adapter in `kotoba/boot.rb`.
 

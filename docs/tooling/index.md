@@ -1,4 +1,7 @@
-# Tooling
+---
+title: Tooling
+description: The bin/kotoba commands that validate catalogs, import game data, and export interchange files.
+---
 
 Catalogs live in `Locales/<locale>.json`. `bin/kotoba` (via `bin/ruby18`) validates them, imports game data, and exports interchange formats for translation tools.
 

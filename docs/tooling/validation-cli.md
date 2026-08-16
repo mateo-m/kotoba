@@ -1,4 +1,7 @@
-# Validation CLI
+---
+title: Validation CLI
+description: Validate catalogs and report missing or extra keys.
+---
 
 Run every command through Ruby 1.8:
 

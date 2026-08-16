@@ -1,4 +1,7 @@
-# Installing in a game
+---
+title: Installing in a game
+description: Extract a release ZIP beside Game.exe, add one boot line in Script Editor, and see a test translation.
+---
 
 Download a release ZIP, extract it beside `Game.exe`, paste one line in Script Editor, and playtest. You should see a test translation on screen in about 15 minutes.
 

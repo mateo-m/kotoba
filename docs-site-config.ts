@@ -3,12 +3,10 @@ import { resolve } from "node:path";
 
 const repoRoot = process.cwd();
 
-export function readKotobaVersion(): string {
-  try {
-    return readFileSync(resolve(repoRoot, "kotoba/VERSION"), "utf8").trim();
-  } catch {
-    return "dev";
-  }
+interface GithubRepository {
+  branch: string;
+  owner: string;
+  repo: string;
 }
 
 function readGitOrigin(): string {
@@ -19,69 +17,59 @@ function readGitOrigin(): string {
   }
 }
 
-export function resolveGithubRepository(): string | undefined {
-  if (process.env.DOCUSAURUS_GITHUB_REPO) {
-    return process.env.DOCUSAURUS_GITHUB_REPO;
+/** Owner and repo for edit links and the header repo link. */
+export function resolveGithub(): GithubRepository | undefined {
+  const fromEnv = process.env.KOTOBA_DOCS_REPO;
+  const [owner, repo] = fromEnv
+    ? fromEnv.split("/")
+    : (readGitOrigin().match(
+        /\[remote "origin"\][\s\S]*?url = .*github\.com[:/]([^/\s]+)\/([^/\s.]+)/
+      ) ?? []).slice(1);
+
+  if (!(owner && repo)) {
+    return undefined;
   }
 
-  const config = readGitOrigin();
-  const match = config.match(
-    /\[remote "origin"\][\s\S]*?url = .*github\.com[:/]([^/\s]+)\/([^/\s.]+)/
-  );
-  if (match) {
-    return `${match[1]}/${match[2]}`;
-  }
-
-  return undefined;
+  return { branch: "main", owner, repo };
 }
 
-export function resolveOrganizationName(): string {
-  const repo = resolveGithubRepository();
-  if (repo) {
-    return repo.split("/")[0];
+/**
+ * GitHub Pages does not tell the build its own URL, and Blume needs an absolute
+ * origin for canonical links, the sitemap, and Open Graph images. Archived
+ * versions depend on it too: each frozen page points its canonical at the
+ * latest equivalent.
+ */
+export function resolveSiteUrl(): string | undefined {
+  const fromEnv = process.env.KOTOBA_DOCS_URL;
+  if (fromEnv) {
+    return fromEnv.replace(/\/$/, "");
   }
-  return process.env.DOCUSAURUS_GITHUB_ORG ?? "mateo-m";
+
+  const github = resolveGithub();
+  return github ? `https://${github.owner}.github.io` : undefined;
 }
 
-export function resolveProjectName(): string {
-  if (process.env.DOCUSAURUS_REPOSITORY_NAME) {
-    return process.env.DOCUSAURUS_REPOSITORY_NAME;
+/**
+ * GitHub Pages serves a project site under `/<repo>`, so the build needs that
+ * base. Set `KOTOBA_DOCS_BASE=/` to build for a root domain instead.
+ */
+export function resolveBase(): string | undefined {
+  const fromEnv = process.env.KOTOBA_DOCS_BASE;
+  if (fromEnv) {
+    return fromEnv === "/" ? undefined : fromEnv.replace(/\/$/, "");
   }
 
-  const repo = resolveGithubRepository();
-  if (repo) {
-    return repo.split("/")[1];
+  // The dev server stays at the root, so local links match the published paths
+  // without the project prefix.
+  if (process.argv.includes("dev")) {
+    return undefined;
   }
 
-  return "kotoba";
+  const github = resolveGithub();
+  return github ? `/${github.repo}` : undefined;
 }
 
-export function resolveSiteUrl(): string {
-  if (process.env.DOCUSAURUS_URL) {
-    return process.env.DOCUSAURUS_URL.replace(/\/$/, "");
-  }
-
-  const repo = resolveGithubRepository();
-  if (repo) {
-    const [org] = repo.split("/");
-    return `https://${org}.github.io`;
-  }
-
-  return "https://mateo-m.github.io";
-}
-
-export function resolveBaseUrl(): string {
-  if (process.env.NODE_ENV === "development") {
-    return process.env.DOCUSAURUS_BASE ?? "/";
-  }
-
-  if (process.env.DOCUSAURUS_BASE) {
-    return process.env.DOCUSAURUS_BASE;
-  }
-
-  return `/${resolveProjectName()}/`;
-}
-
+/** The install guide route, shared with the Ruby tooling through routing.json. */
 export function installDocPath(): string {
   try {
     const routing = JSON.parse(

@@ -1,4 +1,7 @@
-# Bare RGSS integration
+---
+title: Bare RGSS integration
+description: "Project layout, boot steps, and inline kotoba: markers for bare RPG Maker XP."
+---
 
 Install: [Installing in a game](/essential/installation). Sample catalog: `kotoba/samples/bare_rgss/en.json`. Covers layout, boot, and `kotoba:` inline markers after Kotoba loads.
 

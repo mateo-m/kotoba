@@ -1,4 +1,7 @@
-# Runtime API
+---
+title: Runtime API
+description: "The Ruby 1.8 API: setup, lookup, locale fallback, and adapter hooks."
+---
 
 Ruby 1.8. Examples avoid keyword arguments, safe navigation, and post-RGSS1 stdlib.
 

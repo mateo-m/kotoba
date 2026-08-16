@@ -1,4 +1,7 @@
-# TMS workflows
+---
+title: TMS workflows
+description: Convert between nested catalogs and the flat JSON, XLIFF, or PO files that translation tools want.
+---
 
 Translation tools want flat JSON, multi-language JSON, XLIFF, or PO. The CLI converts between those formats and your nested `Locales/*.json` catalogs.
 

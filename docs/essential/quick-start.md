@@ -1,4 +1,7 @@
-# Quick Start
+---
+title: Quick Start
+description: Clone the repo, add a catalog, load Kotoba in Ruby 1.8, and call Kotoba.t.
+---
 
 Clone this repo, add a catalog, load Kotoba in Ruby 1.8, and call `Kotoba.t`. You should see translated strings in the console or a test script.
 

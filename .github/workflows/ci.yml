@@ -59,14 +59,10 @@ jobs:
               - '.github/workflows/ci.yml'
             docs:
               - 'docs/**'
-              - 'versioned_docs/**'
-              - 'versioned_sidebars/**'
-              - 'versions.json'
-              - 'docusaurus.config.ts'
-              - 'sidebars.ts'
+              - 'blume.config.ts'
               - 'docs-site-config.ts'
-              - 'src/**'
-              - 'static/**'
+              - 'theme.css'
+              - 'public/**'
               - 'package.json'
               - 'bun.lock'
               - '.github/workflows/ci.yml'
@@ -96,9 +92,11 @@ jobs:
         with:
           fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - run: bun install
       - run: bun run docs:build
         env:
-          DOCUSAURUS_BASE: /${{ github.event.repository.name }}/
-          DOCUSAURUS_REPOSITORY_NAME: ${{ github.event.repository.name }}
-          DOCUSAURUS_GITHUB_REPO: ${{ github.repository }}
+          KOTOBA_DOCS_BASE: /${{ github.event.repository.name }}
+          KOTOBA_DOCS_REPO: ${{ github.repository }}

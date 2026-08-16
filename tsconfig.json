@@ -1,7 +1,14 @@
 {
-  "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true
   },
-  "exclude": [".docusaurus", "build"]
+  "include": ["blume.config.ts", "docs-site-config.ts", "docs/**/meta.ts"],
+  "exclude": [".blume", "dist", "node_modules"]
 }

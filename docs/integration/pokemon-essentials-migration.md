@@ -1,4 +1,7 @@
-# Essentials migration
+---
+title: Essentials migration
+description: Move Essentials copy from _INTL source text to stable catalog keys, one area at a time.
+---
 
 Essentials adapters bridge legacy `_INTL` calls. Adopt stable JSON catalogs one area at a time.
 

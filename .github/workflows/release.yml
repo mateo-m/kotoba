@@ -30,8 +30,8 @@ jobs:
       - run: bun run lint
       - run: sudo apt-get update && sudo apt-get install -y zip
       - run: |
-          mkdir -p dist
-          ruby bin/build-integration-zips dist
+          mkdir -p pkg
+          ruby bin/build-integration-zips pkg
       - name: Install git-cliff
         run: |
           curl -fsSL "https://github.com/orhun/git-cliff/releases/download/v2.9.1/git-cliff-2.9.1-x86_64-unknown-linux-gnu.tar.gz" \
@@ -44,7 +44,7 @@ jobs:
           cat release-notes.md
       - name: Upload release assets
         run: |
-          gh release upload "${{ inputs.tag }}" dist/*.zip --clobber
+          gh release upload "${{ inputs.tag }}" pkg/*.zip --clobber
           gh release edit "${{ inputs.tag }}" --notes-file release-notes.md
         env:
           GH_TOKEN: ${{ github.token }}

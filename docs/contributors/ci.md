@@ -1,4 +1,7 @@
-# CI
+---
+title: CI
+description: How CI runs the Ruby 1.8 compatibility gate, and how to match it on your machine.
+---
 
 CI should treat Ruby 1.8 as the compatibility gate.
 
@@ -17,15 +20,15 @@ This runs:
 
 ## Documentation site
 
-The docs are published with [Docusaurus](https://docusaurus.io/).
+The docs are published with [Blume](https://useblume.dev/). Pages come from `docs/`, the site options from `blume.config.ts`, and the colors from `theme.css`. Blume needs Node 22.12 or newer.
 
 GitHub Pages serves project sites at `https://<user>.github.io/<repository>/`. The docs base path comes from the repository name:
 
-- CI sets `DOCUSAURUS_BASE` and `DOCUSAURUS_REPOSITORY_NAME` from `github.event.repository.name`.
+- CI sets `KOTOBA_DOCS_BASE` and `KOTOBA_DOCS_REPO` from the repository name.
 - Local builds resolve the same value from `git remote get-url origin` when those variables are unset.
 - `bun run docs:dev` uses `/` so local navigation stays at the dev-server root.
 
-After renaming the GitHub repository, run the **Docs** workflow once so Pages picks up the new base path.
+After you rename the GitHub repository, run the **Docs** workflow once so Pages picks up the new base path.
 
 Preview locally:
 
@@ -34,24 +37,30 @@ bun install
 bun run docs:dev
 ```
 
-Build and preview the static output:
+Build the static output, check the links, and preview it:
 
 ```sh
 bun run docs:build
+bun run docs:check
 bun run docs:preview
 ```
 
+`docs:build` writes to `dist/`. Release archives stage in `pkg/`, because the docs build clears `dist/`.
+
+The sidebar comes from the file tree. A folder is a group, and a file is a page. To change a group title, an icon, or the page order, edit the `meta.ts` file in that folder.
+
 ### Documentation versioning
 
-`https://mateo-m.github.io/kotoba/` serves **latest** (`main`). Each release freezes `docs/` into `versioned_docs/version-v<semver>/` and publishes that edition at `…/v<semver>/…`.
+`https://mateo-m.github.io/kotoba/` serves **latest** (`main`). Each release freezes `docs/` into `docs/v<semver>/` and publishes that edition at `…/v<semver>/…`.
 
 | Piece | Behavior |
 | --- | --- |
-| **Doc edition** | `bunx docusaurus docs:version v<semver>` during `scripts/release.sh` |
-| **Site build** | `bun run docs:build` builds latest + every version in `versions.json` |
+| **Doc edition** | `bunx blume version v<semver>` during `scripts/release.sh` |
+| **Site build** | `bun run docs:build` builds latest + every version in `blume.config.ts` |
 | **ZIP `MANIFEST.json`** | `docs_install_url` → `…/v<version>/essential/installation` |
-| **Version switcher** | Docusaurus docs version dropdown in the navbar |
-| **Footer** | Shows `kotoba/VERSION` from the repository |
+| **Version switcher** | Blume version dropdown in the header |
+
+A frozen edition keeps its own pages, its own `meta.ts` files, and its own landing page. Later edits belong in the live tree.
 
 Doc version matches `kotoba/VERSION`. No separate docs semver.
 
@@ -78,8 +87,8 @@ The script:
 
 1. Prepends git-cliff notes to `CHANGELOG.md` and bumps `kotoba/VERSION`. Only commits that touch library paths listed in `cliff.toml` are included.
 2. Runs `bun run lint` (skip with `RELEASE_SKIP_LINT=1`).
-3. Builds integration ZIPs into `dist/`.
-4. Runs `docusaurus docs:version` to freeze the doc edition, verifies the site build, then creates a signed commit and tag, pushes `main` + the tag.
+3. Builds integration ZIPs into `pkg/`.
+4. Runs `blume version` to freeze the doc edition, verifies the site build, then creates a signed commit and tag, pushes `main` + the tag.
 5. Runs `gh release create` with the ZIPs and a **What's changed** body.
 
 Integration ZIPs ship a minimal `INSTALL.md` (adapter facts + link to the online install guide). Full install documentation lives in `docs/essential/installation.md` and deploys via the Docs workflow, not through library releases.

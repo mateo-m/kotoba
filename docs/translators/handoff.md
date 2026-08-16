@@ -1,4 +1,7 @@
-# Spreadsheet handoff
+---
+title: Spreadsheet handoff
+description: Export a spreadsheet for translators, then import the finished files.
+---
 
 The game loads `Locales/<locale>.json`. Spreadsheets are for translator round-trips in Sheets or Excel.
 

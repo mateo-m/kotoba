@@ -1,4 +1,7 @@
-# For translators
+---
+title: For translators
+description: What a translator receives, what to edit, and what to send back.
+---
 
 You do not need JSON or RPG Maker. The developer sends a spreadsheet (CSV) or a handoff zip.
 

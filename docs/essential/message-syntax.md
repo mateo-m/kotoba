@@ -1,8 +1,11 @@
-# Message syntax
+---
+title: Message syntax
+description: Placeholders, select, plural, apostrophes, and RPG Maker color codes in message strings.
+---
 
 Plain text with optional placeholders: slots the game fills at runtime (names, counts, etc.). Spreadsheet translators: [Placeholders](/translators/placeholders).
 
-Authors edit strings in `Locales/<locale>.json` beside `Game.exe` ([Installing in a game §5](/essential/installation#_5-your-own-translations)). Supports variables, `select`, cardinal `plural`, apostrophes, and RPG Maker color codes.
+Authors edit strings in `Locales/<locale>.json` beside `Game.exe` ([Installing in a game §5](/essential/installation#5-your-own-translations)). Supports variables, `select`, cardinal `plural`, apostrophes, and RPG Maker color codes.
 
 ---
 

@@ -1,4 +1,7 @@
-# Third-party adapters
+---
+title: Third-party adapters
+description: The adapter contract, and how to write an adapter for another kit.
+---
 
 Adapters connect `Kotoba` to an engine, starter kit, or project convention. Keep them thin: the runtime owns locale fallback, catalog loading, and message evaluation; adapters own integration details.
 

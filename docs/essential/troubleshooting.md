@@ -1,4 +1,7 @@
-# Troubleshooting
+---
+title: Troubleshooting
+description: Fixes for the common install and runtime errors.
+---
 
 Install walkthrough: [Installing in a game](/essential/installation).
 
