@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "markdown": {
+      "pattern": "https://mateo-m.github.io/kotoba/{route}.md"
+    },
+    "llmsFullTxt": "https://mateo-m.github.io/kotoba/llms-full.txt",
+    "llmsTxt": "https://mateo-m.github.io/kotoba/llms.txt",
+    "sitemap": "https://mateo-m.github.io/kotoba/sitemap.xml"
+  },
+  "description": "i18n for RPG Maker XP and Pokemon Essentials",
+  "generator": "blume@1.5.1",
+  "name": "Kotoba",
+  "site": "https://mateo-m.github.io",
+  "contentUsage": {
+    "search": true,
+    "ai-input": true,
+    "ai-train": true
+  },
+  "repository": "https://github.com/mateo-m/kotoba"
+}

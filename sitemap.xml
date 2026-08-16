@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://mateo-m.github.io/kotoba/contributors/ci</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/contributors/docker-images</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/essential/catalog-format</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/essential/installation</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/essential/message-syntax</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/essential/quick-start</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/essential/runtime-api</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/essential/troubleshooting</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/integration/bare-rgss</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/integration/pokemon-essentials-migration</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/integration/pokemon-essentials</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/integration/third-party</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/integration</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/introduction</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/reference/compatibility</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/reference/map-event-codes</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/tooling/crowdin</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/tooling/simplelocalize</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/tooling/tms</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/tooling/tolgee</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/tooling/validation-cli</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/tooling/xliff-po</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/tooling</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/translators/handoff</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/translators/placeholders</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba/translators</loc></url>
+  <url><loc>https://mateo-m.github.io/kotoba</loc></url>
+</urlset>

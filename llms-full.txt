@@ -1,0 +1,2692 @@
+# Kotoba
+
+> i18n for RPG Maker XP and Pokemon Essentials
+
+# Kotoba
+Source: https://mateo-m.github.io/kotoba
+
+Download a release ZIP, extract it beside `Game.exe`, paste one line in Script Editor, and playtest.
+
+```ruby Script Editor
+load "kotoba/boot.rb"
+```
+
+Kotoba reads JSON catalogs from the game folder at runtime. There is no compile step.
+
+## Pick your path
+
+<CardGroup cols={3}>
+  <Card title="Introduction" href="/introduction" icon="book-open">
+    What Kotoba is, a small catalog example, and which page to open next.
+  </Card>
+  <Card title="Installing in a game" href="/essential/installation" icon="download">
+    Pick a release ZIP for your kit, extract it next to `Game.exe`, add the boot
+    line, and run the smoke test.
+  </Card>
+  <Card title="For translators" href="/translators/" icon="languages">
+    Edit JSON catalogs under `Locales/`, or export spreadsheets and import the
+    finished files back into the game folder.
+  </Card>
+</CardGroup>
+
+---
+
+# CI
+Source: https://mateo-m.github.io/kotoba/contributors/ci
+
+CI should treat Ruby 1.8 as the compatibility gate.
+
+## Local equivalent
+
+```sh
+bun run lint
+```
+
+This runs:
+
+- Ruby 1.8 formatting checks
+- Ruby syntax checks
+- unit and compatibility tests
+- Dockerfile checks
+
+## Documentation site
+
+The docs are published with [Blume](https://useblume.dev/). Pages come from `docs/`, the site options from `blume.config.ts`, and the colors from `theme.css`. Blume needs Node 22.12 or newer.
+
+GitHub Pages serves project sites at `https://<user>.github.io/<repository>/`. The docs base path comes from the repository name:
+
+- CI sets `KOTOBA_DOCS_BASE` and `KOTOBA_DOCS_REPO` from the repository name.
+- Local builds resolve the same value from `git remote get-url origin` when those variables are unset.
+- `bun run docs:dev` uses `/` so local navigation stays at the dev-server root.
+
+After you rename the GitHub repository, run the **Docs** workflow once so Pages picks up the new base path.
+
+Preview locally:
+
+```sh
+bun install
+bun run docs:dev
+```
+
+Build the static output, check the links, and preview it:
+
+```sh
+bun run docs:build
+bun run docs:check
+bun run docs:preview
+```
+
+`docs:build` writes to `dist/`. Release archives stage in `pkg/`, because the docs build clears `dist/`.
+
+The sidebar comes from the file tree. A folder is a group, and a file is a page. To change a group title, an icon, or the page order, edit the `meta.ts` file in that folder.
+
+### Documentation versioning
+
+`https://mateo-m.github.io/kotoba/` serves **latest** (`main`). Each release freezes `docs/` into `docs/v<semver>/` and publishes that edition at `…/v<semver>/…`.
+
+| Piece | Behavior |
+| --- | --- |
+| **Doc edition** | `bunx blume version v<semver>` during `scripts/release.sh` |
+| **Site build** | `bun run docs:build` builds latest + every version in `blume.config.ts` |
+| **ZIP `MANIFEST.json`** | `docs_install_url` → `…/v<version>/essential/installation` |
+| **Version switcher** | Blume version dropdown in the header |
+
+A frozen edition keeps its own pages, its own `meta.ts` files, and its own landing page. Later edits belong in the live tree.
+
+Doc version matches `kotoba/VERSION`. No separate docs semver.
+
+To redeploy an old doc edition from a git tag, check out the tag and run `bun run docs:build`, then push the output to the `gh-pages` branch (or run the Docs workflow from that ref).
+
+## GitHub Actions
+
+The checked-in workflow at `.github/workflows/ci.yml` runs after changes to runtime, adapter, tooling, test, Docker, or docs files. The `lint` and `docs` jobs run only when their respective paths change. Use **Run workflow** in Actions for a full manual run.
+
+The lint job runs the same lint command after installing Bun. It expects the legacy Ruby Docker images to be buildable on the runner.
+
+Docs deploy through `.github/workflows/docs.yml` on pushes to `main` when docs-related files change. The workflow pushes the built site to the `gh-pages` branch. In the repository Pages settings, choose **Deploy from a branch** and set the branch to `gh-pages` / root.
+
+## Releases
+
+Cut a release locally with `scripts/release.sh`:
+
+```sh
+brew install git-cliff gh   # once
+scripts/release.sh 0.1.0    # first release; later: patch | minor | major
+```
+
+The script:
+
+1. Prepends git-cliff notes to `CHANGELOG.md` and bumps `kotoba/VERSION`. Only commits that touch library paths listed in `cliff.toml` are included.
+2. Runs `bun run lint` (skip with `RELEASE_SKIP_LINT=1`).
+3. Builds integration ZIPs into `pkg/`.
+4. Runs `blume version` to freeze the doc edition, verifies the site build, then creates a signed commit and tag, pushes `main` + the tag.
+5. Runs `gh release create` with the ZIPs and a **What's changed** body.
+
+Integration ZIPs ship a minimal `INSTALL.md` (adapter facts + link to the online install guide). Full install documentation lives in `docs/essential/installation.md` and deploys via the Docs workflow, not through library releases.
+
+Preview notes before cutting:
+
+```sh
+git-cliff --config cliff.toml --unreleased --tag v0.1.0
+```
+
+To rebuild assets or refresh notes for an existing tag, run the **Release** workflow manually in GitHub Actions and pass the tag name.
+
+## Cross-version matrix
+
+For release verification, also run:
+
+```sh
+docker run --rm --platform linux/amd64 -v "$PWD":/work -w /work ruby-legacy:1.9.3-p551 ruby -Itest -e 'ARGV.each { |file| load file }' test/**/*_test.rb
+docker run --rm -v "$PWD":/work -w /work ruby:3.0 ruby -Itest -e 'ARGV.each { |file| load file }' test/**/*_test.rb
+docker run --rm -v "$PWD":/work -w /work ruby:3.1 ruby -Itest -e 'ARGV.each { |file| load file }' test/**/*_test.rb
+```
+
+The Ruby 1.8 check remains the one that decides runtime compatibility.
+
+---
+
+# Legacy Ruby Docker Images
+Source: https://mateo-m.github.io/kotoba/contributors/docker-images
+
+> Reusable Linux Ruby images for compatibility testing against Ruby 1.8 and 1.9.
+
+These images are generic Ruby runtimes. Ruby is installed during the image build, and project code is mounted only when you run tests.
+
+## Requirements
+
+- Docker
+- The repository checked out locally
+
+## Installing
+
+Build the images from the repository root:
+
+```sh
+docker build --platform linux/amd64 \
+  --build-arg RUBY_MAJOR=1.8 \
+  --build-arg RUBY_VERSION=1.8.7-p374 \
+  -t ruby-legacy:1.8.7-p374 \
+  -f docker/ruby-legacy/Dockerfile .
+
+docker build --platform linux/amd64 \
+  --build-arg RUBY_MAJOR=1.9 \
+  --build-arg RUBY_VERSION=1.9.3-p551 \
+  -t ruby-legacy:1.9.3-p551 \
+  -f docker/ruby-legacy/Dockerfile .
+```
+
+## Usage
+
+Run the unit suite in Ruby 1.8:
+
+```sh
+docker run --rm --platform linux/amd64 -v "$PWD":/work -w /work ruby-legacy:1.8.7-p374 \
+  ruby -Itest -e 'ARGV.each { |file| load file }' test/**/*_test.rb
+```
+
+Run the unit suite in Ruby 1.9:
+
+```sh
+docker run --rm --platform linux/amd64 -v "$PWD":/work -w /work ruby-legacy:1.9.3-p551 \
+  ruby -Itest -e 'ARGV.each { |file| load file }' test/**/*_test.rb
+```
+
+Verify common native standard-library extensions:
+
+```sh
+docker run --rm --platform linux/amd64 ruby-legacy:1.8.7-p374 \
+  ruby -e 'require "zlib"; require "openssl"; require "readline"; require "socket"; puts "ok"'
+
+docker run --rm --platform linux/amd64 ruby-legacy:1.9.3-p551 \
+  ruby -e 'require "zlib"; require "openssl"; require "readline"; require "socket"; puts "ok"'
+```
+
+## Related docs
+
+- [Compatibility](/reference/compatibility)
+- [CI](/contributors/ci)
+
+---
+
+# Catalog format
+Source: https://mateo-m.github.io/kotoba/essential/catalog-format
+
+Catalogs are strict JSON objects. Kotoba reads them at runtime. No Marshal, `.dat`, or RPG Maker compile step in the core.
+
+In a fangame, create `Locales/<locale>.json` beside `Game.exe` ([Installing in a game §5](/essential/installation#5-your-own-translations)). In a git clone, the same paths are relative to the repo root ([Quick Start](/essential/quick-start)).
+
+## Shape
+
+Nested objects, string leaves, dot-separated lookup keys.
+
+`Locales/en.json`:
+
+```json
+{
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!",
+    "item_count": "{count, plural, =0 {No items} one {# item} other {# items}}"
+  },
+  "menu": {
+    "save": "Save"
+  }
+}
+```
+
+Lookups:
+
+```ruby
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+# => "A wild Pikachu appeared!"
+
+Kotoba.t("battle.item_count", {"count" => 2})
+# => "2 items"
+
+Kotoba.t("menu.save")
+# => "Save"
+```
+
+Avoid dots inside key names. Dots separate lookup segments only (`battle` + `wild_appeared` → `"battle.wild_appeared"`).
+
+## Valid leaves
+
+Only strings are valid message leaves. Numbers, booleans, arrays, or nested objects at a leaf path are rejected at load time.
+
+## JSON rules
+
+The bundled parser accepts strict JSON:
+
+- UTF-8 BOM is stripped.
+- Objects, arrays, strings, numbers, booleans, and null parse normally.
+- `\uXXXX` escapes and surrogate pairs are decoded.
+- Comments and trailing commas are not allowed.
+- The catalog root must be an object.
+
+## File layout
+
+One file per locale (typical):
+
+```text
+Locales/en.json
+Locales/fr.json
+Locales/pt-BR.json
+```
+
+Split by namespace (larger projects):
+
+```text
+Locales/en/ui.json
+Locales/en/battle.json
+Locales/fr/ui.json
+Locales/fr/battle.json
+```
+
+Config (later files override earlier keys):
+
+```ruby
+config.catalog_paths = {
+  "en" => [
+    "Locales/en/ui.json",
+    "Locales/en/battle.json"
+  ]
+}
+```
+
+Unless `duplicate_key_policy` is `"error"`, later paths win on conflict.
+
+## Key naming
+
+Prefer stable semantic keys the game owns, not the English sentence:
+
+Good:
+
+```json
+{
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}
+```
+
+```ruby
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+# => "A wild Pikachu appeared!"
+```
+
+Avoid for new code:
+
+```json
+{
+  "A wild {1} appeared!": "A wild {pokemon} appeared!"
+}
+```
+
+`source_text` mappings are for [Essentials migration](/integration/pokemon-essentials-migration), not greenfield keys.
+
+## RPG Maker control codes
+
+Color codes are normal string content:
+
+Example:
+
+```json
+{
+  "npc": {
+    "warning": "\\c[2]Careful!\\c[0]"
+  }
+}
+```
+
+```ruby
+Kotoba.t("npc.warning")
+# => "\c[2]Careful!\c[0]"
+```
+
+Translators must preserve these. See [Placeholders](/translators/placeholders).
+
+---
+
+# Installing in a game
+Source: https://mateo-m.github.io/kotoba/essential/installation
+
+Download a release ZIP, extract it beside `Game.exe`, paste one line in Script Editor, and playtest. You should see a test translation on screen in about 15 minutes.
+
+Git clone instead of a ZIP? [Quick Start](/essential/quick-start). Translators: [For translators](/translators/).
+
+---
+
+## 1. Pick a release ZIP
+
+Download one ZIP from [GitHub Releases](https://github.com/mateo-m/kotoba/releases):
+
+| ZIP | Project type |
+| --- | --- |
+| `kotoba-bare-rgss.zip` | Plain RPG Maker XP |
+| `kotoba-essentials-v20.zip` | Pokemon Essentials v20 |
+| `kotoba-essentials-v16.zip` … `v21.zip` | Other Essentials versions |
+| `kotoba-essentials-bes.zip` | BES Essentials fork |
+
+Match your kit name, credits, or download page (e.g. "Essentials v20.1").
+
+---
+
+## 2. Extract into your game folder
+
+`Game.exe` defines the game folder. Extract the ZIP into that folder, not into a subfolder.
+
+### Correct layout
+
+```text
+MyFangame/
+  Game.exe
+  Locales/                       ← your translations later
+    en.json
+  kotoba/
+    boot.rb
+    core.rb
+    adapters/
+    samples/
+      script_editor/
+      pokemon_essentials/en.json   ← Essentials ZIPs
+      bare_rgss/en.json            ← bare ZIP
+  INSTALL.md
+```
+
+### Wrong layout
+
+```text
+MyFangame/
+  Game.exe
+  kotoba-essentials-v20/    ← extra wrapper; move kotoba/ and INSTALL.md up
+    kotoba/
+```
+
+---
+
+## 3. Add Kotoba in Script Editor
+
+RPG Maker does not run `.rb` files from the file explorer. Use **Tools → Script Editor**.
+
+1. Insert a section named `Kotoba` above `Main`.
+2. Paste one line below.
+3. OK, then playtest (F12).
+
+### Essentials (recommended first test)
+
+```ruby
+load "kotoba/samples/script_editor/essentials_smoke_test.rb"
+```
+
+### Bare RPG Maker XP
+
+```ruby
+load "kotoba/samples/script_editor/bare_rgss_smoke_test.rb"
+```
+
+### Boot only (no test popup)
+
+```ruby
+load "kotoba/boot.rb"
+```
+
+More scripts: `kotoba/samples/script_editor/`.
+
+---
+
+## 4. Smoke tests
+
+A passing smoke test only proves Kotoba loaded and read the **sample** catalog. It does not translate existing game dialog. After it works, continue to [§5 Your own translations](#5-your-own-translations) and [Pokemon Essentials](/integration/pokemon-essentials) or [Essentials migration](/integration/pokemon-essentials-migration) to bridge `_INTL`.
+
+### Essentials
+
+Loads `kotoba/boot.rb`, reads the sample catalog, shows a message box.
+
+Catalog (`kotoba/samples/pokemon_essentials/en.json`):
+
+```json
+{
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}
+```
+
+Script (`essentials_smoke_test.rb`):
+
+```ruby
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+```
+
+On screen: `A wild Pikachu appeared!`
+
+`{pokemon}` is filled at runtime. Translators keep that placeholder in every locale. See [Placeholders](/translators/placeholders).
+
+### Bare RGSS
+
+Catalog (`kotoba/samples/bare_rgss/en.json`):
+
+```json
+{
+  "menu": {
+    "save": "Save"
+  }
+}
+```
+
+```ruby
+Kotoba.t("menu.save")
+```
+
+On screen: `Kotoba says: Save`
+
+### Playtest results
+
+| Result | Meaning |
+| --- | --- |
+| Test message appears | Kotoba loaded and read the sample JSON |
+| Game runs, no popup (`load_only`) | Boot OK; no test line |
+| `LoadError` / `No such file` | Files not next to `Game.exe`. See [Troubleshooting](/essential/troubleshooting) |
+| Game runs, text unchanged | Expected until you bridge `_INTL` |
+
+---
+
+## 5. Your own translations
+
+Extracting the ZIP does not translate the game. After the smoke test:
+
+1. Create `Locales/en.json` (and `fr.json`, etc.) next to `Game.exe`.
+2. Edit `kotoba/boot.rb` on disk: set `catalog_paths` and `available_locales`.
+3. In Script Editor, replace the smoke-test line with `load "kotoba/boot.rb"`.
+
+Inside `kotoba/boot.rb` (Essentials v20 ZIP, paths updated):
+
+```ruby
+Kotoba.configure do |config|
+  config.catalog_paths = {
+    "en" => ["Locales/en.json"],
+    "fr" => ["Locales/fr.json"]
+  }
+  config.available_locales = ["en", "fr"]
+end
+```
+
+Release ZIPs already call `Kotoba.use_adapter` at the end of `boot.rb`. After editing paths, save the file and playtest. Config fields: [Runtime API](/essential/runtime-api#configuration).
+
+Next: [Catalog format](/essential/catalog-format), [Pokemon Essentials](/integration/pokemon-essentials) or [Essentials migration](/integration/pokemon-essentials-migration).
+
+---
+
+# Message syntax
+Source: https://mateo-m.github.io/kotoba/essential/message-syntax
+
+Plain text with optional placeholders: slots the game fills at runtime (names, counts, etc.). Spreadsheet translators: [Placeholders](/translators/placeholders).
+
+Authors edit strings in `Locales/<locale>.json` beside `Game.exe` ([Installing in a game §5](/essential/installation#5-your-own-translations)). Supports variables, `select`, cardinal `plural`, apostrophes, and RPG Maker color codes.
+
+---
+
+## Catalog syntax
+
+### Static text
+
+Catalog (`Locales/en.json`):
+
+```json
+{
+  "menu": {
+    "save": "Save"
+  }
+}
+```
+
+```ruby
+Kotoba.t("menu.save")
+# => "Save"
+```
+
+### Variables
+
+Catalog:
+
+```json
+{
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  },
+  "npc": {
+    "greeting": "Hello, {name}!"
+  }
+}
+```
+
+```ruby
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+# => "A wild Pikachu appeared!"
+
+Kotoba.t("npc.greeting", {"name" => "Ari"})
+# => "Hello, Ari!"
+```
+
+String and symbol keys both work. Missing variables follow `config.missing_variable_policy`:
+
+| Policy | `Kotoba.t("npc.greeting", {})` returns |
+| --- | --- |
+| `"keep"` (default) | `Hello, {name}!` |
+| `"empty"` | `Hello, !` |
+| `"error"` | raises `Kotoba::MessageEvaluationError` |
+
+Keep `{name}` in every locale. See [Placeholders](/translators/placeholders).
+
+### Select
+
+Catalog:
+
+```json
+{
+  "battle": {
+    "pronoun_line": "{gender, select, female {She} male {He} other {They}} used {move}."
+  }
+}
+```
+
+```ruby
+Kotoba.t("battle.pronoun_line", {"gender" => "female", "move" => "Thunderbolt"})
+# => "She used Thunderbolt."
+
+Kotoba.t("battle.pronoun_line", {"gender" => "unknown", "move" => "Tackle"})
+# => "They used Tackle."
+```
+
+`other` is required. Unknown selector values use `other`.
+
+### Plural
+
+Catalog:
+
+```json
+{
+  "bag": {
+    "item_count": "{count, plural, =0 {No items} one {# item} other {# items}}"
+  }
+}
+```
+
+```ruby
+Kotoba.t("bag.item_count", {"count" => 0})
+# => "No items"
+
+Kotoba.t("bag.item_count", {"count" => 1})
+# => "1 item"
+
+Kotoba.t("bag.item_count", {"count" => 5})
+# => "5 items"
+```
+
+Branch order: exact (`=0`) → locale category (`one`, `few`, `many`) → `other`. `#` is the count inside plural branches. Count must be integer-like or evaluation raises.
+
+### Nesting
+
+Select and plural branches can nest other syntax. `config.max_message_depth` caps depth.
+
+### Apostrophes
+
+| Pattern | Result |
+| --- | --- |
+| `Bob''s item` | `Bob's item` |
+| `'{count}'` | `{count}` |
+| `Bob's item` | `Bob's item` |
+
+### RPG Maker control codes
+
+Catalog:
+
+```json
+{
+  "npc": {
+    "line": "\\c[3]{name}\\c[0] joined the party."
+  }
+}
+```
+
+```ruby
+Kotoba.t("npc.line", {"name" => "Ari"})
+# => "\c[3]Ari\c[0] joined the party."
+```
+
+Validation can flag translations that drop control codes. See [Validation CLI](/tooling/validation-cli).
+
+### Plural locales supported today
+
+English one/other, French `0`/`1` as `one`, Japanese/Korean/Chinese as `other`, Russian, Polish, Portuguese, Arabic, Czech, Slovak, Slovenian, Lithuanian, Latvian. Not full CLDR.
+
+---
+
+# Quick Start
+Source: https://mateo-m.github.io/kotoba/essential/quick-start
+
+Clone this repo, add a catalog, load Kotoba in Ruby 1.8, and call `Kotoba.t`. You should see translated strings in the console or a test script.
+
+Fangame with `Game.exe`? Use [Installing in a game](/essential/installation) instead.
+
+In a game folder, release `kotoba/boot.rb` uses `require File.join(".", "kotoba", "core")` instead of `require_relative`. Same API calls; paths are relative to `Game.exe`.
+
+## Create a catalog
+
+Add `Locales/en.json`:
+
+```json
+{
+  "menu": {
+    "save": "Save",
+    "load": "Load"
+  },
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!",
+    "item_count": "{count, plural, =0 {No items} one {# item} other {# items}}"
+  }
+}
+```
+
+Catalogs are strict JSON. Leaves must be strings. Lookup keys join nested names with dots. See [Catalog format](/essential/catalog-format).
+
+## Load the runtime
+
+```ruby
+require_relative "kotoba/core"
+
+Kotoba.configure do |config|
+  config.default_locale = "en"
+  config.available_locales = ["en"]
+  config.catalog_paths = {
+    "en" => ["Locales/en.json"]
+  }
+end
+
+Kotoba.load!
+```
+
+## Translate strings
+
+```ruby
+Kotoba.t("menu.save")
+# => "Save"
+
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+# => "A wild Pikachu appeared!"
+
+Kotoba.t("battle.item_count", {"count" => 2})
+# => "2 items"
+```
+
+`_T` is installed by default:
+
+```ruby
+_T("menu.save")
+```
+
+## Add another locale
+
+Create `Locales/fr.json`:
+
+```json
+{
+  "menu": {
+    "save": "Sauvegarder",
+    "load": "Charger"
+  },
+  "battle": {
+    "wild_appeared": "Un {pokemon} sauvage apparait !",
+    "item_count": "{count, plural, =0 {Aucun objet} one {# objet} other {# objets}}"
+  }
+}
+```
+
+Point config at both files:
+
+```ruby
+Kotoba.configure do |config|
+  config.default_locale = "en"
+  config.available_locales = ["en", "fr"]
+  config.catalog_paths = {
+    "en" => ["Locales/en.json"],
+    "fr" => ["Locales/fr.json"]
+  }
+end
+```
+
+Switch locale:
+
+```ruby
+Kotoba.locale = "fr"
+Kotoba.t("menu.save")
+# => "Sauvegarder"
+```
+
+## Validate before you ship
+
+```sh
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
+```
+
+`load-test` checks JSON and message syntax. `validate` checks missing keys, placeholder mismatches, and RPG Maker control-code drift.
+
+Plain RGSS: [Bare RGSS](/integration/bare-rgss). Essentials: [Pokemon Essentials](/integration/pokemon-essentials). Custom kit: [Third-party adapters](/integration/third-party).
+
+---
+
+# Runtime API
+Source: https://mateo-m.github.io/kotoba/essential/runtime-api
+
+Ruby 1.8. Examples avoid keyword arguments, safe navigation, and post-RGSS1 stdlib.
+
+- **Fangame with `Game.exe`:** [Installing in a game](/essential/installation) — `load "kotoba/boot.rb"` in Script Editor; edit `kotoba/boot.rb` on disk for `catalog_paths`, `available_locales`, and the adapter.
+- **Git clone:** [Quick Start](/essential/quick-start) — same API; paths relative to the repo root.
+
+The **Setup** block below belongs in `kotoba/boot.rb` (or an equivalent boot script). Do not paste the whole block into Script Editor unless you are following [Bare RGSS](/integration/bare-rgss) inline boot as an alternative to `boot.rb`.
+
+## Setup
+
+**Catalog** (`Locales/en.json`):
+
+```json
+{
+  "menu": {
+    "save": "Save"
+  }
+}
+```
+
+**Boot** (inside `kotoba/boot.rb` or an equivalent script):
+
+```ruby
+require_relative "kotoba/core"
+
+Kotoba.configure do |config|
+  config.default_locale = "en"
+  config.available_locales = ["en", "fr", "fr-CA"]
+  config.catalog_paths = {
+    "en" => ["Locales/en.json"],
+    "fr" => ["Locales/fr.json"]
+  }
+end
+
+Kotoba.load!
+```
+
+```ruby
+Kotoba.t("menu.save")
+# => "Save"
+```
+
+## Configuration
+
+Locale and catalog fields:
+
+- `source_locale`: authoring source locale. Default: `"en"`.
+- `default_locale`: final fallback locale. Default: `"en"`.
+- `available_locales`: locales known to menus and tools.
+- `locale_names`: display names keyed by locale.
+- `catalog_paths`: locale-to-file mapping used by `load!`.
+- `catalog_discovery_paths`: directories scanned for `<locale>.json` and `<locale>/*.json`.
+- `fallbacks`: explicit fallback chains. Use `"default"` for the shared fallback tail.
+
+Missing translation fields:
+
+- `strict`: raise `Kotoba::MissingTranslationError` for missing keys.
+- `diagnostics`: append missing keys to `diagnostics_file`.
+- `diagnostics_file`: missing-key log path. Default: `kotoba_missing.log`.
+- `show_missing_keys`: render `"translation missing: key"`.
+- `missing_handler`: callable receiving `key, locale`.
+
+Runtime limits and policies:
+
+- `warn_catalog_bytes`: warn threshold for one catalog.
+- `max_catalog_bytes`: hard limit for one catalog.
+- `max_loaded_catalog_bytes`: hard limit across loaded catalogs.
+- `max_json_depth`: JSON nesting limit.
+- `max_message_depth`: message nesting limit.
+- `duplicate_key_policy`: `"override"`, `"warn"`, or `"error"`.
+- `missing_variable_policy`: `"keep"`, `"empty"`, or `"error"`.
+- `warning_handler`: callable receiving warning text.
+- `locale_change_handler`: callable receiving `old_locale, new_locale`.
+
+Integration fields:
+
+- `global_helper`: installs `_T`. Default: `true`.
+- `i18n_alias`: when `true`, sets `I18n = Kotoba` if no `I18n` constant exists yet (legacy script compatibility).
+- `file_loader`: callable receiving a path and returning file contents.
+
+## Lifecycle
+
+- `Kotoba.reset!`: reset config, locale, catalogs, and helpers.
+- `Kotoba.config`: return the config object.
+- `Kotoba.configure { |config| ... }`: mutate config and return it.
+- `Kotoba.locale`: return the active normalized locale.
+- `Kotoba.locale = "fr_CA"`: normalize, store, and load the locale chain.
+- `Kotoba.available_locales`: return normalized configured locales.
+- `Kotoba.normalize_locale(value)`: normalize locale IDs, e.g. `"pt_br"` to `"pt-BR"`.
+- `Kotoba.fallback_chain(locale)`: return lookup order for a locale.
+- `Kotoba.on_locale_change(callback)`: register a locale-change callback.
+- `Kotoba.source_text_key(source_text, options = nil)`: look up a literal source-text mapping without splitting the source sentence on dots.
+
+Locale-change handlers fire only when the normalized locale actually changes:
+
+```ruby
+Kotoba.on_locale_change(lambda do |old_locale, new_locale|
+  # refresh windows or menus here
+end)
+```
+
+## Loading catalogs
+
+`load!` and `reload!` are what games use after `catalog_paths` is set in `kotoba/boot.rb`.
+
+`load_hash` and `load_json` are for tests, adapters, and one-off scripts. Prefer `load!` in shipped games.
+
+Load a Ruby hash (tests and adapters):
+
+```ruby
+Kotoba.load_hash("en", {
+  "menu" => {
+    "save" => "Save"
+  }
+})
+
+Kotoba.t("menu.save")
+# => "Save"
+```
+
+Load JSON source:
+
+```ruby
+source = File.open("Locales/en.json", "rb") { |file| file.read }
+Kotoba.load_json("en", source)
+```
+
+Load configured files:
+
+```ruby
+Kotoba.load!
+```
+
+Reload configured files:
+
+```ruby
+Kotoba.reload!
+```
+
+`load_path(locale, path)` reads one JSON file. If `config.file_loader` is set, the loader is used instead of `File.open`.
+
+Catalog discovery can reduce boot config for folder-based projects:
+
+```ruby
+Kotoba.configure do |config|
+  config.catalog_discovery_paths = ["Locales"]
+end
+```
+
+For locale `en`, the runtime discovers:
+
+```text
+Locales/en.json
+Locales/en/*.json
+```
+
+## Translating
+
+**Catalog:**
+
+```json
+{
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}
+```
+
+```ruby
+Kotoba.t("battle.wild_appeared", {"pokemon" => "Pikachu"})
+# => "A wild Pikachu appeared!"
+```
+
+Supported options:
+
+- `"locale"`: override the active locale.
+- `"default"`: fallback message if the key is missing.
+
+```ruby
+Kotoba.t(
+  "battle.wild_appeared",
+  {"pokemon" => "Pikachu"},
+  {"locale" => "fr", "default" => "A wild {pokemon} appeared!"}
+)
+```
+
+Namespaces are useful inside scripts that repeatedly read the same subtree:
+
+```ruby
+battle_t = Kotoba.namespace("battle")
+battle_t.call("wild_appeared", {"pokemon" => "Pikachu"})
+```
+
+Global helper:
+
+```ruby
+_T("menu.save")
+```
+
+Inline catalog markers in database or event text use the `kotoba:` prefix.
+
+**Catalog** (same `menu.save` as above):
+
+```ruby
+Kotoba::Adapters::BareRGSS.translate_message("kotoba:menu.save", nil)
+# => "Save"
+```
+
+**Migration catalog** with `source_text`:
+
+```json
+{
+  "source_text": {
+    "Hello. {1}": "legacy.line_0001"
+  },
+  "legacy": {
+    "line_0001": "Hello. {name}"
+  }
+}
+```
+
+```ruby
+Kotoba.source_text_key("Hello. {1}")
+# => "legacy.line_0001"
+```
+
+Essentials migration adapters use this because source strings contain periods and cannot be dot-separated lookup paths.
+
+## Errors
+
+- `Kotoba::MissingTranslationError`: raised for missing keys when `strict` is true.
+- `Kotoba::CatalogError`: invalid catalog root/leaves, duplicate keys configured as errors, or catalog size limits.
+- `Kotoba::MessageParseError`: invalid message syntax during catalog load.
+- `Kotoba::MessageEvaluationError`: invalid plural variables or missing variables configured as errors.
+
+## Boundary
+
+The core runtime does not know about RPG Maker maps, Pokemon Essentials, PBS files, or editor internals. Those belong in adapters and tooling.
+
+---
+
+# Troubleshooting
+Source: https://mateo-m.github.io/kotoba/essential/troubleshooting
+
+Install walkthrough: [Installing in a game](/essential/installation).
+
+---
+
+## Install and file layout
+
+### `LoadError: No such file or directory - kotoba/boot.rb`
+
+Kotoba is not next to `Game.exe`. Common cause: an extra folder from the ZIP.
+
+```text
+Wrong:
+  MyGame/kotoba-essentials-v20/kotoba/boot.rb
+
+Right:
+  MyGame/kotoba/boot.rb
+  MyGame/Game.exe
+```
+
+Move `kotoba/` and `INSTALL.md` beside `Game.exe`.
+
+### Double-clicked `boot.rb` and nothing happened
+
+RPG Maker only runs scripts from the Script Editor.
+
+**Tools → Script Editor** → `Kotoba` section above `Main`:
+
+```ruby
+load "kotoba/boot.rb"
+```
+
+### Wrong smoke test for your ZIP
+
+| ZIP | Load line |
+| --- | --- |
+| `kotoba-essentials-*.zip` | `load "kotoba/samples/script_editor/essentials_smoke_test.rb"` |
+| `kotoba-bare-rgss.zip` | `load "kotoba/samples/script_editor/bare_rgss_smoke_test.rb"` |
+
+---
+
+## Playtest results
+
+### Smoke test works but dialog is still English
+
+Kotoba is loaded; the game still calls `_INTL` or hard-coded strings. The smoke test only checks the sample catalog.
+
+Fix: [Pokemon Essentials](/integration/pokemon-essentials) or [Essentials migration](/integration/pokemon-essentials-migration).
+
+### Playtest OK, no message box
+
+You used `load_only.rb` or `load "kotoba/boot.rb"`. Boot only, no test popup.
+
+Use a smoke test script, or add `pbMessage(Kotoba.t(...))`.
+
+### `LoadError` or `NameError` on playtest
+
+| Error hint | Likely cause | Fix |
+| --- | --- | --- |
+| `kotoba/core` | Missing or wrong `kotoba/` path | [Install layout](#loaderror-no-such-file-or-directory---kotobabootrb) |
+| `essentials_v20` (adapter) | Wrong Essentials ZIP | Matching ZIP from [Releases](https://github.com/mateo-m/kotoba/releases) |
+| `Kotoba` uninitialized | Boot did not run | `Kotoba` section above `Main` |
+
+---
+
+## Translations and catalogs
+
+### On screen: `translation missing: menu.save`
+
+Key missing from the loaded catalog for the active locale.
+
+1. Open the JSON in `kotoba/boot.rb` → `catalog_paths`.
+2. Confirm nested key exists (`"menu": { "save": "Save" }` for `menu.save`).
+3. Restart playtest after changing `catalog_paths`.
+
+### On screen: `Hello, {name}!`
+
+Script did not pass `name`, or `missing_variable_policy` is `"keep"`.
+
+```json
+{ "npc": { "greeting": "Hello, {name}!" } }
+```
+
+Wrong: `Kotoba.t("npc.greeting")` → `Hello, {name}!`
+
+Right: `Kotoba.t("npc.greeting", {"name" => "Ari"})` → `Hello, Ari!`
+
+### French line shows English
+
+Locale not switched, or `Locales/fr.json` not listed in `kotoba/boot.rb` → `catalog_paths`.
+
+In `kotoba/boot.rb`, set `available_locales` and `catalog_paths`, then call `Kotoba.locale = "fr"` in script before the line runs.
+
+---
+
+## Validation
+
+On a machine with this repo:
+
+```sh
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
+```
+
+[Validation CLI](/tooling/validation-cli). Returned spreadsheets may drop placeholders or `\c[n]` codes. Send translators [Placeholders](/translators/placeholders).
+
+---
+
+# Integration
+Source: https://mateo-m.github.io/kotoba/integration
+
+Pick the guide for your project. Each ZIP from [GitHub Releases](https://github.com/mateo-m/kotoba/releases) already includes the matching adapter in `kotoba/boot.rb`.
+
+| Guide | Project |
+| --- | --- |
+| [Bare RGSS](/integration/bare-rgss) | Plain RPG Maker XP |
+| [Pokemon Essentials](/integration/pokemon-essentials) | Essentials v16–v21 or BES |
+| [Essentials migration](/integration/pokemon-essentials-migration) | Moving `_INTL` strings into catalogs |
+| [Third-party adapters](/integration/third-party) | Custom engine or fork |
+
+Do not copy adapter files from this repo by hand. Use a release ZIP or follow the third-party guide to register your own adapter.
+
+---
+
+# Bare RGSS integration
+Source: https://mateo-m.github.io/kotoba/integration/bare-rgss
+
+Install: [Installing in a game](/essential/installation). Sample catalog: `kotoba/samples/bare_rgss/en.json`. Covers layout, boot, and `kotoba:` inline markers after Kotoba loads.
+
+## Project layout
+
+```text
+Game/
+  Data/
+  Graphics/
+  Locales/
+    en.json
+    fr.json
+  kotoba/
+    boot.rb
+    config.rb
+    core.rb
+    json.rb
+    message_eval.rb
+    plural_rules.rb
+    adapters/
+      bare_rgss.rb
+      registry.rb
+```
+
+The exact folder names can change, but keep paths simple. Old RGSS Ruby is not a good place for clever load logic.
+
+## Catalog
+
+**`Locales/en.json`:**
+
+```json
+{
+  "menu": {
+    "save": "Save",
+    "load": "Load"
+  },
+  "npc": {
+    "greeting": "Hello, {name}!"
+  }
+}
+```
+
+**Lookups and results:**
+
+```ruby
+Kotoba.t("menu.save")
+# => "Save"
+
+Kotoba.t("npc.greeting", {"name" => "Ari"})
+# => "Hello, Ari!"
+```
+
+## Boot script
+
+Default for release ZIPs: edit `kotoba/boot.rb` on disk and `load "kotoba/boot.rb"` from Script Editor ([Installing in a game](/essential/installation)). The ZIP’s `boot.rb` already configures catalogs and calls `Kotoba.use_adapter("bare_rgss", …)` when you use the bare adapter package.
+
+The inline script below is equivalent if you are **not** using `kotoba/boot.rb` (custom layout, or pasting boot directly into a Script Editor section):
+
+Create a script section near the top of your RPG Maker scripts:
+
+```ruby
+KOTOBA_ROOT = "."
+
+require File.join(KOTOBA_ROOT, "kotoba", "core")
+
+Kotoba.configure do |config|
+  config.default_locale = "en"
+  config.available_locales = ["en", "fr"]
+  config.catalog_paths = {
+    "en" => ["Locales/en.json"],
+    "fr" => ["Locales/fr.json"]
+  }
+  config.strict = false
+  config.show_missing_keys = true
+end
+
+Kotoba.load!
+```
+
+If your game packages files in a custom archive, set `config.file_loader`:
+
+```ruby
+config.file_loader = lambda do |path|
+  # Return the file contents as a string.
+  File.open(path, "rb") { |file| file.read }
+end
+```
+
+## Translating script text
+
+**Catalog** (same `Locales/en.json` as above):
+
+```ruby
+message = Kotoba.t("npc.greeting", {"name" => "Ari"})
+# => "Hello, Ari!"
+
+message = _T("npc.greeting", {"name" => "Ari"})
+# => "Hello, Ari!"
+```
+
+## Changing locale
+
+```ruby
+Kotoba.locale = "fr"
+```
+
+The runtime loads the new locale and its fallback chain on assignment.
+
+## Suggested RPG Maker usage
+
+**Catalog** (`Locales/en.json`):
+
+```json
+{
+  "menu": { "save": "Save", "load": "Load" },
+  "npc": { "greeting": "Hello, {name}!" }
+}
+```
+
+**In events or scripts:**
+
+```ruby
+pbMessage(_T("npc.greeting", {"name" => $game_player.name}))
+# => "Hello, <player name>!"
+
+commands = [_T("menu.save"), _T("menu.load")]
+# => ["Save", "Load"]
+```
+
+For debug-only missing-key visibility:
+
+```ruby
+Kotoba.configure do |config|
+  config.show_missing_keys = $DEBUG ? true : false
+end
+```
+
+## Optional: `kotoba:` prefix adapter
+
+If you want database or event text to carry translation keys inline (`"kotoba:menu.save"`) instead of calling `_T` in script, the bare ZIP already ships `kotoba/adapters/bare_rgss.rb`. Edit `kotoba/boot.rb` to match the boot block below instead of pasting a second copy into Script Editor.
+
+Copy the optional bare adapter too (only if missing from your tree):
+
+```text
+  kotoba/
+    adapters/
+      registry.rb
+      bare_rgss.rb
+```
+
+Boot with:
+
+```ruby
+KOTOBA_ROOT = "."
+
+require File.join(KOTOBA_ROOT, "kotoba", "core")
+require File.join(KOTOBA_ROOT, "kotoba", "adapters", "bare_rgss")
+
+Kotoba.configure do |config|
+  config.default_locale = "en"
+  config.catalog_paths = {
+    "en" => ["Locales/en.json"],
+    "fr" => ["Locales/fr.json"]
+  }
+end
+
+Kotoba.use_adapter("bare_rgss", {"load" => true})
+```
+
+Strings prefixed with `kotoba:` translate through the adapter; plain strings pass through.
+
+**Catalog:**
+
+```json
+{
+  "menu": {
+    "save": "Save"
+  }
+}
+```
+
+```ruby
+Kotoba::Adapters::BareRGSS.translate_message("kotoba:menu.save", nil)
+# => "Save"
+
+Kotoba::Adapters::BareRGSS.translate_message("Save", nil)
+# => "Save"
+```
+
+Most bare RGSS projects do not need this. Prefer `_T("menu.save")` in script unless you already store `kotoba:` markers in data.
+
+## Validate before copying into the game
+
+See [Validation CLI](/tooling/validation-cli):
+
+```sh
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
+```
+
+Fix catalog errors, then copy `Locales/*.json` into your game folder beside `Game.exe`.
+
+---
+
+# Pokemon Essentials integration
+Source: https://mateo-m.github.io/kotoba/integration/pokemon-essentials
+
+Essentials adapters bridge existing `_INTL` calls so you can adopt Kotoba without moving every string at once.
+
+Install: [Installing in a game](/essential/installation). Sample: `kotoba/samples/pokemon_essentials/en.json`.
+
+ZIP (`kotoba-essentials-v16.zip` through `v21`, or `kotoba-essentials-bes.zip`) from [GitHub Releases](https://github.com/mateo-m/kotoba/releases).
+
+Supported targets:
+
+- `essentials_v16`
+- `essentials_v17`
+- `essentials_v18`
+- `essentials_v19`
+- `essentials_v20`
+- `essentials_v21`
+- `essentials_bes`
+
+## Choose the adapter
+
+Your release ZIP’s `kotoba/boot.rb` already `require`s the matching adapter file and calls `Kotoba.use_adapter`. Edit that file for `catalog_paths` and locale lists ([Installing in a game §5](/essential/installation#5-your-own-translations)).
+
+Use the snippet below only for a custom boot layout, or when reading what the generated `boot.rb` contains:
+
+```ruby
+require File.join(".", "kotoba", "core")
+require File.join(".", "kotoba", "adapters", "essentials_v18")
+
+Kotoba.use_adapter("essentials_v18", {
+  "catalog_paths" => {
+    "en" => ["Locales/en.json"],
+    "fr" => ["Locales/fr.json"]
+  },
+  "load" => true
+})
+```
+
+Use the adapter matching your Essentials version. `essentials_v19` and `essentials_v20` are separate modules with the same `_INTL` / `_ISPRINTF` bridge shape.
+
+## `source_text` vs stable keys
+
+| Situation | Approach |
+| --- | --- |
+| Existing `_INTL("English sentence", …)` still in scripts | `source_text` map in `Locales/en.json` + adapter bridge |
+| New or refactored scripts | `Kotoba.t("battle.wild_appeared", {…})` with stable keys |
+
+## Catalog for legacy `_INTL`
+
+Essentials scripts call:
+
+```ruby
+_INTL("A wild {1} appeared!", pokemon.name)
+```
+
+**Catalog** (`Locales/en.json`):
+
+```json
+{
+  "source_text": {
+    "A wild {1} appeared!": "battle.wild_appeared"
+  },
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}
+```
+
+The bridge maps the English source string to a stable key, then evaluates the catalog message.
+
+**Bridge call and result:**
+
+```ruby
+Kotoba::Adapters::EssentialsV18._INTL("A wild {1} appeared!", "Pikachu")
+# => "A wild Pikachu appeared!"
+```
+
+### `_ISPRINTF` example
+
+Catalog:
+
+```json
+{
+  "source_text": {
+    "You have {1:d} coins.": "ui.coins"
+  },
+  "ui": {
+    "coins": "You have {count} coins."
+  }
+}
+```
+
+```ruby
+Kotoba::Adapters::EssentialsV18._ISPRINTF("You have {1:d} coins.", 42)
+# => "You have 42 coins."
+```
+
+Volunteers translating `battle.wild_appeared` keep `{pokemon}`. See [Placeholders](/translators/placeholders).
+
+## Optional global patch
+
+The built-in Essentials adapters do not replace global `_INTL` at file load time. Your ZIP’s `kotoba/boot.rb` loads the adapter; existing game scripts still call `_INTL` until you route them through the bridge (catalog + `source_text`) or add a global patch.
+
+Add a project-local Script Editor section **after** `kotoba/boot.rb` loads, only if `_INTL` is not already reaching the adapter and you have checked for custom Essentials patches:
+
+```ruby
+def _INTL(*args)
+  Kotoba::Adapters::EssentialsV18._INTL(*args)
+end
+
+def _ISPRINTF(*args)
+  Kotoba::Adapters::EssentialsV18._ISPRINTF(*args)
+end
+```
+
+Replace `EssentialsV18` with your adapter module. Prefer catalog + `source_text` over a global patch when you can.
+
+## Stable-key new code
+
+Prefer stable keys instead of English source sentences as API.
+
+**Catalog:**
+
+```json
+{
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  },
+  "menu": {
+    "pokemon": "Pokémon",
+    "bag": "Bag",
+    "save": "Save"
+  }
+}
+```
+
+```ruby
+Kotoba.t("battle.wild_appeared", {"pokemon" => pokemon.name})
+# => "A wild Pikachu appeared!"
+
+pbMessage(Kotoba.t("menu.save"))
+# => shows "Save"
+```
+
+## v21 split messages
+
+The v21 adapter can load split message files through normal `catalog_paths`:
+
+```ruby
+Kotoba.use_adapter("essentials_v21", {
+  "catalog_paths" => {
+    "en" => [
+      "Locales/en/messages_core.json",
+      "Locales/en/messages_game.json"
+    ]
+  },
+  "load" => true
+})
+```
+
+## BES bridge and data names
+
+The BES adapter supports the same `_INTL` and `_ISPRINTF` bridge as the v16-v20 adapters:
+
+```ruby
+Kotoba.use_adapter("essentials_bes", {
+  "catalog_paths" => {"en" => ["Locales/en.json"]},
+  "load" => true
+})
+
+Kotoba::Adapters::EssentialsBES._INTL("A wild {1} appeared!", "Pikachu")
+Kotoba::Adapters::EssentialsBES._ISPRINTF("You have {1:d} coins.", 42)
+```
+
+Use `install_global: true` only when you intentionally want project-wide `_INTL` routing. See [Optional Global Patch](#optional-global-patch).
+
+The adapter also exposes small data-name helpers:
+
+```ruby
+Kotoba::Adapters::EssentialsBES.move_name("thunderbolt")
+Kotoba::Adapters::EssentialsBES.item_name("potion")
+Kotoba::Adapters::EssentialsBES.ability_name("overgrow")
+```
+
+**Catalog:**
+
+```json
+{
+  "data": {
+    "moves": {
+      "thunderbolt": {
+        "name": "Thunderbolt"
+      }
+    }
+  }
+}
+```
+
+```ruby
+Kotoba::Adapters::EssentialsBES.move_name("thunderbolt")
+# => "Thunderbolt"
+```
+
+## Migration workflow
+
+1. Add the runtime and adapter.
+2. Add a source locale JSON catalog.
+3. Add `source_text` mappings for existing `_INTL` strings.
+4. Validate the source catalog.
+5. Add translated locale catalogs.
+6. Validate translated catalogs against the source catalog.
+7. Convert new code to stable `Kotoba.t` keys over time.
+
+## Validation
+
+```sh
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
+```
+
+Validation catches missing keys, placeholder mismatches, and RPG Maker control-code mismatches before playtest. Copy validated `Locales/*.json` into the game folder. Commands: [Validation CLI](/tooling/validation-cli).
+
+---
+
+# Essentials migration
+Source: https://mateo-m.github.io/kotoba/integration/pokemon-essentials-migration
+
+Essentials adapters bridge legacy `_INTL` calls. Adopt stable JSON catalogs one area at a time.
+
+## `source_text` vs stable keys
+
+| Situation | Approach |
+| --- | --- |
+| Existing `_INTL("English sentence", …)` still in scripts | `source_text` map in `Locales/en.json` + adapter bridge |
+| New or refactored scripts | `Kotoba.t("battle.wild_appeared", {…})` with stable keys |
+
+## The problem with source-English keys
+
+Legacy Essentials text passes the English sentence straight into `_INTL`:
+
+```ruby
+_INTL("A wild {1} appeared!", name)
+```
+
+When English copy changes, translations keyed on that sentence break.
+
+## Bridge with `source_text`
+
+During migration, map legacy source strings to stable keys:
+
+```json
+{
+  "source_text": {
+    "A wild {1} appeared!": "battle.wild_appeared"
+  },
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}
+```
+
+The adapter resolves the source string to a stable key, then evaluates the runtime message.
+
+## Prefer stable keys in new code
+
+New scripts should call keys directly:
+
+```ruby
+Kotoba.t("battle.wild_appeared", {"pokemon" => name})
+```
+
+Stable keys survive refactors and keep translator diffs small.
+
+## Migration plan
+
+1. Install the matching Essentials adapter from a [release integration ZIP](/essential/installation).
+2. Add `Locales/en.json`.
+3. Add only the strings you are actively translating.
+4. Route `_INTL` through the adapter for the chosen project area.
+5. Add `source_text` mappings for those strings.
+6. Run validation.
+7. Add translated locale files.
+8. Convert new or frequently edited scripts to direct `Kotoba.t` calls.
+
+Avoid migrating every string at once. Start with menus, battle text, or one plugin.
+
+## Import helpers
+
+Import commands use `bin/ruby18 bin/kotoba` from a cloned repo ([Validation CLI](/tooling/validation-cli)), not inside RPG Maker.
+
+Copy files from your game folder into the repo first (for example `build/mygame/PBS/moves.txt`, `build/mygame/Data/messages.dat`). Paths in the commands below are relative to the repo root. When using Docker via `bin/ruby18`, inputs must live under the repository directory.
+
+If the game ships compiled translations in `Data/messages.dat`, inspect it first:
+
+```sh
+bin/ruby18 bin/kotoba messages-dat-extract Data/messages.dat build/messages.extract.json
+```
+
+Then migrate it to a runtime catalog:
+
+```sh
+bin/ruby18 bin/kotoba messages-dat-migrate Data/messages.dat legacy Locales/legacy.json
+```
+
+Essentials paired-line text can be converted into a source-text bridge catalog:
+
+```sh
+bin/ruby18 bin/kotoba essentials-pairs-import intl.txt essentials Locales/en.essentials.json
+```
+
+Common PBS-style CSV files can be extracted into `data.<namespace>.<id>` catalogs:
+
+```sh
+bin/ruby18 bin/kotoba pbs-extract moves PBS/moves.txt Locales/en.moves.json
+bin/ruby18 bin/kotoba pbs-extract items PBS/items.txt Locales/en.items.json
+bin/ruby18 bin/kotoba pbs-extract abilities PBS/abilities.txt Locales/en.abilities.json
+bin/ruby18 bin/kotoba pbs-extract pokemon PBS/pokemon.txt Locales/en.pokemon.json
+bin/ruby18 bin/kotoba pbs-extract types PBS/types.txt Locales/en.types.json
+bin/ruby18 bin/kotoba pbs-extract trainers PBS/trainers.txt Locales/en.trainers.json
+```
+
+BES and v21-style projects may also ship `Text_english_core/` and `Text_english_game/` directories. Convert them with:
+
+```sh
+bin/ruby18 bin/kotoba text-english-import Text_english_core core Locales/en.core.json
+bin/ruby18 bin/kotoba text-english-import Text_english_game game Locales/en.game.json
+```
+
+Map event dialogue can be imported from compiled `Data/Map*.rxdata` files:
+
+```sh
+bin/ruby18 bin/kotoba map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
+```
+
+Copy outputs into your game’s `Locales/` beside `Game.exe`, then point `kotoba/boot.rb` at them.
+
+---
+
+# Third-party adapters
+Source: https://mateo-m.github.io/kotoba/integration/third-party
+
+Adapters connect `Kotoba` to an engine, starter kit, or project convention. Keep them thin: the runtime owns locale fallback, catalog loading, and message evaluation; adapters own integration details.
+
+## Adapter contract
+
+An adapter is any object that responds to:
+
+```ruby
+install(options)
+```
+
+Register it by name:
+
+```ruby
+Kotoba.register_adapter("my_engine", Kotoba::Adapters::MyEngine)
+```
+
+Install it later:
+
+```ruby
+Kotoba.use_adapter("my_engine", {"load" => true})
+```
+
+`use_adapter` looks up the registered adapter and calls `install(options || {})`.
+
+## Minimal adapter
+
+Create `kotoba/adapters/my_engine.rb`:
+
+```ruby
+require File.join(File.dirname(__FILE__), "registry")
+
+module Kotoba
+  module Adapters
+    module MyEngine
+      def self.install(options)
+        paths = options["catalog_paths"] || options[:catalog_paths]
+        if paths
+          Kotoba.configure do |config|
+            config.catalog_paths = paths
+          end
+        end
+        Kotoba.load! if options["load"] || options[:load]
+        install_global_helper if options["install_global"] || options[:install_global]
+        true
+      end
+
+      def self.translate_text(text, variables)
+        if text.to_s[0, 7] == "kotoba:"
+          return Kotoba.t(text.to_s[7, text.to_s.length - 7], variables || {})
+        end
+        text
+      end
+
+      def self.install_global_helper
+        return if Object.method_defined?(:_MY_KOTOBA)
+        Object.class_eval do
+          def _MY_KOTOBA(key, variables = nil, options = nil)
+            Kotoba.t(key, variables || {}, options || {})
+          end
+        end
+      end
+    end
+  end
+end
+
+Kotoba.register_adapter("my_engine", Kotoba::Adapters::MyEngine)
+```
+
+Use string and symbol option keys. RPG Maker scripts and external Ruby code mix both styles.
+
+## Example usage
+
+```ruby
+require_relative "kotoba/core"
+require_relative "kotoba/adapters/my_engine"
+
+Kotoba.use_adapter("my_engine", {
+  "catalog_paths" => {
+    "en" => ["Locales/en.json"]
+  },
+  "load" => true,
+  "install_global" => true
+})
+
+_MY_KOTOBA("menu.save")
+```
+
+## Source-text bridge example
+
+Legacy engines translate source English:
+
+```ruby
+_INTL("A wild {1} appeared!", pokemon_name)
+```
+
+Use a catalog namespace to map source text to stable keys:
+
+```json
+{
+  "source_text": {
+    "A wild {1} appeared!": "battle.wild_appeared"
+  },
+  "battle": {
+    "wild_appeared": "A wild {pokemon} appeared!"
+  }
+}
+```
+
+Then bridge positional variables:
+
+```ruby
+def self.intl(source_text, *args)
+  key = Kotoba.t("source_text." + source_text.to_s, nil, {"default" => ""})
+  return source_text if key == ""
+  Kotoba.t(key, {"pokemon" => args[0], "arg1" => args[0]})
+end
+```
+
+Source-text bridges are migration tools. New code should call stable keys directly.
+
+## Test pattern
+
+Put tests under `test/compatibility/`:
+
+```ruby
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "test_helper"))
+
+adapter_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "kotoba", "adapters"))
+$LOAD_PATH.unshift(adapter_path) unless $LOAD_PATH.include?(adapter_path)
+require "my_engine"
+
+class MyEngineAdapterTest < KotobaTestCase
+  FIXTURE_ROOT = File.expand_path(File.join(File.dirname(__FILE__), "..", "fixtures", "my_engine"))
+
+  def test_adapter_loads_catalogs
+    Kotoba.use_adapter("my_engine", {
+      "catalog_paths" => {"en" => [File.join(FIXTURE_ROOT, "en.json")]},
+      "load" => true
+    })
+
+    assert_equal("Save", Kotoba.t("menu.save"))
+  end
+end
+```
+
+## Fixture policy
+
+Every supported adapter target needs fixtures:
+
+- generated minimal catalog data used by tests
+- a `SOURCE` file explaining engine/version provenance
+- local path, tag, commit, release date, or other source evidence
+- notes that fixtures are not copied full game data
+
+Do not claim support for an engine version without fixtures and acceptance tests.
+
+## What belongs in an adapter
+
+Adapter should:
+
+- configure catalog paths
+- load catalogs on install
+- bridge engine-specific markers to `Kotoba.t`
+- optionally install global helpers
+- expose small data-name helpers for known engine data
+
+Adapter should not:
+
+- add parser features
+- change runtime fallback behavior
+- put Pokemon/PBS/map assumptions into `kotoba/`
+- load large binary assets during unit tests
+- swallow install failures silently
+
+## Verification
+
+Run:
+
+```sh
+bin/ruby18 bin/lint
+```
+
+For core adapter changes, also run the cross-version Docker matrix in [Compatibility](/reference/compatibility).
+
+---
+
+# Introduction
+Source: https://mateo-m.github.io/kotoba/introduction
+
+You are reading the **latest** Kotoba guide. For a released library version, pick it in the version switcher in the header.
+
+## What is Kotoba?
+
+Kotoba loads JSON translation catalogs from your game folder at runtime. Drop a release ZIP beside `Game.exe`, add one line in Script Editor, and look up strings with `Kotoba.t` from your scripts.
+
+Catalog (`Locales/en.json`):
+
+```json
+{
+  "menu": {
+    "save": "Save",
+    "load": "Load"
+  }
+}
+```
+
+Boot line in Script Editor:
+
+```ruby
+load "kotoba/boot.rb"
+```
+
+Lookup:
+
+```ruby
+Kotoba.t("menu.save")  # => "Save"
+```
+
+That is the whole loop: JSON on disk, one boot line, translated text at runtime. No compile step.
+
+## Essentials and bare RGSS
+
+Release ZIPs cover bare RPG Maker XP and Pokemon Essentials v16–v21 (plus BES). Adapters bridge existing `_INTL` calls while you move copy into catalogs. See [Integration](/integration/) to match your kit.
+
+:::info[Prerequisites]
+
+You need RPG Maker XP with Script Editor access. For Essentials, download the ZIP that matches your kit version (v16–v21 or BES).
+
+:::
+
+## Pick your path
+
+Different jobs start in different places:
+
+- **Game folder with `Game.exe`** — [Installing in a game](/essential/installation)
+- **Git clone for tooling or tests** — [Quick Start](/essential/quick-start)
+- **Translation work** — [For translators](/translators/)
+- **Install worked but something looks wrong** — [Troubleshooting](/essential/troubleshooting)
+
+The rest of the guide covers catalog format, message syntax, placeholders, and export to spreadsheets. If you already know you want Kotoba beside `Game.exe`, skip ahead to [Installation](/essential/installation).
+
+---
+
+# Compatibility
+Source: https://mateo-m.github.io/kotoba/reference/compatibility
+
+Ruby 1.8 is the compatibility gate. Newer Ruby versions help development and CI, but only 1.8 behavior matches what RPG Maker XP runs in production.
+
+## Tested rubies
+
+Current test coverage has been run against:
+
+- Ruby `1.8.7-p374`
+- Ruby `1.9.3-p551`
+- Ruby `3.0`
+- Ruby `3.1`
+
+Ruby 1.8 and 1.9 use local Docker images.
+
+## Legacy Ruby images
+
+Build Ruby 1.8:
+
+```sh
+docker build --platform linux/amd64 \
+  --build-arg RUBY_MAJOR=1.8 \
+  --build-arg RUBY_VERSION=1.8.7-p374 \
+  -t ruby-legacy:1.8.7-p374 \
+  -f docker/ruby-legacy/Dockerfile .
+```
+
+Build Ruby 1.9:
+
+```sh
+docker build --platform linux/amd64 \
+  --build-arg RUBY_MAJOR=1.9 \
+  --build-arg RUBY_VERSION=1.9.3-p551 \
+  -t ruby-legacy:1.9.3-p551 \
+  -f docker/ruby-legacy/Dockerfile .
+```
+
+## Running checks
+
+Ruby 1.8 checks:
+
+```sh
+bin/ruby18 bin/lint
+```
+
+Dockerfile checks:
+
+```sh
+bin/lint-docker
+```
+
+Full Bun script:
+
+```sh
+bun run lint
+```
+
+## Runtime rules
+
+Avoid Ruby features newer than 1.8 in runtime and adapter files:
+
+- keyword arguments
+- safe navigation
+- refinements
+- frozen-string comments
+- pattern matching
+- `Encoding`
+- standard-library `json`
+- modern Enumerable conveniences unless deliberately polyfilled
+
+Tests and scripts also stay conservative because they run under Ruby 1.8 during linting.
+
+---
+
+# Map event command reference
+Source: https://mateo-m.github.io/kotoba/reference/map-event-codes
+
+RPG Maker XP event commands that can carry player-facing text. Kotoba map import coverage.
+
+## Supported
+
+| Code | Name | Notes |
+| --- | --- | --- |
+| 101 | Show Text | First line block |
+| 401 | Show Text (continuation) | Additional lines |
+| 102 | Show Choices | Flat strings and nested choice arrays |
+| 402 | When | Choice branch labels |
+| 108 | Comment | Plain text and `_INTL` / `_ISPRINTF` in comments |
+| 408 | Comment More | Continuation comment lines |
+| 355 | Script | `_INTL` / `_ISPRINTF` strings |
+| 356 | Script (continuation) | `_INTL` / `_ISPRINTF` strings |
+| 655 | Script More | `_INTL` / `_ISPRINTF` strings |
+| 657 | Script More | `_INTL` / `_ISPRINTF` strings (single-quoted) |
+
+## Deferred
+
+| Code | Name | Reason |
+| --- | --- | --- |
+| 118 | Label | Developer jump labels, not player text |
+| 119 | Call Common Event | Internal event names |
+| 204 | Scroll Map | Numeric scroll parameters; occasional strings are map metadata labels |
+| 209 | Set Move Route | Text lives in move-route sub-commands (future work) |
+| 231 | Show Picture | Asset filenames, not dialogue |
+| 509 | Move Command | Move-route payload |
+
+---
+
+# Tooling
+Source: https://mateo-m.github.io/kotoba/tooling
+
+Catalogs live in `Locales/<locale>.json`. `bin/kotoba` (via `bin/ruby18`) validates them, imports game data, and exports interchange formats for translation tools.
+
+Commands run from a cloned repo on a PC, not inside RPG Maker.
+
+## Typical workflow
+
+1. Author or import strings into `Locales/<locale>.json`.
+2. Run [load-test and validate](/tooling/validation-cli) before handoff.
+3. Export the format your TMS expects ([TMS workflows](/tooling/tms)).
+4. Import translations back to nested JSON.
+5. Validate translated catalogs against the source locale.
+
+```sh
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
+```
+
+---
+
+# Crowdin
+Source: https://mateo-m.github.io/kotoba/tooling/crowdin
+
+For Crowdin, use nested JSON directly or export flat dot keys.
+
+Export:
+
+```sh
+bin/ruby18 bin/kotoba flat-export Locales/en.json build/crowdin.en.json
+```
+
+Import:
+
+```sh
+bin/ruby18 bin/kotoba flat-import build/crowdin.fr.json Locales/fr.json
+```
+
+Validate:
+
+```sh
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
+```
+
+Tell translators not to edit placeholders such as `{pokemon}` or RPG Maker control codes such as `\\c[2]`.
+
+---
+
+# SimpleLocalize
+Source: https://mateo-m.github.io/kotoba/tooling/simplelocalize
+
+Single-language JSON can use the runtime catalog format directly.
+
+For multi-language JSON, export a flattened all-language shape:
+
+```sh
+bin/ruby18 bin/kotoba tms-export simplelocalize_multi_language_json en Locales/en.json build/simplelocalize.json
+```
+
+Import translated multi-language JSON back into a runtime catalog:
+
+```sh
+bin/ruby18 bin/kotoba tms-import simplelocalize_multi_language_json fr build/simplelocalize.fr.json Locales/fr.json
+```
+
+The importer restores nested runtime JSON.
+
+---
+
+# TMS workflows
+Source: https://mateo-m.github.io/kotoba/tooling/tms
+
+Translation tools want flat JSON, multi-language JSON, XLIFF, or PO. The CLI converts between those formats and your nested `Locales/*.json` catalogs.
+
+Per-tool commands: [Crowdin](/tooling/crowdin), [SimpleLocalize](/tooling/simplelocalize), [Tolgee](/tooling/tolgee), [XLIFF and PO](/tooling/xliff-po).
+
+## Workflow
+
+1. Validate the source catalog.
+2. Export the format your TMS expects.
+3. Translate.
+4. Import back to nested JSON.
+5. Validate translated JSON against the source catalog.
+
+```sh
+bin/ruby18 bin/kotoba load-test Locales/en.json
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
+```
+
+## Supported interchange
+
+- flat dot-key JSON
+- SimpleLocalize multi-language JSON
+- XLIFF
+- PO
+
+Crowdin and Tolgee can use flat dot-key JSON workflows.
+
+---
+
+# Tolgee
+Source: https://mateo-m.github.io/kotoba/tooling/tolgee
+
+Tolgee can use flat dot-key JSON as an interchange format.
+
+Export:
+
+```sh
+bin/ruby18 bin/kotoba flat-export Locales/en.json build/tolgee.en.json
+```
+
+Import:
+
+```sh
+bin/ruby18 bin/kotoba flat-import build/tolgee.fr.json Locales/fr.json
+```
+
+Validate:
+
+```sh
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
+```
+
+Keep placeholders and RPG Maker control codes unchanged unless you also update source validation rules.
+
+---
+
+# Validation CLI
+Source: https://mateo-m.github.io/kotoba/tooling/validation-cli
+
+Run every command through Ruby 1.8:
+
+```sh
+bin/ruby18 bin/kotoba <command> ...
+```
+
+Clone this repo on a PC. Shipped games only need the runtime from a release ZIP.
+
+### Working with game files
+
+Import and extract commands read paths on your PC, not inside RPG Maker. Copy `PBS/`, `Data/`, `Text_english_*`, or `.rxdata` files from your game into the repo (for example `build/mygame/…`), then point commands at those paths. When using Docker via `bin/ruby18`, inputs must stay under the repository directory.
+
+## Load test
+
+```sh
+bin/ruby18 bin/kotoba load-test Locales/en.json
+```
+
+Checks:
+
+- strict JSON parsing
+- catalog root type
+- valid string leaves
+- message syntax
+
+## Cross-locale validation
+
+```sh
+bin/ruby18 bin/kotoba validate Locales/en.json Locales/fr.json
+```
+
+Checks:
+
+- keys missing from the translated catalog
+- placeholder mismatches
+- RPG Maker control-code mismatches
+
+Use the source locale as the first argument.
+
+`--human` for output aimed at translators:
+
+```sh
+bin/ruby18 bin/kotoba validate --human Locales/en.json Locales/fr.json
+```
+
+Write a JSON report:
+
+```sh
+bin/ruby18 bin/kotoba validate-report Locales/en.json Locales/fr.json build/validation-report.json
+bin/ruby18 bin/kotoba validate-report --human Locales/en.json Locales/fr.json build/validation-report.json
+```
+
+The report includes `ok`, `error_count`, grouped error counts, and the raw errors.
+
+## Spreadsheet export and import
+
+Export CSV with `key`, `english`, `translation`, `context`, `notes`:
+
+```sh
+bin/ruby18 bin/kotoba spreadsheet-export Locales/en.json build/translate.csv i18n.metadata.json
+```
+
+Import a completed spreadsheet back to nested JSON:
+
+```sh
+bin/ruby18 bin/kotoba spreadsheet-import Locales/en.json build/translate.csv Locales/fr.json
+```
+
+See [Spreadsheet handoff](/translators/handoff).
+
+## Schema validation
+
+```sh
+bin/ruby18 bin/kotoba schema catalog Locales/en.json
+bin/ruby18 bin/kotoba schema metadata metadata.json
+bin/ruby18 bin/kotoba schema validation validation.json
+```
+
+Schemas live under `schemas/`.
+
+## Flat key export and import
+
+Export nested JSON to dot keys:
+
+```sh
+bin/ruby18 bin/kotoba flat-export Locales/en.json build/en.flat.json
+```
+
+Import dot keys back to nested JSON:
+
+```sh
+bin/ruby18 bin/kotoba flat-import build/fr.flat.json Locales/fr.json
+```
+
+## Pseudolocalization
+
+```sh
+bin/ruby18 bin/kotoba pseudo Locales/en.json Locales/pseudo.json
+```
+
+Pseudolocalization preserves placeholders and RPG Maker control codes. Use it to find hard-coded strings and layout assumptions.
+
+## PBS Extraction
+
+Extract common text from PBS-style CSV files and sectioned PBS files. Supported namespaces: `moves`, `items`, `abilities`, `pokemon`, `types`, `trainers`, `trainer_types`, and `map_metadata`.
+
+```sh
+bin/ruby18 bin/kotoba pbs-extract moves PBS/moves.txt Locales/en.moves.json
+bin/ruby18 bin/kotoba pbs-extract items PBS/items.txt Locales/en.items.json
+bin/ruby18 bin/kotoba pbs-extract abilities PBS/abilities.txt Locales/en.abilities.json
+bin/ruby18 bin/kotoba pbs-extract pokemon PBS/pokemon.txt Locales/en.pokemon.json
+bin/ruby18 bin/kotoba pbs-extract types PBS/types.txt Locales/en.types.json
+bin/ruby18 bin/kotoba pbs-extract trainers PBS/trainers.txt Locales/en.trainers.json
+bin/ruby18 bin/kotoba pbs-extract trainer_types PBS/trainertypes.txt Locales/en.trainer_types.json
+bin/ruby18 bin/kotoba pbs-extract map_metadata PBS/map_metadata.txt Locales/en.map_metadata.json
+```
+
+The output uses the `data.<namespace>.<id>` shape used by adapter helpers. Items include `name`, `name_plural`, and `description`. Abilities include `name` and `description`. Pokemon sections include `name`, `kind`, `pokedex`, and optional `form_name`. Types include `name`. Trainer sections include `lose_text`, optional `end_speech`, `end_battle`, and `reg_speech`, plus `trainer_type`, `trainer_name`, and optional `version` parsed from the section header. Trainer type sections include `name`. Map metadata sections include `name`.
+
+## messages.dat Extraction
+
+Some Essentials games ship compiled translations in `Data/messages.dat`. Extract a readable structured dump:
+
+```sh
+bin/ruby18 bin/kotoba messages-dat-extract Data/messages.dat build/messages.extract.json
+```
+
+The extract output preserves section IDs, array entries, and source/target pairs from `OrderedHash` sections.
+
+Migrate directly to this runtime's catalog shape:
+
+```sh
+bin/ruby18 bin/kotoba messages-dat-migrate Data/messages.dat legacy Locales/legacy.json
+```
+
+The migration output creates stable generated keys under the namespace you provide, plus `source_text` mappings for source-text sections. Essentials placeholders such as `{1}` and `{1:d}` are converted to runtime placeholders such as `{arg1}`.
+
+If `bin/ruby18` is using Docker, the input `.dat` file must be under the repository directory or another path mounted into the container. Copy external game files into a local `tmp/` or `build/` directory before running the command.
+
+## Essentials paired-line import
+
+Import Essentials paired original/translated text files:
+
+```sh
+bin/ruby18 bin/kotoba essentials-pairs-import intl.txt essentials Locales/en.essentials.json
+```
+
+The output contains a `source_text` map and generated stable keys under the namespace you provide.
+
+## Text_english Import
+
+Import Essentials `Text_english_*` sectioned pair files. Each `[section]` header starts a new key group; lines alternate source and target text:
+
+```sh
+bin/ruby18 bin/kotoba text-english-import Text_english_core/TYPE_NAMES.txt core Locales/en.core.json
+```
+
+Import every `.txt` file in a directory:
+
+```sh
+bin/ruby18 bin/kotoba text-english-import Text_english_core core Locales/en.core.json
+```
+
+Directory imports merge files under `<namespace>.<filename>.<section>.line_*` keys.
+
+## Map event text from `.rxdata`
+
+Extract show-text and comment commands from compiled RPG Maker XP maps:
+
+```sh
+bin/ruby18 bin/kotoba map-rxdata-extract Data/Map001.rxdata build/map001.extract.json
+```
+
+Import map dialogue into a runtime catalog with `source_text` mappings:
+
+```sh
+bin/ruby18 bin/kotoba map-rxdata-import Data/Map001.rxdata maps Locales/en.maps.json
+```
+
+The importer reads event command codes `101` (show text), `401` (continuation), `102` (choices), `402` (choice branch), `108` (comment), `408` (comment continuation), and `_INTL` / `_ISPRINTF` strings inside script commands `355`, `356`, `655`, and `657` (double- or single-quoted). See [Map event codes](/reference/map-event-codes) for the full checklist. Copy external `.rxdata` files into the repository before running `bin/ruby18` through Docker.
+
+## Translator handoff package
+
+Create a small folder for translators:
+
+```sh
+bin/ruby18 bin/kotoba handoff build/handoff-en en Locales/en.json
+```
+
+The folder contains source JSON, flat JSON, pseudolocalized JSON, and a README.
+
+## TMS export and import
+
+SimpleLocalize multi-language JSON:
+
+```sh
+bin/ruby18 bin/kotoba tms-export simplelocalize_multi_language_json en Locales/en.json build/simplelocalize.json
+bin/ruby18 bin/kotoba tms-import simplelocalize_multi_language_json fr build/simplelocalize.fr.json Locales/fr.json
+```
+
+XLIFF:
+
+```sh
+bin/ruby18 bin/kotoba tms-export xliff fr Locales/en.json build/fr.xliff
+bin/ruby18 bin/kotoba tms-import xliff fr build/fr.xliff Locales/fr.json
+```
+
+PO:
+
+```sh
+bin/ruby18 bin/kotoba tms-export po fr Locales/en.json build/fr.po
+bin/ruby18 bin/kotoba tms-import po fr build/fr.po Locales/fr.json
+```
+
+## Failure behavior
+
+The CLI exits non-zero when validation fails.
+
+---
+
+# XLIFF and PO
+Source: https://mateo-m.github.io/kotoba/tooling/xliff-po
+
+Export:
+
+```sh
+bin/ruby18 bin/kotoba tms-export xliff fr Locales/en.json build/fr.xliff
+bin/ruby18 bin/kotoba tms-export po fr Locales/en.json build/fr.po
+```
+
+Import:
+
+```sh
+bin/ruby18 bin/kotoba tms-import xliff fr build/fr.xliff Locales/fr.json
+bin/ruby18 bin/kotoba tms-import po fr build/fr.po Locales/fr.json
+```
+
+The converter stores the catalog key in the XLIFF unit ID or PO `msgctxt`. Translators should edit target text only.
+
+---
+
+# For translators
+Source: https://mateo-m.github.io/kotoba/translators
+
+You do not need JSON or RPG Maker. The developer sends a spreadsheet (CSV) or a handoff zip.
+
+## Incoming files
+
+| File | What to do |
+| --- | --- |
+| `spreadsheet.en.csv` | Open in Google Sheets or Excel. Fill the translation column. |
+| `README.md` in a handoff zip | Rules from the developer. |
+
+### Spreadsheet columns
+
+| Column | Edit? | Purpose |
+| --- | --- | --- |
+| `key` | No | Internal ID (e.g. `battle.wild_appeared`). |
+| `english` | No | Source text. |
+| `translation` | Yes | Your line. |
+| `context` | No | Where it appears (menu, map, etc.). |
+| `notes` | No | Developer notes. |
+
+## Rules
+
+1. Edit only the `translation` column.
+2. Keep placeholders as in English: `{pokemon}`, `{name}`, `{count}`, `{1}`, `{2}`, etc.
+3. Keep RPG Maker color codes: `\c[2]`, `\c[0]`, and similar.
+4. Do not add, remove, or rename rows.
+5. Leave `translation` blank if you are not done with that row.
+
+## Placeholders
+
+Curly braces are filled in by the game at show time.
+
+| English | Good translation | On screen (example) |
+| --- | --- | --- |
+| `A wild {pokemon} appeared!` | `Un {pokemon} sauvage apparait !` | `Un Pikachu sauvage apparait !` |
+| `A wild {1} appeared!` | `¡Un {1} salvaje apareció!` | `¡Un Pikachu salvaje apareció!` |
+| `\c[2]Careful!\c[0]` | `\c[2]¡Cuidado!\c[0]` | red “¡Cuidado!” in game |
+
+You can reorder `{1}` and `{2}` for grammar if each number still appears once. Ask the developer if unsure.
+
+Details: [Placeholders](/translators/placeholders).
+
+## Hand back
+
+Send the spreadsheet back. The developer imports it and checks placeholders and color codes.
+
+Unclear strings? Ask for a note in `notes` or `context` and a new sheet.
+
+---
+
+# Spreadsheet handoff
+Source: https://mateo-m.github.io/kotoba/translators/handoff
+
+The game loads `Locales/<locale>.json`. Spreadsheets are for translator round-trips in Sheets or Excel.
+
+Clone this repo on a PC to run export/import commands ([Tooling](/tooling/)). Copy finished `Locales/*.json` into the game folder beside `Game.exe`.
+
+Send translators [For translators](/translators/) and [Placeholders](/translators/placeholders) with the CSV.
+
+## Workflow
+
+1. Build or import English (`Locales/en.json`).
+2. Export a spreadsheet.
+3. Send the CSV or a `handoff/` zip.
+4. Import the returned CSV into `Locales/fr.json` (or another locale).
+5. Validate before shipping.
+
+```sh
+bin/ruby18 bin/kotoba spreadsheet-export Locales/en.json build/translate.csv i18n.metadata.json
+bin/ruby18 bin/kotoba spreadsheet-import Locales/en.json build/translate.csv Locales/fr.json
+bin/ruby18 bin/kotoba validate --human Locales/en.json Locales/fr.json
+```
+
+## One-command handoff folder
+
+```sh
+bin/ruby18 bin/kotoba handoff build/handoff-fr fr Locales/en.json i18n.metadata.json
+```
+
+Output:
+
+- `spreadsheet.en.csv`: for translators
+- `source.en.json`: developer copy of the catalog
+- `pseudo.en.json`: layout QA with stretched text
+- `metadata.json`: optional context when provided
+
+Zip `build/handoff-fr/` and share it.
+
+## Spreadsheet columns
+
+| Column | Filled by | Notes |
+| --- | --- | --- |
+| `key` | export | Dot path (`battle.wild_appeared`). Do not edit. |
+| `english` | export | Source locale text. |
+| `translation` | translator | Imported back into the locale catalog. |
+| `context` | export | From metadata or auto-generated from the key path. |
+| `notes` | export | Metadata `description`, `speaker`, `max_length`. |
+
+### Metadata file (optional)
+
+`i18n.metadata.json` adds context per key:
+
+```json
+{
+  "battle.wild_appeared": {
+    "context": "Wild battle intro",
+    "description": "Shown at the start of a wild encounter.",
+    "speaker": "Narrator"
+  }
+}
+```
+
+Validate before export:
+
+```sh
+bin/ruby18 bin/kotoba schema metadata i18n.metadata.json
+```
+
+## Pokemon Essentials
+
+1. Import PBS, `Text_english_*`, or map dialogue into English JSON, then export. Translators see game context, not script IDs.
+2. Export one namespace (`menu`, `maps.map_0001`, `data.moves`) per person when starting out.
+3. Use `{1}` in English when migrating `_INTL` if your translators already know Essentials placeholders. `{pokemon}` works too; validation matches English.
+4. Export omits internal `source_text` migration rows.
+
+Example:
+
+```sh
+bin/ruby18 bin/kotoba text-english-import Text_english_core core Locales/en.core.json
+bin/ruby18 bin/kotoba spreadsheet-export Locales/en.core.json build/core-translate.csv
+```
+
+## Re-export with partial translations
+
+```sh
+bin/ruby18 bin/kotoba spreadsheet-import Locales/en.json build/translate.csv Locales/fr.json
+bin/ruby18 bin/kotoba spreadsheet-export Locales/en.json build/translate.csv i18n.metadata.json Locales/fr.json
+```
+
+## Validation for humans
+
+Default `validate` output is for developers. `--human` for pasting back to translators:
+
+```sh
+bin/ruby18 bin/kotoba validate --human Locales/en.json Locales/fr.json
+```
+
+Example:
+
+```text
+In fr.json: keep the same {placeholders} as English for "A wild {pokemon} appeared!" (key: battle.wild_appeared). Missing: {pokemon}.
+```
+
+JSON reports:
+
+```sh
+bin/ruby18 bin/kotoba validate-report --human Locales/en.json Locales/fr.json build/report.json
+```
+
+---
+
+# Placeholders and special text
+Source: https://mateo-m.github.io/kotoba/translators/placeholders
+
+Edit the translation column in a spreadsheet.
+
+Spreadsheet rules: [For translators](/translators/). Developer syntax: [Message syntax](/essential/message-syntax).
+
+---
+
+## What is a placeholder?
+
+Text in curly braces that the game replaces when the line is shown. Do not delete it or swap it for a fixed word (e.g. `Pikachu` instead of `{pokemon}`).
+
+| English | Your translation | On screen (example) |
+| --- | --- | --- |
+| `A wild {pokemon} appeared!` | `¡Un {pokemon} salvaje apareció!` | `¡Un Pikachu salvaje apareció!` |
+| `Hello, {name}!` | `Bonjour, {name} !` | `Bonjour, Ari !` |
+| `You have {count} coins.` | `Tienes {count} monedas.` | `Tienes 42 monedas.` |
+
+The game supplies `Pikachu`, `Ari`, or `42`. You write the words around the placeholder.
+
+---
+
+## Can I move `{1}` and `{2}`?
+
+Pokemon Essentials uses numbered slots in English:
+
+```text
+A wild {1} appeared!
+{1} used {2}!
+```
+
+### Default: keep every placeholder
+
+| English | Good | Bad |
+| --- | --- | --- |
+| `A wild {1} appeared!` | `¡Un {1} salvaje apareció!` | `¡Un Pikachu salvaje apareció!` |
+| `{1} used {2}!` | `¡{1} usó {2}!` | `¡Pikachu usó Impactrueno!` |
+
+### Different word order
+
+You may reorder `{1}`, `{2}`, etc. if:
+
+1. Every number appears exactly once (`{1}` stays `{1}`).
+2. You do not remove or rename placeholders.
+3. Ask the developer when unsure. They can validate before ship.
+
+| English | Spanish (reordered) | On screen |
+| --- | --- | --- |
+| `{1} gave {2} to {3}` | `{1} le dio {2} a {3}` | `Misty le dio una Potion a Ash` |
+| `A wild {1} appeared!` | `¡Apareció un {1} salvaje!` | `¡Apareció un Pikachu salvaje!` |
+
+Named placeholders (`{pokemon}`, `{name}`) work the same.
+
+---
+
+## Color and control codes
+
+RPG Maker color codes start with `\c[` and end with `\c[0]` (or another number). Copy them exactly.
+
+| English | Good | Bad |
+| --- | --- | --- |
+| `\c[2]Careful!\c[0]` | `\c[2]¡Cuidado!\c[0]` | `¡Cuidado!` (codes removed) |
+
+Keep `\n`, `\|`, etc. unless the developer says otherwise.
+
+---
+
+## Plural lines (`{count, plural, …}`)
+
+Some English rows change wording by count:
+
+```text
+{count, plural, =0 {No items} one {# item} other {# items}}
+```
+
+1. Keep `{count, plural,` and branch labels (`=0`, `one`, `other`) unless the developer changes them.
+2. Translate only the words inside each `{…}` branch.
+3. Keep `#` where English has it. It becomes the number in game.
+
+| English branches | Spanish branches | Count | On screen |
+| --- | --- | --- | --- |
+| `=0 {No items}` / `one {# item}` / `other {# items}` | `=0 {Sin objetos}` / `one {# objeto}` / `other {# objetos}` | 0 | `Sin objetos` |
+| (same) | (same) | 1 | `1 objeto` |
+| (same) | (same) | 5 | `5 objetos` |
+
+Ask for a note in the notes column if the row is unclear.
+
+---
+
+## Select lines (`{gender, select, …}`)
+
+```text
+{gender, select, female {She} male {He} other {They}} used {move}.
+```
+
+Translate `She`, `He`, `They`. Keep `{move}`, `female`, `male`, `other`, and the `select` structure unless the developer approves a change.
+
+| Input | On screen (example) |
+| --- | --- |
+| gender = female, move = Thunderbolt | `She used Thunderbolt.` |
+
+---
+
+## Checklist
+
+- [ ] Only the translation column was edited
+- [ ] Every `{placeholder}` from English remains (same spelling, same braces)
+- [ ] Every `{1}`, `{2}`, … appears the right number of times
+- [ ] Color codes like `\c[2]` and `\c[0]` are unchanged
+- [ ] Plural/select skeleton unchanged unless the developer agreed
+- [ ] Skipped rows are blank, not deleted

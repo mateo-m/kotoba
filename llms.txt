@@ -1,0 +1,100 @@
+# Kotoba
+
+> i18n for RPG Maker XP and Pokemon Essentials
+
+## Docs
+
+- [Kotoba](https://mateo-m.github.io/kotoba): i18n for RPG Maker XP and Pokemon Essentials.
+- [Introduction](https://mateo-m.github.io/kotoba/introduction): What Kotoba is, a small catalog example, and which page to open next.
+
+## Essentials
+
+- [Installing in a game](https://mateo-m.github.io/kotoba/essential/installation): Extract a release ZIP beside Game.exe, add one boot line in Script Editor, and see a test translation.
+- [Quick Start](https://mateo-m.github.io/kotoba/essential/quick-start): Clone the repo, add a catalog, load Kotoba in Ruby 1.8, and call Kotoba.t.
+- [Troubleshooting](https://mateo-m.github.io/kotoba/essential/troubleshooting): Fixes for the common install and runtime errors.
+- [Catalog format](https://mateo-m.github.io/kotoba/essential/catalog-format): How Kotoba reads strict JSON catalogs, and the rules the keys must follow.
+- [Message syntax](https://mateo-m.github.io/kotoba/essential/message-syntax): Placeholders, select, plural, apostrophes, and RPG Maker color codes in message strings.
+- [Runtime API](https://mateo-m.github.io/kotoba/essential/runtime-api): The Ruby 1.8 API: setup, lookup, locale fallback, and adapter hooks.
+
+## Integration
+
+- [Integration](https://mateo-m.github.io/kotoba/integration): Pick the integration guide that matches your project kit.
+- [Bare RGSS integration](https://mateo-m.github.io/kotoba/integration/bare-rgss): Project layout, boot steps, and inline kotoba: markers for bare RPG Maker XP.
+- [Pokemon Essentials integration](https://mateo-m.github.io/kotoba/integration/pokemon-essentials): Bridge the existing _INTL calls in Pokemon Essentials with the adapter.
+- [Essentials migration](https://mateo-m.github.io/kotoba/integration/pokemon-essentials-migration): Move Essentials copy from _INTL source text to stable catalog keys, one area at a time.
+- [Third-party adapters](https://mateo-m.github.io/kotoba/integration/third-party): The adapter contract, and how to write an adapter for another kit.
+
+## For translators
+
+- [For translators](https://mateo-m.github.io/kotoba/translators): What a translator receives, what to edit, and what to send back.
+- [Placeholders and special text](https://mateo-m.github.io/kotoba/translators/placeholders): How to keep placeholders and special text correct in a spreadsheet.
+- [Spreadsheet handoff](https://mateo-m.github.io/kotoba/translators/handoff): Export a spreadsheet for translators, then import the finished files.
+
+## Tooling
+
+- [Tooling](https://mateo-m.github.io/kotoba/tooling): The bin/kotoba commands that validate catalogs, import game data, and export interchange files.
+- [Validation CLI](https://mateo-m.github.io/kotoba/tooling/validation-cli): Validate catalogs and report missing or extra keys.
+- [TMS workflows](https://mateo-m.github.io/kotoba/tooling/tms): Convert between nested catalogs and the flat JSON, XLIFF, or PO files that translation tools want.
+- [Crowdin](https://mateo-m.github.io/kotoba/tooling/crowdin): Export and import catalogs for Crowdin.
+- [SimpleLocalize](https://mateo-m.github.io/kotoba/tooling/simplelocalize): Export and import catalogs for SimpleLocalize.
+- [Tolgee](https://mateo-m.github.io/kotoba/tooling/tolgee): Export and import catalogs for Tolgee.
+- [XLIFF and PO](https://mateo-m.github.io/kotoba/tooling/xliff-po): Export and import catalogs as XLIFF or PO.
+
+## Specs
+
+- [Map event command reference](https://mateo-m.github.io/kotoba/reference/map-event-codes): The RPG Maker XP event commands that Kotoba map import covers.
+- [Compatibility](https://mateo-m.github.io/kotoba/reference/compatibility): Which Ruby versions Kotoba supports, and why 1.8 is the gate.
+
+## Contributors
+
+- [CI](https://mateo-m.github.io/kotoba/contributors/ci): How CI runs the Ruby 1.8 compatibility gate, and how to match it on your machine.
+- [Legacy Ruby Docker Images](https://mateo-m.github.io/kotoba/contributors/docker-images): The reusable Linux Ruby images for 1.8 and 1.9 compatibility tests.
+
+## v0.1.0 (archived)
+
+### Docs
+
+- [Kotoba v0.1.0](https://mateo-m.github.io/kotoba/v0.1.0): The Kotoba guide as it was at the v0.1.0 release.
+
+### Essentials
+
+- [Installing in a game](https://mateo-m.github.io/kotoba/v0.1.0/essential/installation): Extract a release ZIP beside Game.exe, add one boot line in Script Editor, and see a test translation.
+- [Quick Start](https://mateo-m.github.io/kotoba/v0.1.0/essential/quick-start): Clone the repo, add a catalog, load Kotoba in Ruby 1.8, and call Kotoba.t.
+- [Troubleshooting](https://mateo-m.github.io/kotoba/v0.1.0/essential/troubleshooting): Fixes for the common install and runtime errors.
+- [Catalog format](https://mateo-m.github.io/kotoba/v0.1.0/essential/catalog-format): How Kotoba reads strict JSON catalogs, and the rules the keys must follow.
+- [Message syntax](https://mateo-m.github.io/kotoba/v0.1.0/essential/message-syntax): Placeholders, select, plural, apostrophes, and RPG Maker color codes in message strings.
+- [Runtime API](https://mateo-m.github.io/kotoba/v0.1.0/essential/runtime-api): The Ruby 1.8 API: setup, lookup, locale fallback, and adapter hooks.
+
+### Integration
+
+- [Integration](https://mateo-m.github.io/kotoba/v0.1.0/integration): Pick the integration guide that matches your project kit.
+- [Bare RGSS integration](https://mateo-m.github.io/kotoba/v0.1.0/integration/bare-rgss): Project layout, boot steps, and inline kotoba: markers for bare RPG Maker XP.
+- [Pokemon Essentials integration](https://mateo-m.github.io/kotoba/v0.1.0/integration/pokemon-essentials): Bridge the existing _INTL calls in Pokemon Essentials with the adapter.
+- [Essentials migration](https://mateo-m.github.io/kotoba/v0.1.0/integration/pokemon-essentials-migration): Move Essentials copy from _INTL source text to stable catalog keys, one area at a time.
+- [Third-party adapters](https://mateo-m.github.io/kotoba/v0.1.0/integration/third-party): The adapter contract, and how to write an adapter for another kit.
+
+### For translators
+
+- [For translators](https://mateo-m.github.io/kotoba/v0.1.0/translators): What a translator receives, what to edit, and what to send back.
+- [Placeholders and special text](https://mateo-m.github.io/kotoba/v0.1.0/translators/placeholders): How to keep placeholders and special text correct in a spreadsheet.
+- [Spreadsheet handoff](https://mateo-m.github.io/kotoba/v0.1.0/translators/handoff): Export a spreadsheet for translators, then import the finished files.
+
+### Tooling
+
+- [Tooling](https://mateo-m.github.io/kotoba/v0.1.0/tooling): The bin/kotoba commands that validate catalogs, import game data, and export interchange files.
+- [Validation CLI](https://mateo-m.github.io/kotoba/v0.1.0/tooling/validation-cli): Validate catalogs and report missing or extra keys.
+- [TMS workflows](https://mateo-m.github.io/kotoba/v0.1.0/tooling/tms): Convert between nested catalogs and the flat JSON, XLIFF, or PO files that translation tools want.
+- [Crowdin](https://mateo-m.github.io/kotoba/v0.1.0/tooling/crowdin): Export and import catalogs for Crowdin.
+- [SimpleLocalize](https://mateo-m.github.io/kotoba/v0.1.0/tooling/simplelocalize): Export and import catalogs for SimpleLocalize.
+- [Tolgee](https://mateo-m.github.io/kotoba/v0.1.0/tooling/tolgee): Export and import catalogs for Tolgee.
+- [XLIFF and PO](https://mateo-m.github.io/kotoba/v0.1.0/tooling/xliff-po): Export and import catalogs as XLIFF or PO.
+
+### Specs
+
+- [Map event command reference](https://mateo-m.github.io/kotoba/v0.1.0/reference/map-event-codes): The RPG Maker XP event commands that Kotoba map import covers.
+- [Compatibility](https://mateo-m.github.io/kotoba/v0.1.0/reference/compatibility): Which Ruby versions Kotoba supports, and why 1.8 is the gate.
+
+### Contributors
+
+- [CI](https://mateo-m.github.io/kotoba/v0.1.0/contributors/ci): How CI runs the Ruby 1.8 compatibility gate, and how to match it on your machine.
+- [Legacy Ruby Docker Images](https://mateo-m.github.io/kotoba/v0.1.0/contributors/docker-images): The reusable Linux Ruby images for 1.8 and 1.9 compatibility tests.
